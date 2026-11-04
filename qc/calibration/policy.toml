@@ -1,0 +1,187 @@
+# SPEC-011 section 9: every threshold of the historical calibration as a placeholder row.
+# Values are set by source review or playtest review, never by simulation output.
+schema = "calibration-policy/1"
+
+[[threshold]]
+id = "widen_exact_pm"
+value = 150
+confidence = "unverified"
+placeholder = true
+calibration_target = "CT-011-1101"
+note = "Widening of an exact stated count, either side."
+
+[[threshold]]
+id = "widen_approx_pm"
+value = 200
+confidence = "unverified"
+placeholder = true
+calibration_target = "CT-011-1101"
+note = "Widening of an 'about' figure, either side."
+
+[[threshold]]
+id = "approx_time_s"
+value = 900
+confidence = "unverified"
+placeholder = true
+calibration_target = "CT-011-1101"
+note = "Half-width of a '~T' time window."
+
+[[threshold]]
+id = "weak_width_pm"
+value = 1500
+confidence = "unverified"
+placeholder = true
+calibration_target = "CT-011-1101"
+note = "Band width above which a gated band is flagged weak."
+
+[[threshold]]
+id = "spread_limit_pm"
+value = 400
+confidence = "unverified"
+placeholder = true
+calibration_target = "CT-011-1102"
+note = "Seed spread above which a band is unstable."
+
+[[threshold]]
+id = "seeds_smoke_lo"
+value = 1
+confidence = "unverified"
+placeholder = true
+calibration_target = "CT-011-1102"
+note = "First seed of the pull-request suite."
+
+[[threshold]]
+id = "seeds_smoke_hi"
+value = 4
+confidence = "unverified"
+placeholder = true
+calibration_target = "CT-011-1102"
+note = "Last seed of the pull-request suite."
+
+[[threshold]]
+id = "seeds_full_lo"
+value = 1
+confidence = "unverified"
+placeholder = true
+calibration_target = "CT-011-1102"
+note = "First seed of the nightly suite."
+
+[[threshold]]
+id = "seeds_full_hi"
+value = 16
+confidence = "unverified"
+placeholder = true
+calibration_target = "CT-011-1102"
+note = "Last seed of the nightly suite."
+
+[[threshold]]
+id = "seeds_fit_lo"
+value = 1
+confidence = "unverified"
+placeholder = true
+calibration_target = "CT-011-1102"
+note = "First seed of a fit."
+
+[[threshold]]
+id = "seeds_fit_hi"
+value = 8
+confidence = "unverified"
+placeholder = true
+calibration_target = "CT-011-1102"
+note = "Last seed of a fit."
+
+[[threshold]]
+id = "seeds_holdout_lo"
+value = 101
+confidence = "unverified"
+placeholder = true
+calibration_target = "CT-011-1102"
+note = "First hold-out seed, disjoint from the fit seeds."
+
+[[threshold]]
+id = "seeds_holdout_hi"
+value = 116
+confidence = "unverified"
+placeholder = true
+calibration_target = "CT-011-1102"
+note = "Last hold-out seed."
+
+[[threshold]]
+id = "trend_alert_pm"
+value = 150
+confidence = "unverified"
+placeholder = true
+calibration_target = "CT-011-1103"
+note = "Drift against the baseline median that is reported."
+
+[[threshold]]
+id = "holdout_pass_pm"
+value = 700
+confidence = "unverified"
+placeholder = true
+calibration_target = "CT-011-1104"
+note = "Share of gated hold-out bands that must pass."
+
+[[threshold]]
+id = "holdout_loss_factor"
+value = 2
+confidence = "unverified"
+placeholder = true
+calibration_target = "CT-011-1104"
+note = "Hold-out loss limit as a multiple of the fit loss."
+
+[[threshold]]
+id = "holdout_looks_per_cycle"
+value = 3
+confidence = "unverified"
+placeholder = true
+calibration_target = "CT-011-1104"
+note = "Hold-out looks allowed in one cycle."
+
+[[threshold]]
+id = "fit_rounds"
+value = 3
+confidence = "unverified"
+placeholder = true
+calibration_target = "CT-011-1105"
+note = "Coordinate-descent rounds."
+
+[[threshold]]
+id = "fit_grid_max_points"
+value = 33
+confidence = "unverified"
+placeholder = true
+calibration_target = "CT-011-1105"
+note = "Most grid points tried for one tunable."
+
+[[threshold]]
+id = "fit_excess_cap_pm"
+value = 2000
+confidence = "unverified"
+placeholder = true
+calibration_target = "CT-011-1105"
+note = "Cap on a band's excess inside the loss."
+
+[[threshold]]
+id = "fit_accept_factor_pm"
+value = 1100
+confidence = "unverified"
+placeholder = true
+calibration_target = "CT-011-1105"
+note = "Accepted-range loss limit as a multiple of the minimum loss."
+
+[[threshold]]
+id = "fit_accept_slack_per_band"
+value = 100
+confidence = "unverified"
+placeholder = true
+calibration_target = "CT-011-1105"
+note = "Accepted-range loss slack added per gated fit band."
+
+[[threshold]]
+id = "fit_free_param_divisor"
+value = 3
+confidence = "unverified"
+placeholder = true
+calibration_target = "CT-011-1105"
+note = "Free parameters allowed are gated fit bands divided by this."

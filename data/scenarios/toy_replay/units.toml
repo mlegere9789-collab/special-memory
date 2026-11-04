@@ -1,0 +1,73 @@
+# Toy replay units (SPEC-011 section 3, interim unit list). Invented geometry for loader tests.
+schema = "replay-units/1"
+
+[[unit]]
+id = "toy_army"
+level = "army"
+parent = ""
+side = 0
+strength = 0
+training = "trained"
+formation = "column"
+confidence = "unverified"
+placeholder = true
+calibration_target = "CT-011-1101"
+note = "Toy headquarters; invented."
+
+[[unit]]
+id = "toy_bde"
+level = "brigade"
+parent = "toy_army"
+side = 0
+strength = 0
+training = "trained"
+formation = "column"
+confidence = "unverified"
+placeholder = true
+calibration_target = "CT-011-1101"
+note = "Toy brigade; invented."
+
+[[unit]]
+id = "toy_r1"
+level = "regiment"
+parent = "toy_bde"
+side = 0
+strength = 100
+training = "trained"
+formation = "column"
+x_m = 0
+y_m = 0
+confidence = "unverified"
+placeholder = true
+calibration_target = "CT-011-1101"
+note = "Toy regiment; invented."
+
+[[unit]]
+id = "toy_r2"
+level = "regiment"
+parent = "toy_bde"
+side = 0
+strength = 100
+training = "trained"
+formation = "column"
+x_m = 0
+y_m = 100
+confidence = "unverified"
+placeholder = true
+calibration_target = "CT-011-1101"
+note = "Toy regiment; invented."
+
+[[unit]]
+id = "toy_b1"
+level = "regiment"
+parent = ""
+side = 1
+strength = 100
+training = "trained"
+formation = "line"
+x_m = 1000
+y_m = 0
+confidence = "unverified"
+placeholder = true
+calibration_target = "CT-011-1101"
+note = "Toy opponent; invented."

@@ -181,6 +181,15 @@ dependencies = [
 ]
 
 [[package]]
+name = "history-cal"
+version = "0.0.1"
+dependencies = [
+ "battle-rules",
+ "core-math",
+ "sim-state",
+]
+
+[[package]]
 name = "indexmap"
 version = "2.14.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
