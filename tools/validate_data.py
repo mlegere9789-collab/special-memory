@@ -10,8 +10,13 @@ Rules beyond the schema:
   R6 regression fixtures in qc/fixtures/*.toml: a listed (file, path) must NOT hold the listed bad value as verified
   R7 rules data: every data/rules/<name>.toml validates against data/schemas/<name>.schema.json, holds no float, and
      every table with a 'confidence' key passes the provenance definition in rules-common.schema.json
+  R8 plugins: every tools/validators/*.py (not starting with '_') exposes validate(root) -> list[str], one text per
+     problem; each runs after the checks above and its problems print as '<plugin>: <text>'. A plugin that cannot be
+     imported, lacks validate, raises, or returns anything but a list of strings is itself one problem (never skipped).
+     The environment variable HD_VALIDATORS_DIR replaces the plugin directory (used by the self-tests).
 Exit 1 on any problem.
 """
+import importlib.util
 import json
 import os
 import sys
@@ -23,6 +28,7 @@ from referencing import Registry, Resource
 
 ROOT = os.path.abspath(sys.argv[1]) if len(sys.argv) > 1 else os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SCHEMA_DIR = os.path.join(ROOT, "data", "schemas")
+VALIDATORS_DIR = os.environ.get("HD_VALIDATORS_DIR") or os.path.join(os.path.dirname(os.path.abspath(__file__)), "validators")
 KINDS = {"battles": "battle", "commanders": "commander", "districts": "district", "politics": "politics"}
 
 
@@ -100,6 +106,37 @@ def check_rules(reg):
                 print("%s: R7 provenance at %s: %s" % (rel, p, err.message[:160]))
                 problems += 1
     return files, problems
+
+
+def discover_plugins(directory):
+    """Return [(name, path)] for every plugin module in `directory`, in name order."""
+    if not os.path.isdir(directory):
+        return []
+    return [(n[:-3], os.path.join(directory, n)) for n in sorted(os.listdir(directory))
+            if n.endswith(".py") and not n.startswith("_")]
+
+
+def run_plugins(directory, root):
+    """R8: run every plugin's validate(root). Returns the number of problems found."""
+    problems = 0
+    for name, path in discover_plugins(directory):
+        try:
+            spec = importlib.util.spec_from_file_location("hd_validator_" + name, path)
+            module = importlib.util.module_from_spec(spec)
+            spec.loader.exec_module(module)
+            found = module.validate(root)
+            if not isinstance(found, list) or not all(isinstance(x, str) for x in found):
+                raise TypeError("validate(root) must return a list of strings, got %r" % (found,))
+        except BaseException as e:  # a broken plugin fails the run; it is never skipped
+            if isinstance(e, KeyboardInterrupt):
+                raise
+            print("%s: plugin failed: %s: %s" % (name, type(e).__name__, str(e)[:160]))
+            problems += 1
+            continue
+        for text in found:
+            print("%s: %s" % (name, text))
+        problems += len(found)
+    return problems
 
 
 def walk_facts(node, path=""):
@@ -190,6 +227,7 @@ def main():
     rule_files, rule_problems = check_rules(reg)
     count += rule_files
     problems += rule_problems
+    problems += run_plugins(VALIDATORS_DIR, ROOT)
     print("validate_data: %d records, %d problems" % (count, problems))
     return 1 if problems else 0
 
