@@ -3,6 +3,8 @@
 //! (`qc/fixtures/ref_height.py`) can recompute it independently.
 #![allow(dead_code)]
 
+pub mod lospack;
+
 use core_math::{Fx, Vec2Fx};
 use terrain::{TerrainIndex, TerrainWorld, Tile, TileId, CELL_MM, TILE_CELLS};
 

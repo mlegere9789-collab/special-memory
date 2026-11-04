@@ -13,7 +13,7 @@ use std::collections::BTreeMap;
 #[derive(Debug)]
 pub struct TerrainWorld {
     index: TerrainIndex,
-    tiles: BTreeMap<TileId, Tile>,
+    pub(crate) tiles: BTreeMap<TileId, Tile>,
 }
 
 /// A position resolved to a cell and the offsets inside it.
@@ -23,6 +23,13 @@ struct Spot<'a> {
     ly: usize,
     fx: i64,
     fy: i64,
+}
+
+/// One terrain lookup for the sight rule.
+pub(crate) struct Sample {
+    pub height: i64,
+    pub cell: (i64, i64),
+    pub occ: i64,
 }
 
 impl TerrainWorld {
@@ -87,15 +94,23 @@ impl TerrainWorld {
     /// Tiles whose area meets the rectangle `min..=max` after clamping to the extent, ascending
     /// `(y, x)`. Residency is not consulted. An inverted rectangle selects nothing.
     pub fn tiles_for_rect(&self, min: Vec2Fx, max: Vec2Fx) -> Vec<TileId> {
-        if min.x > max.x || min.y > max.y {
+        self.tiles_for_rect_mm(
+            (fx_to_mm(min.x), fx_to_mm(min.y)),
+            (fx_to_mm(max.x), fx_to_mm(max.y)),
+        )
+    }
+
+    /// [`Self::tiles_for_rect`] for corners in millimetres.
+    pub(crate) fn tiles_for_rect_mm(&self, min: (i64, i64), max: (i64, i64)) -> Vec<TileId> {
+        if min.0 > max.0 || min.1 > max.1 {
             return Vec::new();
         }
         let span = |lo: i64, hi: i64, n: u32| {
             let t = |v: i64| v.div_euclid(TILE_MM).clamp(0, i64::from(n) - 1) as u16;
             (t(lo), t(hi))
         };
-        let (x0, x1) = span(fx_to_mm(min.x), fx_to_mm(max.x), self.index.tiles_x());
-        let (y0, y1) = span(fx_to_mm(min.y), fx_to_mm(max.y), self.index.tiles_y());
+        let (x0, x1) = span(min.0, max.0, self.index.tiles_x());
+        let (y0, y1) = span(min.1, max.1, self.index.tiles_y());
         let mut out = Vec::with_capacity((usize::from(x1 - x0) + 1) * (usize::from(y1 - y0) + 1));
         for y in y0..=y1 {
             for x in x0..=x1 {
@@ -107,8 +122,13 @@ impl TerrainWorld {
 
     /// Clamps `p` to the extent, finds its cell and the tile that holds it.
     fn locate(&self, p: Vec2Fx) -> Result<Spot<'_>, TerrainError> {
+        self.locate_mm(fx_to_mm(p.x), fx_to_mm(p.y))
+    }
+
+    /// [`Self::locate`] for a position already in millimetres.
+    fn locate_mm(&self, x: i64, y: i64) -> Result<Spot<'_>, TerrainError> {
         let (ex, ey) = self.extent_mm();
-        let (x, y) = (fx_to_mm(p.x).clamp(0, ex), fx_to_mm(p.y).clamp(0, ey));
+        let (x, y) = (x.clamp(0, ex), y.clamp(0, ey));
         let cells = i64::from(TILE_CELLS);
         let cx = (x / CELL_MM).min(i64::from(self.index.tiles_x()) * cells - 1);
         let cy = (y / CELL_MM).min(i64::from(self.index.tiles_y()) * cells - 1);
@@ -133,15 +153,38 @@ impl TerrainWorld {
         [at(0, 0), at(1, 0), at(0, 1), at(1, 1)]
     }
 
-    /// Ground height in millimetres above `z_origin_cm`: bilinear in the cell, floored.
-    /// Positions outside the extent clamp to it.
-    pub fn height_mm(&self, p: Vec2Fx) -> Result<i64, TerrainError> {
-        let s = self.locate(p)?;
-        let [h00, h10, h01, h11] = Self::corners(&s).map(i128::from);
+    fn bilinear(s: &Spot<'_>) -> i64 {
+        let [h00, h10, h01, h11] = Self::corners(s).map(i128::from);
         let (c, fx, fy) = (i128::from(CELL_MM), i128::from(s.fx), i128::from(s.fy));
         let sum =
             h00 * (c - fx) * (c - fy) + h10 * fx * (c - fy) + h01 * (c - fx) * fy + h11 * fx * fy;
-        Ok((10 * sum).div_euclid(c * c) as i64)
+        (10 * sum).div_euclid(c * c) as i64
+    }
+
+    /// Ground height in millimetres above `z_origin_cm`: bilinear in the cell, floored.
+    /// Positions outside the extent clamp to it.
+    pub fn height_mm(&self, p: Vec2Fx) -> Result<i64, TerrainError> {
+        self.height_at_mm(fx_to_mm(p.x), fx_to_mm(p.y))
+    }
+
+    /// [`Self::height_mm`] for a position in millimetres (clamped to the extent).
+    pub(crate) fn height_at_mm(&self, x: i64, y: i64) -> Result<i64, TerrainError> {
+        Ok(Self::bilinear(&self.locate_mm(x, y)?))
+    }
+
+    /// Ground height, global cell and cover height (mm) at a position in millimetres, from one
+    /// tile lookup (clamped to the extent).
+    pub(crate) fn sample_mm(&self, x: i64, y: i64) -> Result<Sample, TerrainError> {
+        let s = self.locate_mm(x, y)?;
+        let cells = i64::from(TILE_CELLS);
+        Ok(Sample {
+            height: Self::bilinear(&s),
+            cell: (
+                i64::from(s.tile.id().x) * cells + s.lx as i64,
+                i64::from(s.tile.id().y) * cells + s.ly as i64,
+            ),
+            occ: 100 * i64::from(s.tile.occ()[s.ly * TILE_CELLS as usize + s.lx]),
+        })
     }
 
     /// Terrain class id of the cell holding `p` (clamped to the extent).

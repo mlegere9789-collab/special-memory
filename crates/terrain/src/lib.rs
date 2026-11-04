@@ -1,6 +1,5 @@
 //! Battlefield terrain pack: tile codec, index and the height, class, cover, flag and slope
-//! queries (SPEC-014 sections 4, 5 and 11). Obstacles and line of sight are added by a later
-//! ticket.
+//! queries, obstacle queries and line of sight (SPEC-014 sections 4, 5 and 11).
 //!
 //! Everything is integer-only and deterministic: no I/O, no clocks, no floating point.
 //! Positions are [`Vec2Fx`] in metres (the simulation's unit); the pack works in millimetres, and
@@ -11,11 +10,13 @@
 mod hash;
 mod index;
 mod minitoml;
+mod sight;
 mod tile;
 mod world;
 
 pub use hash::fnv1a64;
 pub use index::{Sector, Slab, TerrainIndex};
+pub use sight::{Blocker, LosMode, LosResult, SEG_FIRE_BLOCKING, SEG_SIGHT_BLOCKING};
 pub use tile::{ObstacleSeg, Tile, CELL_COUNT, HEIGHT_COUNT, HEIGHT_SIDE};
 pub use world::TerrainWorld;
 
