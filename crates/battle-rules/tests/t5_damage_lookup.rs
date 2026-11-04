@@ -15,13 +15,13 @@ const REGIONS: [Region; 3] = [Region::Legs, Region::Torso, Region::Head];
 #[test]
 fn boundaries_of_a_cell() {
     let d = table();
-    // band 0 legs: 0 killed, 50 wounded, 200 disabled permille.
+    // band 0 legs: 0 killed, 10 wounded, 40 disabled permille.
     let o = |roll| d.outcome(0, Region::Legs, roll);
     assert_eq!(o(0), HitOutcome::Wounded);
-    assert_eq!(o(49_999), HitOutcome::Wounded);
-    assert_eq!(o(50_000), HitOutcome::Disabled);
-    assert_eq!(o(249_999), HitOutcome::Disabled);
-    assert_eq!(o(250_000), HitOutcome::NoEffect);
+    assert_eq!(o(9_999), HitOutcome::Wounded);
+    assert_eq!(o(10_000), HitOutcome::Disabled);
+    assert_eq!(o(49_999), HitOutcome::Disabled);
+    assert_eq!(o(50_000), HitOutcome::NoEffect);
     assert_eq!(o(999_999), HitOutcome::NoEffect);
     // The roll is reduced modulo 10^6.
     assert_eq!(o(1_000_000), o(0));
@@ -31,8 +31,13 @@ fn boundaries_of_a_cell() {
 
 #[test]
 fn a_cell_that_sums_to_1000_never_gives_no_effect() {
-    let d = table();
-    // band 3 head: 950 / 50 / 0.
+    // A table whose band 3 head cell is 950 / 50 / 0 (sums to 1000).
+    let d = DamageTable::from_toml_str(&DAMAGE.replacen(
+        "killed_pm = 350\nwounded_pm = 300\ndisabled_pm = 30\n",
+        "killed_pm = 950\nwounded_pm = 50\ndisabled_pm = 0\n",
+        1,
+    ))
+    .unwrap();
     assert_eq!(d.outcome(3, Region::Head, 949_999), HitOutcome::Killed);
     assert_eq!(d.outcome(3, Region::Head, 950_000), HitOutcome::Wounded);
     assert_eq!(d.outcome(3, Region::Head, 999_999), HitOutcome::Wounded);
@@ -95,8 +100,8 @@ fn energy_bands() {
     assert_eq!(at(0, 1), 0);
     assert_eq!(at(149_999, 1000), 0);
     assert_eq!(at(150, 1), 1);
-    assert_eq!(at(499_999, 1000), 1);
-    assert_eq!(at(500, 1), 2);
+    assert_eq!(at(799_999, 1000), 1);
+    assert_eq!(at(800, 1), 2);
     assert_eq!(at(1499, 1), 2);
     assert_eq!(at(1500, 1), 3);
     assert_eq!(d.band_for_energy(Fx::MAX), 3);

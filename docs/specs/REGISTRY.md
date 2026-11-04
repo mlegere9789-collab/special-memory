@@ -338,6 +338,7 @@ Labels are sequential per base spec in landing order (wave, then ticket id). A l
 | A14 | section 7: counter `obstacle_stops` | SPEC-010 | T-106 | 10 | pending |
 | A15 | section 5: `resolve_chord` tests only the obstacles of overlapped sectors | SPEC-008 | T-087 | 9 | pending, depends on D-01 |
 | A16 | sections 2 and 5: ground-relative geometry over the terrain pack (was SPEC-014 "A4", which collided with the landed A4) | SPEC-014 | none yet | blocked | blocked on D-02 |
+| A18 | section 1 data: placeholder rows fitted so that bands B1 to B11 hold (A17 stays reserved) | T-024 | T-024 | 4 | landed |
 
 ### 9.11 SPEC-011 (historical replay and calibration)
 

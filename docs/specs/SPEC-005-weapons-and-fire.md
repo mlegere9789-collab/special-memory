@@ -166,3 +166,26 @@ Section 4 gives one stream per soldier, `STREAM_SOLDIER_BASE + slot index`, deri
 1. Section 4, firing drain: `fatigue += fire_drain_ppm * drain_pm / 1000` (floor, clamped at `FATIGUE_MAX`); `drain_pm` is the heat multiplier of SPEC-009 section 7 and is 1000 with `env = None`.
 2. Section 3 and 10, `Weather`: with `env` `Some`, step TK-02 overwrites `BattleState.weather` every `smoke.period_ticks` ticks from the weather timeline (`wind` from `WeatherNow`, `wet_pm` from powder damp, `ground_pm` from ground wetness); the misfire factor and the ground restitution read it unchanged. With `env = None` the scenario's `weather` is never touched.
 3. Section 8, smoke source and update with `env` `Some`: the fire phase calls `SmokeGrid::add_smoke(muzzle, powder_mg, misfire, &SmokeParams)` instead of `add` (units `powder_mg * yield_pm / 1000`, a misfire times `misfire_pm / 1000` as a second floor, saturating at `cell_cap` with the excess in `lost_cap`), and step TK-12 runs `SmokeGrid::update` on ticks with `tick % period_ticks == period_ticks - 1` instead of the per-tick `decay`; the grid is otherwise untouched. `decay`, `add`, `shot_units` and the constants of section 8 are unchanged and still serve `env = None`. The hash gains the environment block of SPEC-009 section 9 only with `env` `Some` (smoke losses and weather state); the smoke block itself is unchanged.
+
+## Amendment A18 (from T-024 calibration, 2026-11-04)
+The first run of the fire bands (CYCLE-03-f0) missed B1, B2, B4, B7 (shot and case), B8, B9 and B10, because the placeholder rows let nearly every shot kill several men. The rows below were fitted, one band group at a time and on data only (no band, formula or test threshold changed), until B1 to B11 hold. They stay placeholders with the targets named; the values of section 1 are superseded as listed. Units are those of section 1; outcome cells are permille killed/wounded/disabled.
+
+| Row | Old | New | Band | Target |
+|---|---|---|---|---|
+| `shot_12` `cd_pm` | 470 | 530 | B7 | CT-005-2 |
+| `case_12` `muzzle_mm_s` | 400000 | 350000 | B7 | CT-005-2 |
+| `canister_12` burst `spread_sigma_urad` | 60000 | 10000 | B8 | CT-005-2 |
+| `canister_12` burst `pellet_cd_pm` | 470 | 900 | B8 | CT-005-2 |
+| `rifle_58` `aim_scale_pm` | 1000 | 5000 | B1, B9 | CT-005-3 |
+| `rifle_58` `sigma_slope_urad_per_100m` | 250 | 5000 | B1 | CT-005-3 |
+| `smoothbore_69` `aim_scale_pm` | 1000 | 5500 | B2 | CT-005-3 |
+| `smoothbore_69` `sigma0_urad` | 6000 | 22000 | B2 | CT-005-3 |
+| `smoothbore_69` `sigma_slope_urad_per_100m` | 4000 | 45000 | B2, B3 | CT-005-3 |
+| `[absorb]` `ball_j`, `conical_j` | 600 | 1100 | B1, B2 | CT-005-6 |
+| `[energy_bands]` `b2_min_j` | 500 | 800 | B1, B2 | CT-005-6 |
+| band 0 legs / torso / head | 0/50/200, 20/150/300, 150/350/300 | 0/10/40, 5/40/100, 30/110/100 | B1, B10 | CT-005-6 |
+| band 1 legs / torso / head | 10/500/300, 150/600/200, 500/350/100 | 0/24/36, 6/48/60, 36/72/48 | B2, B10 | CT-005-6 |
+| band 2 legs / torso / head | 50/800/100, 300/650/40, 800/180/10 | 12/160/120, 72/240/120, 200/200/40 | B1, B2, B10 | CT-005-6 |
+| band 3 legs / torso / head | 300/650/40, 650/330/10, 950/50/0 | 60/260/100, 150/450/100, 350/300/30 | B10 | CT-005-6 |
+
+The energy bands of section 1 now read B0 below 150 J, B1 150 to 799, B2 800 to 1499, B3 1500 and up. `ref_flight.csv` (T5-05) is regenerated from the changed ammunition rows. The dispersion of section 3 is limited to 46,340 micro-radians by the `i32` sum of squares; the smoothbore rows reach that limit beyond about 90 m.

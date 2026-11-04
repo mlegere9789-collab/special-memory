@@ -62,7 +62,7 @@ fn bursts_match_the_spec() {
     let c = t.get("canister_12").unwrap().burst.as_ref().unwrap();
     assert_eq!(
         (c.count, c.pellet_diameter_mm, c.shape, c.spread_sigma_urad),
-        (27, 38, BurstShape::Cone, 60000)
+        (27, 38, BurstShape::Cone, 10000)
     );
     assert_eq!((c.pellet_speed_pm, c.fuse_sigma_substeps), (850, 0));
     assert_eq!(c.dud_ppm, 0);
@@ -126,7 +126,7 @@ fn weapon_rows_and_step_sums() {
     );
     assert_eq!(r.misfire_restart_step, 3);
     assert_eq!(r.ram_step(), Some(2));
-    assert_eq!((r.sigma0_urad, r.sigma_slope_urad_per_100m), (700, 250));
+    assert_eq!((r.sigma0_urad, r.sigma_slope_urad_per_100m), (700, 5000));
     let rev = w.get("revolver_44").unwrap();
     assert_eq!((rev.magazine, rev.cycle_ticks), (6, 20));
     assert_eq!(rev.ram_step(), None);
@@ -171,12 +171,12 @@ fn damage_rows_load() {
     let cell = d.cell(2, Region::Torso);
     assert_eq!(
         (cell.killed_pm, cell.wounded_pm, cell.disabled_pm),
-        (300, 650, 40)
+        (72, 240, 120)
     );
     let cell = d.cell(3, Region::Head);
     assert_eq!(
         (cell.killed_pm, cell.wounded_pm, cell.disabled_pm),
-        (950, 50, 0)
+        (350, 300, 30)
     );
     for band in 0..4 {
         for region in [Region::Legs, Region::Torso, Region::Head] {
@@ -185,8 +185,8 @@ fn damage_rows_load() {
         }
     }
     assert_eq!(d.absorb_pellet_j(), 600);
-    assert_eq!(d.absorb_j(AmmoKind::Ball), 600);
-    assert_eq!(d.absorb_j(AmmoKind::Conical), 600);
+    assert_eq!(d.absorb_j(AmmoKind::Ball), 1100);
+    assert_eq!(d.absorb_j(AmmoKind::Conical), 1100);
     assert_eq!(d.absorb_j(AmmoKind::Shot), 40000);
 }
 
@@ -228,7 +228,11 @@ fn every_row_carries_provenance() {
 fn floats_are_refused_in_every_table() {
     let e = AmmoTable::from_toml_str(&mutate(AMMO, "mass_g = 27\n", "mass_g = 27.0\n"));
     assert_eq!(e.unwrap_err(), DataError::Float("ammo[0].mass_g".into()));
-    let e = WeaponTable::from_toml_str(&mutate(WEAPONS, "sigma0_urad = 6000", "sigma0_urad = 6e3"));
+    let e = WeaponTable::from_toml_str(&mutate(
+        WEAPONS,
+        "sigma0_urad = 22000",
+        "sigma0_urad = 2.2e4",
+    ));
     assert_eq!(
         e.unwrap_err(),
         DataError::Float("weapon[0].sigma0_urad".into())
@@ -366,8 +370,8 @@ fn structural_violations_are_refused() {
 fn a_row_summing_above_1000_is_refused() {
     let bad = mutate(
         DAMAGE,
-        "killed_pm = 950\nwounded_pm = 50\ndisabled_pm = 0\n",
-        "killed_pm = 950\nwounded_pm = 50\ndisabled_pm = 1\n",
+        "killed_pm = 350\nwounded_pm = 300\ndisabled_pm = 30\n",
+        "killed_pm = 350\nwounded_pm = 300\ndisabled_pm = 351\n",
     );
     assert!(matches!(
         DamageTable::from_toml_str(&bad),

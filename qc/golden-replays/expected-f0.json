@@ -1,0 +1,8 @@
+{
+  "format": 1,
+  "rows": [
+    {"scenario": "cal_line", "parameters": "rifle_58 trained 91440 dry", "ticks": 2400, "seed": 1, "final_hash": "11f34cade0460ac4"},
+    {"scenario": "cal_canister", "parameters": "napoleon_12 canister 183000", "ticks": 1200, "seed": 1, "final_hash": "16912c8c2c6c08cf"},
+    {"scenario": "f0_large", "parameters": "rifle_58 25 v 25 regiments of 400", "ticks": 600, "seed": 42, "final_hash": "c1d9af2c3bbe283e"}
+  ]
+}
