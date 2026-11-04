@@ -284,6 +284,12 @@ Ticket ids are `T-NNN`, three digits: `T-014` to `T-024` (SPEC-004 and SPEC-005)
 
 Labels are sequential per base spec in landing order (wave, then ticket id). A label is written into the base spec by the ticket named, as an "Amendment An (from Tnnn)" section, before the tests and the code of that ticket. Labels already landed are unchanged.
 
+### 9.0 SPEC-001 (core-math)
+
+| Label | Content | Source | Ticket | Status |
+|---|---|---|---|---|
+| A1 | `Rng::try_from_state`, `from_state` zero-state rule, `coin` boundary behaviour | review | T-H1 | landed |
+
 ### 9.1 SPEC-002 (sim-state)
 
 | Label | Content | Source | Ticket | Status |
@@ -311,6 +317,7 @@ Labels are sequential per base spec in landing order (wave, then ticket id). A l
 | A6 | section 9: steering target offset `peek_mm` | SPEC-009 | T-095 | 5 | pending |
 | A7 | sections 7 and 8: `issue_order` refusal in FallingBack and Broken, roster skips `F_SKULK`, `BattleState::can_fire` morale gate | SPEC-006 | T-064 | 6 | pending |
 | A8 | public setters (fatigue, strength) and read accessors for belief building and the interface | SPEC-010, 015 | T-103 | 7 | pending |
+| A9 | movement details found while building steering: snap needs `\|vel\| <= accel / TICK_HZ`, T4-03 against the fatigue-aware reference, gait defaults, anchor and scenario geometry (was labelled A2 in the T-019 commit; A2 belongs to SPEC-007) | T-019 | T-019 | 1 | landed |
 
 ### 9.4 SPEC-005 (weapons and fire)
 
