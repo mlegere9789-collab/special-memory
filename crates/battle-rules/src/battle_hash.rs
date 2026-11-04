@@ -18,7 +18,7 @@ fn order_fields(order: &Order) -> (u8, i64, i64, u8) {
 
 /// The hash of a battle: the world, then every regiment ascending by id, then every locomotion
 /// slot ascending, then the fire block, the smoke block and the casualty block of SPEC-005, then
-/// the command block when `cmd` is `Some` (SPEC-007), then the environment block when `env` is
+/// the morale block when `morale` is `Some` (SPEC-006), the command block when `cmd` is `Some` (SPEC-007), then the environment block when `env` is
 /// `Some` (SPEC-009). FNV-1a 64 over little-endian fields.
 ///
 /// Per regiment: `id u16, team u8, training u8, state tag u8 (0 steady, 1 forming), from u8,
@@ -78,8 +78,8 @@ pub fn battle_hash_into(state: &BattleState, h: &mut StateHasher) {
     write_fire(h, state);
     write_smoke(h, state);
     write_casualties(h, state);
-    // Optional blocks follow in REGISTRY order (morale, command, environment); the morale block
-    // goes before the command block when the morale layer lands.
+    // Optional blocks follow in REGISTRY order: morale, command, environment.
+    write_morale(h, state);
     if let Some(cmd) = &state.cmd {
         write_command_block(h, cmd);
     }
@@ -165,6 +165,75 @@ fn write_casualties(h: &mut StateHasher, state: &BattleState) {
         h.write_u8(c.kind as u8);
         h.write_u32(c.shooter_unit);
         h.write_u8(c.ammo);
+    }
+}
+
+/// Marks the morale block: "MOR1".
+const MORALE_MAGIC: u32 = 0x4D_4F_52_31;
+
+/// The morale block (SPEC-006 section 6), written only when `morale` is `Some`: `u32
+/// 0x4D_4F_52_31`, the regiment count, then per regiment `kind u8, state_ticks u32, c u32,
+/// loss u32, window u32, nerve_offset i32, broken_count u8, s0 u16, rounds_full u32, supply_pm
+/// u16, leader_pm u16, colonel u32`, the officer count and indices, the absent count and indices,
+/// `rng` as 4 x `u64`, `indicator u8, dwell u16`; the leader count and per leader `id u16, team
+/// u8, alive u8, x i64, y i64, prestige u16`; `cursor u64`; the event count and per event `kind
+/// u8, regiment u16, x i64, y i64`; then per team `present u8, x i64, y i64` (zeros when absent).
+fn write_morale(h: &mut StateHasher, state: &BattleState) {
+    let Some(ms) = &state.morale else {
+        return;
+    };
+    let count = |n: usize| u32::try_from(n).unwrap_or(u32::MAX);
+    h.write_u32(MORALE_MAGIC);
+    h.write_u32(count(ms.regs.len()));
+    for r in &ms.regs {
+        h.write_u8(r.kind.tag());
+        h.write_u32(r.state_ticks);
+        h.write_u32(r.c);
+        h.write_u32(r.loss);
+        h.write_u32(r.window);
+        h.write_u32(r.nerve_offset as u32);
+        h.write_u8(r.broken_count);
+        h.write_u16(r.s0);
+        h.write_u32(r.rounds_full);
+        h.write_u16(r.supply_pm);
+        h.write_u16(r.leader_pm);
+        h.write_u32(r.colonel.index);
+        h.write_u32(count(r.officers.len()));
+        for a in &r.officers {
+            h.write_u32(a.index);
+        }
+        h.write_u32(count(r.absent.len()));
+        for a in &r.absent {
+            h.write_u32(a.index);
+        }
+        for w in r.rng.state() {
+            h.write_u64(w);
+        }
+        h.write_u8(r.indicator.tag());
+        h.write_u16(r.dwell);
+    }
+    h.write_u32(count(ms.leaders.len()));
+    for l in &ms.leaders {
+        h.write_u16(l.id);
+        h.write_u8(l.team);
+        h.write_u8(u8::from(l.alive));
+        h.write_i64(l.pos.x.raw());
+        h.write_i64(l.pos.y.raw());
+        h.write_u16(l.prestige_pm);
+    }
+    h.write_u64(ms.cursor as u64);
+    h.write_u32(count(ms.events.len()));
+    for e in &ms.events {
+        h.write_u8(e.kind as u8);
+        h.write_u16(e.regiment.0);
+        h.write_i64(e.pos.x.raw());
+        h.write_i64(e.pos.y.raw());
+    }
+    for p in &ms.rally_points {
+        h.write_u8(u8::from(p.is_some()));
+        let (x, y) = p.map_or((0, 0), |p| (p.x.raw(), p.y.raw()));
+        h.write_i64(x);
+        h.write_i64(y);
     }
 }
 
