@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Debug viewer</title>
+<style>
+  :root { color-scheme: dark; --bg: #14161a; --fg: #d8dce2; --line: #2c3038; }
+  body { margin: 0; padding: 12px; background: var(--bg); color: var(--fg); font: 14px/1.4 monospace; }
+  #hud { display: flex; flex-wrap: wrap; gap: 4px 24px; margin-bottom: 8px; }
+  #hud b { color: #fff; font-weight: normal; }
+  #stage { display: block; width: 800px; height: 800px; border: 0; background: #1d2026; }
+  #error { color: #ff8a80; white-space: pre-wrap; }
+</style>
+</head>
+<body>
+<div id="hud">
+  <span>tick <b id="tick">-</b></span>
+  <span>hash <b id="hash">-</b></span>
+  <span>agents <b id="agents">-</b></span>
+  <span>seed <b id="seed">-</b></span>
+</div>
+<canvas id="stage" width="800" height="800"></canvas>
+<div id="error"></div>
+<script type="module">
+import init, { Viewer } from "./pkg/viewer_web.js";
+
+// Team colours: team 0 blue, team 1 orange. Hit points scale lightness and opacity so that
+// worn agents fade toward the background.
+const TEAM_RGB = [[70, 140, 255], [255, 150, 60]];
+const params = new URLSearchParams(location.search);
+const seed = BigInt(params.get("seed") ?? "1");
+const agents = Number(params.get("agents") ?? "400");
+const tick = Number(params.get("tick") ?? "0");
+
+function draw(v) {
+  const canvas = document.getElementById("stage");
+  const ctx = canvas.getContext("2d");
+  ctx.fillStyle = "#1d2026";
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+  const sx = canvas.width / (v.arena_width_m() * 100);
+  const sy = canvas.height / (v.arena_height_m() * 100);
+  const pos = v.positions_cm(), team = v.teams(), hp = v.hp(), maxHp = v.start_hp();
+  for (let i = 0; i < team.length; i++) {
+    const f = hp[i] / maxHp;
+    const [r, g, b] = TEAM_RGB[team[i] & 1];
+    ctx.fillStyle = `rgba(${r}, ${g}, ${b}, ${(0.25 + 0.75 * f).toFixed(3)})`;
+    ctx.beginPath();
+    ctx.arc(pos[2 * i] * sx, pos[2 * i + 1] * sy, 3, 0, 2 * Math.PI);
+    ctx.fill();
+    if (hp[i] <= maxHp / 4) {
+      ctx.strokeStyle = "#ff3b30";
+      ctx.lineWidth = 1;
+      ctx.stroke();
+    }
+  }
+}
+
+try {
+  await init();
+  const v = new Viewer(seed, agents);
+  v.advance_to(tick);
+  draw(v);
+  document.getElementById("tick").textContent = String(v.tick());
+  document.getElementById("hash").textContent = v.hash_hex();
+  document.getElementById("agents").textContent = String(v.agent_count());
+  document.getElementById("seed").textContent = String(seed);
+  window.__snapshot = {
+    tick: v.tick(), hash: v.hash_hex(), agents: v.agent_count(),
+    team1: Array.from(v.teams()).filter((t) => t === 1).length,
+    minHp: Math.min(...v.hp()),
+  };
+  window.__ready = true;
+} catch (e) {
+  document.getElementById("error").textContent = String(e);
+  window.__error = String(e);
+}
+</script>
+</body>
+</html>

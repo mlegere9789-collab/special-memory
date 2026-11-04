@@ -2,3 +2,5 @@ target/
 *.swp
 __pycache__/
 sbom.json
+shells/viewer-web/www/pkg/
+node_modules/
