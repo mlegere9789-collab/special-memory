@@ -74,3 +74,10 @@ pub mod scenarios;
 
 // T-026
 pub mod registry;
+
+// T-081
+mod scenario;
+pub use scenario::{
+    scenario_hash, Arm, Arrival, Departure, MapSpec, Objective, Scenario, ScenarioError, Side,
+    StrengthCheck, TerrainSpec, Trigger, TriggerKind, TriggerOrder, Unit, WeatherRow,
+};

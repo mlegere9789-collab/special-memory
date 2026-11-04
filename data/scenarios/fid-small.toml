@@ -1,0 +1,124 @@
+# Two divisions meeting on the Chambersburg Pike, morning of 1863-07-01 (SPEC-008 section 2.3).
+schema = "scenario/1"
+id = "fid-small"
+title = "Pike contact"
+date = "1863-07-01"
+clock_start_s = 26400
+duration_s = 2400
+tick_hz = 20
+fidelity_class = 0
+f0_cap = 15000
+agent_cap = 35000
+
+[map]
+width_mm = 4000000
+height_mm = 3000000
+origin_x_mm = 0
+origin_y_mm = 0
+
+[terrain]
+cell_mm = 500000
+legend = [{ ch = ".", class = 0 }, { ch = "W", class = 3 }]
+rows = """
+........
+...W....
+..WW....
+........
+........
+........
+"""
+
+[[unit]]
+id = "buford_div"
+side = "union"
+parent = ""
+arm = "cavalry"
+men = 2700
+guns = 0
+training = "veteran"
+weapon = "carbine_52"
+rounds_per_man = 40
+commander = "john_buford"
+confidence = "partial"
+sources = [{ document = "CWV", page = 80, note = "about 2,700 troopers" }]
+
+[[unit]]
+id = "heth_div"
+side = "confederate"
+parent = ""
+arm = "infantry"
+men = 3000
+guns = 0
+training = "trained"
+weapon = "rifle_58"
+rounds_per_man = 40
+commander = "henry_heth"
+confidence = "unverified"
+placeholder = true
+calibration_target = "CT-008-82"
+sources = [{ document = "CWV", page = 80, note = "division strength not stated; scale stand-in" }]
+
+[[arrival]]
+unit = "buford_div"
+at_s = 0
+x_mm = 2000000
+y_mm = 1500000
+heading_deg = 180
+formation = "line"
+low_s = 0
+high_s = 0
+confidence = "partial"
+sources = [{ document = "CWV", page = 80, note = "dismounted cavalry holds the ridge west of town" }]
+
+[[arrival]]
+unit = "heth_div"
+at_s = 600
+x_mm = 200000
+y_mm = 1500000
+heading_deg = 0
+formation = "column"
+low_s = 600
+high_s = 2400
+confidence = "partial"
+sources = [{ document = "CWV", page = 69, note = "contact about 7:30" }, { document = "CWV", page = 80, note = "about 7:30 to 8" }]
+
+[[strength_check]]
+at_s = 0
+side = "union"
+men = 2700
+tol_men = 270
+confidence = "partial"
+sources = [{ document = "CWV", page = 80, note = "about 2,700 troopers" }]
+
+[[trigger]]
+id = "buford_hold"
+at_s = 1200
+kind = "order"
+unit = "buford_div"
+order = "hold"
+confidence = "partial"
+sources = [{ document = "CWV", page = 80, note = "holds until relieved" }]
+
+[[weather]]
+from_s = 0
+wind_x_mm_s = 1000
+wind_y_mm_s = 0
+wet_pm = 0
+ground_pm = 0
+visibility_m = 5000
+confidence = "unverified"
+placeholder = true
+calibration_target = "CT-008-88"
+sources = [{ document = "CWV", page = 79, note = "hot, high 80s F" }]
+
+[[weather]]
+from_s = 1200
+wind_x_mm_s = 2000
+wind_y_mm_s = 500
+wet_pm = 0
+ground_pm = 0
+visibility_m = 4000
+confidence = "unverified"
+placeholder = true
+calibration_target = "CT-008-88"
+sources = [{ document = "CWV", page = 79, note = "hot, high 80s F" }]
