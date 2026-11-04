@@ -2,7 +2,43 @@
 
 use crate::store::{AgentId, AgentStore};
 use core_math::{Fx, Vec2Fx};
+use std::fmt;
 use std::sync::atomic::{AtomicU64, Ordering};
+
+/// Largest number of cells a [`SpatialGrid`] may have (2^26).
+pub const MAX_GRID_CELLS: u64 = 1 << 26;
+
+/// Why a [`SpatialGrid`] could not be created.
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub enum GridError {
+    /// `width_cells` or `height_cells` is zero.
+    ZeroDimension,
+    /// The cell size is zero or negative.
+    NonPositiveCellSize,
+    /// `width * height` overflows or exceeds [`MAX_GRID_CELLS`]; `cells` is the product
+    /// (`u64::MAX` if the product itself overflowed).
+    TooManyCells {
+        /// The requested number of cells.
+        cells: u64,
+    },
+}
+
+impl fmt::Display for GridError {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match self {
+            GridError::ZeroDimension => write!(f, "grid width and height must be at least 1 cell"),
+            GridError::NonPositiveCellSize => write!(f, "grid cell size must be positive"),
+            GridError::TooManyCells { cells } => {
+                write!(
+                    f,
+                    "grid of {cells} cells exceeds the limit {MAX_GRID_CELLS}"
+                )
+            }
+        }
+    }
+}
+
+impl std::error::Error for GridError {}
 
 /// Squared distance between two points as an exact integer in raw units
 /// (Q64.64, i.e. the product of two raw Q32.32 values).
@@ -62,24 +98,40 @@ impl SpatialGrid {
     /// Creates an empty grid of `width_cells` x `height_cells` cells of side
     /// `cell_size`, whose minimum corner is `origin`.
     ///
-    /// A non-positive `cell_size` is raised to the smallest representable
-    /// value (raw 1), and zero dimensions are raised to 1, so the grid is
-    /// always valid.
-    pub fn new(cell_size: Fx, width_cells: u32, height_cells: u32, origin: Vec2Fx) -> SpatialGrid {
-        let width = width_cells.max(1);
-        let height = height_cells.max(1);
-        let cells = width as usize * height as usize;
-        SpatialGrid {
-            cell_size: cell_size.raw().max(1),
-            width,
-            height,
+    /// # Errors
+    /// Returns [`GridError::ZeroDimension`] for a zero width or height,
+    /// [`GridError::NonPositiveCellSize`] for a cell size of zero or less, and
+    /// [`GridError::TooManyCells`] when `width * height` overflows (checked) or exceeds
+    /// [`MAX_GRID_CELLS`] (2^26).
+    pub fn new(
+        cell_size: Fx,
+        width_cells: u32,
+        height_cells: u32,
+        origin: Vec2Fx,
+    ) -> Result<SpatialGrid, GridError> {
+        if width_cells == 0 || height_cells == 0 {
+            return Err(GridError::ZeroDimension);
+        }
+        if cell_size.raw() <= 0 {
+            return Err(GridError::NonPositiveCellSize);
+        }
+        let cells = u64::from(width_cells)
+            .checked_mul(u64::from(height_cells))
+            .unwrap_or(u64::MAX);
+        if cells > MAX_GRID_CELLS {
+            return Err(GridError::TooManyCells { cells });
+        }
+        Ok(SpatialGrid {
+            cell_size: cell_size.raw(),
+            width: width_cells,
+            height: height_cells,
             origin,
-            cell_start: vec![0; cells + 1],
+            cell_start: vec![0; cells as usize + 1],
             entries: Vec::new(),
             scratch_cell: Vec::new(),
             scratch_cursor: Vec::new(),
             cells_touched: AtomicU64::new(0),
-        }
+        })
     }
 
     /// Grid width in cells.
@@ -116,7 +168,11 @@ impl SpatialGrid {
 
     /// Rebuilds the index from every alive agent in `store` in O(n + cells).
     ///
-    /// The result depends only on the alive agents' slots and positions.
+    /// The result depends only on the alive agents' slots and positions. Queries return a
+    /// snapshot of the store as it stood at the last `rebuild`: agents spawned, moved or
+    /// despawned afterwards are not reflected until the next rebuild (use
+    /// [`SpatialGrid::query_radius_alive`] / [`SpatialGrid::nearest_alive`] to drop ids that are
+    /// no longer alive).
     pub fn rebuild(&mut self, store: &AgentStore) {
         let cells = self.width as usize * self.height as usize;
         self.scratch_cell.clear();
@@ -199,6 +255,9 @@ impl SpatialGrid {
     /// Clears `out` and fills it with every indexed agent whose squared
     /// distance to `center` is at most `radius^2`, sorted by
     /// `(distance_sq, slot index)`. A negative radius yields no agents.
+    ///
+    /// The result is a snapshot of the last [`SpatialGrid::rebuild`]: it may contain ids that
+    /// have been despawned since, and positions are those recorded at the rebuild.
     pub fn query_radius(&self, center: Vec2Fx, radius: Fx, out: &mut Vec<AgentId>) {
         out.clear();
         let r = radius.raw();
@@ -219,6 +278,9 @@ impl SpatialGrid {
 
     /// The closest indexed agent within `radius` of `center`, with the same
     /// `(distance_sq, slot index)` tie-break as [`SpatialGrid::query_radius`].
+    ///
+    /// Like [`SpatialGrid::query_radius`] it reflects the last [`SpatialGrid::rebuild`] and may
+    /// return an id that has been despawned since.
     pub fn nearest(&self, center: Vec2Fx, radius: Fx) -> Option<AgentId> {
         let r = radius.raw();
         if r < 0 {
@@ -229,6 +291,52 @@ impl SpatialGrid {
         self.for_candidates(center, r, |e| {
             let d = distance_sq_raw(e.pos, center);
             if d <= r2 && best.is_none_or(|b| (d, e.id.index) < (b.0, b.1)) {
+                best = Some((d, e.id.index, e.id));
+            }
+        });
+        best.map(|b| b.2)
+    }
+
+    /// Like [`SpatialGrid::query_radius`], but ids that `store` no longer considers alive (not
+    /// alive, or a slot reused under a newer generation) are left out. Positions and distances
+    /// still come from the last [`SpatialGrid::rebuild`].
+    pub fn query_radius_alive(
+        &self,
+        store: &AgentStore,
+        center: Vec2Fx,
+        radius: Fx,
+        out: &mut Vec<AgentId>,
+    ) {
+        out.clear();
+        let r = radius.raw();
+        if r < 0 {
+            return;
+        }
+        let r2 = (r as u128) * (r as u128);
+        let mut hits: Vec<(u128, u32, AgentId)> = Vec::new();
+        self.for_candidates(center, r, |e| {
+            let d = distance_sq_raw(e.pos, center);
+            if d <= r2 && store.is_alive(e.id) {
+                hits.push((d, e.id.index, e.id));
+            }
+        });
+        hits.sort_unstable_by_key(|h| (h.0, h.1));
+        out.extend(hits.into_iter().map(|h| h.2));
+    }
+
+    /// Like [`SpatialGrid::nearest`], but only considers ids that `store` still considers alive,
+    /// so a despawned nearest agent yields the next nearest live one rather than itself.
+    pub fn nearest_alive(&self, store: &AgentStore, center: Vec2Fx, radius: Fx) -> Option<AgentId> {
+        let r = radius.raw();
+        if r < 0 {
+            return None;
+        }
+        let r2 = (r as u128) * (r as u128);
+        let mut best: Option<(u128, u32, AgentId)> = None;
+        self.for_candidates(center, r, |e| {
+            let d = distance_sq_raw(e.pos, center);
+            if d <= r2 && store.is_alive(e.id) && best.is_none_or(|b| (d, e.id.index) < (b.0, b.1))
+            {
                 best = Some((d, e.id.index, e.id));
             }
         });

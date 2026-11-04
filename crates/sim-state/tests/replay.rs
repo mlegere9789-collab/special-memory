@@ -18,9 +18,9 @@ fn arb_replay() -> impl Strategy<Value = Replay> {
     (
         "[a-z0-9_ -]{0,40}",
         any::<u64>(),
-        any::<u16>(),
+        1u16..=u16::MAX,
         0u8..=2,
-        any::<u32>(),
+        1u32..=u32::MAX,
         prop::collection::vec(
             (
                 any::<u64>(),
@@ -35,10 +35,17 @@ fn arb_replay() -> impl Strategy<Value = Replay> {
         any::<u64>(),
     )
         .prop_map(|(id, seed, hz, fid, ci, inputs, cps, total, fin)| {
+            // Valid replays have unique input keys and strictly increasing checkpoint
+            // ticks that do not exceed `total_ticks` (SPEC-002 Amendment A1).
             let mut w = ReplayWriter::new(id, seed, hz, fid, ci);
+            let mut keys = std::collections::BTreeSet::new();
             for (t, a, s, p) in inputs {
-                w.push_input(t, a, s, p);
+                if keys.insert((t, a, s)) {
+                    w.push_input(t, a, s, p);
+                }
             }
+            let cps: std::collections::BTreeMap<u64, u64> = cps.into_iter().collect();
+            let total = total.max(cps.keys().next_back().copied().unwrap_or(0));
             for (t, h) in cps {
                 w.push_checkpoint(t, h);
             }
@@ -241,7 +248,7 @@ fn allocation_bombs_rejected() {
     b.extend_from_slice(&u16::MAX.to_le_bytes());
     b.extend_from_slice(b"ab");
     assert!(matches!(
-        ReplayReader::parse(&b),
+        ReplayReader::parse(&assemble(b)),
         Err(ReplayError::LengthExceedsData { .. })
     ));
 }

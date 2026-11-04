@@ -134,21 +134,38 @@ impl Rng {
         }
     }
 
-    /// Restores a generator from a saved state. The all-zero state is invalid for xoshiro (it
-    /// would only ever output zero), so it is replaced by the state seeded from 0.
+    /// Restores a generator from a saved state, returning `None` for the all-zero state, which
+    /// is invalid for xoshiro (it would only ever output zero). This is the exact round-trip
+    /// API: `Rng::try_from_state(r.state())` equals `Some(r)` for every generator `r`.
+    ///
+    /// ```
+    /// use core_math::Rng;
+    /// let mut a = Rng::from_seed(5);
+    /// let mut b = Rng::try_from_state(a.state()).unwrap();
+    /// assert_eq!(a.next_u64(), b.next_u64());
+    /// assert!(Rng::try_from_state([0; 4]).is_none());
+    /// ```
+    pub fn try_from_state(state: [u64; 4]) -> Option<Rng> {
+        if state == [0; 4] {
+            None
+        } else {
+            Some(Rng { s: state })
+        }
+    }
+
+    /// Restores a generator from a saved state. The all-zero state is invalid for xoshiro, so
+    /// it is replaced by the state seeded from 0 (the seed-0 state); every other state is
+    /// restored exactly. Use [`Rng::try_from_state`] to detect the invalid state instead.
     ///
     /// ```
     /// use core_math::Rng;
     /// let mut a = Rng::from_seed(5);
     /// let mut b = Rng::from_state(a.state());
     /// assert_eq!(a.next_u64(), b.next_u64());
+    /// assert_eq!(Rng::from_state([0; 4]), Rng::from_seed(0));
     /// ```
     pub fn from_state(state: [u64; 4]) -> Rng {
-        if state == [0; 4] {
-            Rng::from_seed(0)
-        } else {
-            Rng { s: state }
-        }
+        Rng::try_from_state(state).unwrap_or_else(|| Rng::from_seed(0))
     }
 
     /// Returns the exact generator state.
@@ -239,8 +256,8 @@ impl Rng {
         Fx::from_raw(i64::from(self.next_u32()))
     }
 
-    /// Returns `true` with probability `num / den`. `den == 0` is always `false` and
-    /// `num >= den` always `true`; in both degenerate cases no randomness is consumed.
+    /// Returns `true` with probability `num / den`. `num == 0` or `den == 0` is always `false`
+    /// and `num >= den` always `true`; in every degenerate case no randomness is consumed.
     ///
     /// ```
     /// use core_math::Rng;

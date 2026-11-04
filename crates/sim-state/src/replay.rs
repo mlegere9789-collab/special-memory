@@ -13,6 +13,19 @@
 //! footer       total_ticks u64, final_hash u64,
 //!              body_hash u64 (FNV-1a 64 of every preceding byte)
 //! ```
+//!
+//! # Validity rules
+//! Both [`ReplayWriter::finish`] and [`ReplayReader::parse`] enforce:
+//! * input keys `(tick, actor, seq)` strictly increasing (no duplicates);
+//! * checkpoint ticks strictly increasing and none greater than `total_ticks`;
+//! * `tick_hz != 0`, and `checkpoint_interval != 0` whenever `total_ticks > 0`;
+//! * fidelity class 0, 1 or 2.
+//!
+//! The reader checks the magic and version (the fixed-size prefix), then verifies the footer
+//! body hash over every byte before it, and only then parses the structure, so any corruption
+//! reports [`ReplayError::BodyHashMismatch`] before a structural error. Every pre-allocation
+//! is bounded by the bytes actually remaining (at most one record per minimum record size),
+//! never by a declared count.
 
 use crate::world::fnv1a64;
 use std::fmt;
@@ -81,8 +94,31 @@ pub enum ReplayError {
         /// Hash computed over the preceding bytes.
         actual: u64,
     },
-    /// Bytes remain after the footer.
+    /// Bytes remain between the footer fields and the body hash.
     TrailingBytes(usize),
+    /// Input at `index` has the same `(tick, actor, seq)` key as its predecessor.
+    DuplicateInput {
+        /// Index of the offending input.
+        index: usize,
+    },
+    /// Checkpoint at `index` is not at a strictly later tick than its predecessor.
+    CheckpointsNotIncreasing {
+        /// Index of the offending checkpoint.
+        index: usize,
+    },
+    /// Checkpoint at `index` lies after the final tick.
+    CheckpointBeyondTotal {
+        /// Index of the offending checkpoint.
+        index: usize,
+        /// Tick of that checkpoint.
+        tick: u64,
+        /// The replay's `total_ticks`.
+        total_ticks: u64,
+    },
+    /// `tick_hz` is zero.
+    ZeroTickHz,
+    /// `checkpoint_interval` is zero although `total_ticks` is greater than zero.
+    ZeroCheckpointInterval,
     /// Writer: scenario id longer than `u16::MAX` bytes (value is its length).
     ScenarioIdTooLong(usize),
     /// Writer: a payload longer than `u32::MAX` bytes (value is its length).
@@ -114,6 +150,33 @@ impl fmt::Display for ReplayError {
                 "body hash mismatch (stored {expected:#018x}, computed {actual:#018x})"
             ),
             ReplayError::TrailingBytes(n) => write!(f, "{n} trailing bytes after footer"),
+            ReplayError::DuplicateInput { index } => {
+                write!(
+                    f,
+                    "input {index} repeats the (tick, actor, seq) key of its predecessor"
+                )
+            }
+            ReplayError::CheckpointsNotIncreasing { index } => {
+                write!(
+                    f,
+                    "checkpoint {index} is not at a later tick than its predecessor"
+                )
+            }
+            ReplayError::CheckpointBeyondTotal {
+                index,
+                tick,
+                total_ticks,
+            } => write!(
+                f,
+                "checkpoint {index} at tick {tick} is after the final tick {total_ticks}"
+            ),
+            ReplayError::ZeroTickHz => write!(f, "tick_hz must not be zero"),
+            ReplayError::ZeroCheckpointInterval => {
+                write!(
+                    f,
+                    "checkpoint_interval must not be zero when total_ticks is above zero"
+                )
+            }
             ReplayError::ScenarioIdTooLong(n) => write!(f, "scenario id of {n} bytes is too long"),
             ReplayError::PayloadTooLong(n) => write!(f, "payload of {n} bytes is too long"),
             ReplayError::TooManyRecords(n) => write!(f, "{n} records exceed the u32 count field"),
@@ -277,6 +340,13 @@ impl ReplayWriter {
             }
         }
         self.inputs.sort_by_key(|i| (i.tick, i.actor, i.seq));
+        validate_content(
+            self.tick_hz,
+            self.checkpoint_interval,
+            &self.inputs,
+            &self.checkpoints,
+            total_ticks,
+        )?;
         Ok(Replay {
             scenario_id: self.scenario_id,
             seed: self.seed,
@@ -289,6 +359,49 @@ impl ReplayWriter {
             final_hash,
         })
     }
+}
+
+/// Checks the replay-level rules shared by the writer and the reader. `inputs` must already be
+/// in `(tick, actor, seq)` order; `fidelity_class` is checked by the callers.
+fn validate_content(
+    tick_hz: u16,
+    checkpoint_interval: u32,
+    inputs: &[InputRecord],
+    checkpoints: &[Checkpoint],
+    total_ticks: u64,
+) -> Result<(), ReplayError> {
+    if tick_hz == 0 {
+        return Err(ReplayError::ZeroTickHz);
+    }
+    if checkpoint_interval == 0 && total_ticks > 0 {
+        return Err(ReplayError::ZeroCheckpointInterval);
+    }
+    for (index, pair) in inputs.windows(2).enumerate() {
+        let (prev, next) = (&pair[0], &pair[1]);
+        let (a, b) = (
+            (prev.tick, prev.actor, prev.seq),
+            (next.tick, next.actor, next.seq),
+        );
+        if a == b {
+            return Err(ReplayError::DuplicateInput { index: index + 1 });
+        }
+        if a > b {
+            return Err(ReplayError::InputsNotSorted { index: index + 1 });
+        }
+    }
+    for (index, c) in checkpoints.iter().enumerate() {
+        if index > 0 && checkpoints[index - 1].tick >= c.tick {
+            return Err(ReplayError::CheckpointsNotIncreasing { index });
+        }
+        if c.tick > total_ticks {
+            return Err(ReplayError::CheckpointBeyondTotal {
+                index,
+                tick: c.tick,
+                total_ticks,
+            });
+        }
+    }
+    Ok(())
 }
 
 /// Bounds-checked little-endian reader.
@@ -361,16 +474,37 @@ pub struct ReplayReader;
 
 impl ReplayReader {
     /// Parses and fully validates a replay.
+    ///
+    /// The magic and version are checked first, then the body hash over every byte before the
+    /// final eight, and only then the structure and the rules listed in the module docs.
     pub fn parse(data: &[u8]) -> Result<Replay, ReplayError> {
-        let mut c = Cursor { data, pos: 0 };
-        if c.array::<4>()? != REPLAY_MAGIC {
+        let mut prefix = Cursor { data, pos: 0 };
+        if prefix.array::<4>()? != REPLAY_MAGIC {
             return Err(ReplayError::BadMagic);
         }
-        let version = c.u16()?;
+        let version = prefix.u16()?;
         if version != REPLAY_VERSION {
             return Err(ReplayError::UnsupportedVersion(version));
         }
+        if data.len() < prefix.pos + 8 {
+            return Err(ReplayError::Truncated);
+        }
+        let body_end = data.len() - 8;
+        let mut stored = [0u8; 8];
+        stored.copy_from_slice(&data[body_end..]);
+        let stored = u64::from_le_bytes(stored);
+        let actual = fnv1a64(&data[..body_end]);
+        if stored != actual {
+            return Err(ReplayError::BodyHashMismatch {
+                expected: stored,
+                actual,
+            });
+        }
 
+        let mut c = Cursor {
+            data: &data[..body_end],
+            pos: prefix.pos,
+        };
         let id_len = u64::from(c.u16()?);
         let id_bytes = c.take_declared(id_len)?;
         let scenario_id = std::str::from_utf8(id_bytes)
@@ -386,17 +520,12 @@ impl ReplayReader {
 
         let n_inputs = c.count(MIN_INPUT_BYTES)?;
         let mut inputs: Vec<InputRecord> = Vec::with_capacity(n_inputs);
-        for index in 0..n_inputs {
+        for _ in 0..n_inputs {
             let tick = c.u64()?;
             let actor = c.u8()?;
             let seq = c.u16()?;
             let len = u64::from(c.u32()?);
             let payload = c.take_declared(len)?.to_vec();
-            if let Some(prev) = inputs.last() {
-                if (prev.tick, prev.actor, prev.seq) > (tick, actor, seq) {
-                    return Err(ReplayError::InputsNotSorted { index });
-                }
-            }
             inputs.push(InputRecord {
                 tick,
                 actor,
@@ -415,18 +544,16 @@ impl ReplayReader {
 
         let total_ticks = c.u64()?;
         let final_hash = c.u64()?;
-        let body_end = c.pos;
-        let stored = c.u64()?;
-        let actual = fnv1a64(&data[..body_end]);
-        if stored != actual {
-            return Err(ReplayError::BodyHashMismatch {
-                expected: stored,
-                actual,
-            });
-        }
         if c.remaining() != 0 {
             return Err(ReplayError::TrailingBytes(c.remaining()));
         }
+        validate_content(
+            tick_hz,
+            checkpoint_interval,
+            &inputs,
+            &checkpoints,
+            total_ticks,
+        )?;
 
         Ok(Replay {
             scenario_id,
