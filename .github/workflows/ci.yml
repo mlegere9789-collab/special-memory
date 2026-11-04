@@ -41,6 +41,7 @@ jobs:
           python3 tools/test_gb_ladder.py
           python3 tools/test_gb_chain.py
           python3 tools/test_gb_time.py
+          python3 tools/test_gb_reports.py
           python3 tools/test_survey.py
           python3 tools/test_ingest_dem.py
           python3 tools/test_check_assets.py
