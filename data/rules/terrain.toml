@@ -1,0 +1,101 @@
+# Terrain classes (SPEC-004 section 5). Speed, effort, line disorder and cover are permille; every number is a placeholder (CT-4).
+schema = "terrain/1"
+
+[[class]]
+id = 0
+name = "open"
+speed_pm = 1000
+effort_pm = 1000
+line_disorder_pm = 0
+cover_pm = 0
+blocks_movement = false
+confidence = "unverified"
+placeholder = true
+calibration_target = "CT-4"
+
+[[class]]
+id = 1
+name = "road"
+speed_pm = 1050
+effort_pm = 900
+line_disorder_pm = 0
+cover_pm = 0
+blocks_movement = false
+confidence = "unverified"
+placeholder = true
+calibration_target = "CT-4"
+
+[[class]]
+id = 2
+name = "orchard"
+speed_pm = 850
+effort_pm = 1100
+line_disorder_pm = 150
+cover_pm = 150
+blocks_movement = false
+confidence = "unverified"
+placeholder = true
+calibration_target = "CT-4"
+
+[[class]]
+id = 3
+name = "woods"
+speed_pm = 600
+effort_pm = 1400
+line_disorder_pm = 400
+cover_pm = 300
+blocks_movement = false
+confidence = "unverified"
+placeholder = true
+calibration_target = "CT-4"
+sources = [{ document = "CWV", page = 511, note = "qualitative only: woods slow movement and break formations (section 4.4)" }]
+
+[[class]]
+id = 4
+name = "thicket"
+speed_pm = 350
+effort_pm = 1800
+line_disorder_pm = 600
+cover_pm = 450
+blocks_movement = false
+confidence = "unverified"
+placeholder = true
+calibration_target = "CT-4"
+sources = [{ document = "CWV", page = 511, note = "qualitative only: thickets are named obstacles" }]
+
+[[class]]
+id = 5
+name = "marsh"
+speed_pm = 450
+effort_pm = 1800
+line_disorder_pm = 300
+cover_pm = 0
+blocks_movement = false
+confidence = "unverified"
+placeholder = true
+calibration_target = "CT-4"
+sources = [{ document = "CWV", page = 65, note = "qualitative only: swamps and creek bottoms are named obstacles" }]
+
+[[class]]
+id = 6
+name = "ford"
+speed_pm = 500
+effort_pm = 1500
+line_disorder_pm = 300
+cover_pm = 0
+blocks_movement = false
+confidence = "unverified"
+placeholder = true
+calibration_target = "CT-4"
+
+[[class]]
+id = 7
+name = "deep_water"
+speed_pm = 0
+effort_pm = 1000
+line_disorder_pm = 0
+cover_pm = 0
+blocks_movement = true
+confidence = "unverified"
+placeholder = true
+calibration_target = "CT-4"

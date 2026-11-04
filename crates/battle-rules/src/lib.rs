@@ -18,3 +18,11 @@ pub use conventions::{
 pub use error::DataError;
 pub use provenance::{Confidence, Provenance, SourceRef};
 pub use reader::{parse_table, Table};
+
+// T-016
+mod fatigue;
+mod locomotion;
+mod terrain;
+pub use fatigue::{fatigue_speed_pm, fatigue_step};
+pub use locomotion::{CurvePoint, Gait, GaitRow, LocomotionGlobals, LocomotionTable, FATIGUE_MAX};
+pub use terrain::{TerrainClass, TerrainGrid, TerrainTable, DEFAULT_CELL_MM};

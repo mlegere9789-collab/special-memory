@@ -1,0 +1,276 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "locomotion.schema.json",
+  "title": "Locomotion table (SPEC-004 sections 3 and 4)",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema",
+    "tick_hz",
+    "gait",
+    "globals",
+    "fatigue_curve"
+  ],
+  "properties": {
+    "schema": {
+      "const": "locomotion/1"
+    },
+    "tick_hz": {
+      "const": 20
+    },
+    "gait": {
+      "type": "array",
+      "minItems": 4,
+      "maxItems": 4,
+      "items": {
+        "$ref": "#/$defs/gait"
+      },
+      "allOf": [
+        {
+          "contains": {
+            "properties": {
+              "id": {
+                "const": "walk"
+              }
+            },
+            "required": [
+              "id"
+            ]
+          }
+        },
+        {
+          "contains": {
+            "properties": {
+              "id": {
+                "const": "quick"
+              }
+            },
+            "required": [
+              "id"
+            ]
+          }
+        },
+        {
+          "contains": {
+            "properties": {
+              "id": {
+                "const": "double_quick"
+              }
+            },
+            "required": [
+              "id"
+            ]
+          }
+        },
+        {
+          "contains": {
+            "properties": {
+              "id": {
+                "const": "run"
+              }
+            },
+            "required": [
+              "id"
+            ]
+          }
+        }
+      ]
+    },
+    "globals": {
+      "$ref": "#/$defs/globals"
+    },
+    "fatigue_curve": {
+      "type": "array",
+      "minItems": 2,
+      "items": {
+        "$ref": "#/$defs/curve_point"
+      },
+      "description": "fatigue_ppm strictly increasing and speed_pm non-increasing: enforced by the Rust loader",
+      "allOf": [
+        {
+          "contains": {
+            "properties": {
+              "fatigue_ppm": {
+                "const": 0
+              }
+            },
+            "required": [
+              "fatigue_ppm"
+            ]
+          }
+        },
+        {
+          "contains": {
+            "properties": {
+              "fatigue_ppm": {
+                "const": 1000000
+              }
+            },
+            "required": [
+              "fatigue_ppm"
+            ]
+          }
+        }
+      ]
+    }
+  },
+  "$defs": {
+    "gait": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "speed_mm_s",
+        "drain_ppm_per_tick",
+        "confidence"
+      ],
+      "properties": {
+        "id": {
+          "enum": [
+            "walk",
+            "quick",
+            "double_quick",
+            "run"
+          ]
+        },
+        "speed_mm_s": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "drain_ppm_per_tick": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "confidence": {
+          "$ref": "rules-common.schema.json#/$defs/provenance/properties/confidence"
+        },
+        "placeholder": {
+          "$ref": "rules-common.schema.json#/$defs/provenance/properties/placeholder"
+        },
+        "calibration_target": {
+          "$ref": "rules-common.schema.json#/$defs/provenance/properties/calibration_target"
+        },
+        "sources": {
+          "$ref": "rules-common.schema.json#/$defs/provenance/properties/sources"
+        },
+        "second_source": {
+          "$ref": "rules-common.schema.json#/$defs/provenance/properties/second_source"
+        },
+        "note": {
+          "$ref": "rules-common.schema.json#/$defs/provenance/properties/note"
+        }
+      }
+    },
+    "globals": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "accel_mm_s2",
+        "body_radius_mm",
+        "personal_space_mm",
+        "avoid_gain_mm_s",
+        "max_lag_mm",
+        "catchup_mm",
+        "catchup_fatigue_limit_ppm",
+        "rest_recover_ppm_per_tick",
+        "rest_speed_mm_s",
+        "confidence"
+      ],
+      "properties": {
+        "accel_mm_s2": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "body_radius_mm": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "personal_space_mm": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "avoid_gain_mm_s": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "max_lag_mm": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "catchup_mm": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "catchup_fatigue_limit_ppm": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "rest_recover_ppm_per_tick": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "rest_speed_mm_s": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "confidence": {
+          "$ref": "rules-common.schema.json#/$defs/provenance/properties/confidence"
+        },
+        "placeholder": {
+          "$ref": "rules-common.schema.json#/$defs/provenance/properties/placeholder"
+        },
+        "calibration_target": {
+          "$ref": "rules-common.schema.json#/$defs/provenance/properties/calibration_target"
+        },
+        "sources": {
+          "$ref": "rules-common.schema.json#/$defs/provenance/properties/sources"
+        },
+        "second_source": {
+          "$ref": "rules-common.schema.json#/$defs/provenance/properties/second_source"
+        },
+        "note": {
+          "$ref": "rules-common.schema.json#/$defs/provenance/properties/note"
+        }
+      }
+    },
+    "curve_point": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "fatigue_ppm",
+        "speed_pm",
+        "confidence"
+      ],
+      "properties": {
+        "fatigue_ppm": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 1000000
+        },
+        "speed_pm": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 1000
+        },
+        "confidence": {
+          "$ref": "rules-common.schema.json#/$defs/provenance/properties/confidence"
+        },
+        "placeholder": {
+          "$ref": "rules-common.schema.json#/$defs/provenance/properties/placeholder"
+        },
+        "calibration_target": {
+          "$ref": "rules-common.schema.json#/$defs/provenance/properties/calibration_target"
+        },
+        "sources": {
+          "$ref": "rules-common.schema.json#/$defs/provenance/properties/sources"
+        },
+        "second_source": {
+          "$ref": "rules-common.schema.json#/$defs/provenance/properties/second_source"
+        },
+        "note": {
+          "$ref": "rules-common.schema.json#/$defs/provenance/properties/note"
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,87 @@
+# Locomotion: gait speeds, fatigue drain, steering globals and the fatigue speed curve (SPEC-004 sections 3 and 4).
+# Units: mm/s, ppm per tick, permille. Every row is a placeholder awaiting its calibration target.
+schema = "locomotion/1"
+tick_hz = 20
+
+[[gait]]
+id = "walk"
+speed_mm_s = 1067
+drain_ppm_per_tick = 7
+confidence = "unverified"
+placeholder = true
+calibration_target = "CT-1"
+sources = [{ document = "CWV", page = 453, tag = "[Memory; I did not open these manuals]", note = "names Hardee (1855) and Casey (1862) as the drill references and gives no rate" }]
+note = "common time, remembered cadence 90 steps/min at 28 inch; speed unsourced (CT-1), drain derived from the CT-2 fatigue targets"
+
+[[gait]]
+id = "quick"
+speed_mm_s = 1303
+drain_ppm_per_tick = 28
+confidence = "unverified"
+placeholder = true
+calibration_target = "CT-1"
+sources = [{ document = "CWV", page = 453, tag = "[Memory; I did not open these manuals]", note = "names Hardee (1855) and Casey (1862) as the drill references and gives no rate" }]
+note = "quick time, remembered cadence 110 steps/min at 28 inch; speed unsourced (CT-1), drain derived from the CT-2 fatigue targets"
+
+[[gait]]
+id = "double_quick"
+speed_mm_s = 2305
+drain_ppm_per_tick = 139
+confidence = "unverified"
+placeholder = true
+calibration_target = "CT-1"
+sources = [{ document = "CWV", page = 453, tag = "[Memory; I did not open these manuals]", note = "names Hardee (1855) and Casey (1862) as the drill references and gives no rate" }]
+note = "double-quick time, remembered cadence 165 steps/min at 33 inch; speed unsourced (CT-1), drain derived from the CT-2 fatigue targets"
+
+[[gait]]
+id = "run"
+speed_mm_s = 3600
+drain_ppm_per_tick = 1111
+confidence = "unverified"
+placeholder = true
+calibration_target = "CT-1"
+sources = [{ document = "CWV", page = 453, tag = "[Memory; I did not open these manuals]", note = "names Hardee (1855) and Casey (1862) as the drill references and gives no rate" }]
+note = "unregulated running pace; speed unsourced (CT-1), drain derived from the CT-2 fatigue targets"
+
+[globals]
+accel_mm_s2 = 3000
+body_radius_mm = 250
+personal_space_mm = 500
+avoid_gain_mm_s = 1200
+max_lag_mm = 6000
+catchup_mm = 1500
+catchup_fatigue_limit_ppm = 600000
+rest_recover_ppm_per_tick = 83
+rest_speed_mm_s = 100
+confidence = "unverified"
+placeholder = true
+calibration_target = "CT-3"
+note = "no page gives these figures; set by playtest review"
+
+[[fatigue_curve]]
+fatigue_ppm = 0
+speed_pm = 1000
+confidence = "unverified"
+placeholder = true
+calibration_target = "CT-2"
+
+[[fatigue_curve]]
+fatigue_ppm = 500000
+speed_pm = 900
+confidence = "unverified"
+placeholder = true
+calibration_target = "CT-2"
+
+[[fatigue_curve]]
+fatigue_ppm = 800000
+speed_pm = 650
+confidence = "unverified"
+placeholder = true
+calibration_target = "CT-2"
+
+[[fatigue_curve]]
+fatigue_ppm = 1000000
+speed_pm = 400
+confidence = "unverified"
+placeholder = true
+calibration_target = "CT-2"

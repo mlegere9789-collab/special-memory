@@ -1,0 +1,92 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "terrain.schema.json",
+  "title": "Terrain classes (SPEC-004 section 5)",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema",
+    "class"
+  ],
+  "properties": {
+    "schema": {
+      "const": "terrain/1"
+    },
+    "class": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "$ref": "#/$defs/class"
+      },
+      "description": "id unique and ascending: enforced by the Rust loader"
+    }
+  },
+  "$defs": {
+    "class": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "name",
+        "speed_pm",
+        "effort_pm",
+        "line_disorder_pm",
+        "cover_pm",
+        "blocks_movement",
+        "confidence"
+      ],
+      "properties": {
+        "id": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 255
+        },
+        "name": {
+          "type": "string",
+          "pattern": "^[a-z][a-z_]*$"
+        },
+        "speed_pm": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 2000
+        },
+        "effort_pm": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 10000
+        },
+        "line_disorder_pm": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 1000
+        },
+        "cover_pm": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 1000
+        },
+        "blocks_movement": {
+          "type": "boolean"
+        },
+        "confidence": {
+          "$ref": "rules-common.schema.json#/$defs/provenance/properties/confidence"
+        },
+        "placeholder": {
+          "$ref": "rules-common.schema.json#/$defs/provenance/properties/placeholder"
+        },
+        "calibration_target": {
+          "$ref": "rules-common.schema.json#/$defs/provenance/properties/calibration_target"
+        },
+        "sources": {
+          "$ref": "rules-common.schema.json#/$defs/provenance/properties/sources"
+        },
+        "second_source": {
+          "$ref": "rules-common.schema.json#/$defs/provenance/properties/second_source"
+        },
+        "note": {
+          "$ref": "rules-common.schema.json#/$defs/provenance/properties/note"
+        }
+      }
+    }
+  }
+}
