@@ -1,0 +1,43 @@
+# cargo-deny policy (gate G4, supply chain; ADR 0005).
+# The game ships as a proprietary commercial product, so only permissive licences are accepted.
+# Copyleft licences (GPL, LGPL, AGPL, MPL, EPL, CDDL) are not in the allow list and are therefore refused.
+
+[graph]
+all-features = true
+
+[advisories]
+# Known vulnerabilities, unmaintained and yanked crates are all errors.
+version = 2
+yanked = "deny"
+ignore = []
+
+[licenses]
+version = 2
+confidence-threshold = 0.93
+# The allow list is a policy for future dependencies, so entries no current crate uses are expected.
+unused-allowed-license = "allow"
+allow = [
+    "MIT",
+    "Apache-2.0",
+    "Apache-2.0 WITH LLVM-exception",
+    "BSD-2-Clause",
+    "BSD-3-Clause",
+    "ISC",
+    "Unicode-3.0",
+    "Zlib",
+    "Unlicense",
+    "0BSD",
+    "CC0-1.0",
+]
+# A dual-licensed crate is acceptable when at least one alternative is in the allow list.
+
+[bans]
+multiple-versions = "warn"
+wildcards = "deny"
+allow-wildcard-paths = true
+
+[sources]
+unknown-registry = "deny"
+unknown-git = "deny"
+allow-registry = ["https://github.com/rust-lang/crates.io-index"]
+allow-git = []

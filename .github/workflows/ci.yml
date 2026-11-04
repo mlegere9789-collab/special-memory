@@ -66,3 +66,49 @@ jobs:
       - run: cargo test --workspace --locked --release
       - name: verify golden replays (cross-platform proof)
         run: bash tools/verify_goldens.sh
+
+  supply:
+    name: supply (deny, licence ledger, sbom)
+    runs-on: ubuntu-24.04
+    env:
+      CARGO_DENY_VERSION: "0.20.2"
+      CARGO_CYCLONEDX_VERSION: "0.5.9"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: toolchain
+        run: rustup toolchain install 1.97.0 --profile minimal
+      - name: cache supply tools
+        id: supply-tools
+        uses: actions/cache@v4
+        with:
+          path: ~/supply-tools
+          key: supply-tools-${{ runner.os }}-deny-${{ env.CARGO_DENY_VERSION }}-cyclonedx-${{ env.CARGO_CYCLONEDX_VERSION }}
+      - name: install cargo-deny and cargo-cyclonedx (pinned)
+        if: steps.supply-tools.outputs.cache-hit != 'true'
+        run: |
+          cargo install --locked --version "$CARGO_DENY_VERSION" --root ~/supply-tools cargo-deny
+          cargo install --locked --version "$CARGO_CYCLONEDX_VERSION" --root ~/supply-tools cargo-cyclonedx
+      - name: tools on PATH
+        run: echo "$HOME/supply-tools/bin" >> "$GITHUB_PATH"
+      - name: cargo-deny (advisories, licences, bans, sources)
+        run: cargo deny --locked check
+      - name: licence ledger is current
+        run: python3 tools/licence_ledger.py --check
+      - name: SBOM (CycloneDX)
+        run: cargo cyclonedx --format json --spec-version 1.5 --override-filename sbom
+      - name: collect SBOM files
+        run: |
+          mkdir -p sbom-out
+          find . -path ./target -prune -o -name 'sbom.json' -print | while read -r f; do
+            cp "$f" "sbom-out/$(echo "${f#./}" | tr '/' '_')"
+          done
+          ls sbom-out
+      - name: upload SBOM
+        uses: actions/upload-artifact@v4
+        with:
+          name: sbom-cyclonedx
+          path: sbom-out/
+          if-no-files-found: error
