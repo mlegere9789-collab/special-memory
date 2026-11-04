@@ -1,0 +1,147 @@
+# SPEC-007 section 10: the command bands (family "command"), CT-007-1, CT-007-2, CT-007-3,
+# CT-007-6 and CT-007-7. Integer-only: every `low`/`high` is the real number times the band's
+# `scale`. Times are milli-minutes (1200 ticks to the minute), friction is per 100 legs, shares
+# and confidences are fractions. `weapon` names the variant (a medium, or the officer of
+# `cemetery_hill`); `at_mm` the distance. A band changes only through a SPEC-007 amendment that
+# cites evidence; simulation output never sets a limit.
+schema = "bands/1"
+
+[[band]]
+id = "C1"
+family = "command"
+metric = "delivery"
+weapon = "courier"
+scale = 1000
+points = [{ at_mm = 3000000, low = 8000, high = 40000 }]
+confidence = "unverified"
+placeholder = true
+calibration_target = "CT-007-1"
+note = "A 3 km courier leg takes 8 to 40 minutes."
+
+[[band]]
+id = "C2"
+family = "command"
+metric = "relay_delivery"
+weapon = "courier"
+scale = 1000
+points = [{ at_mm = 3000000, high = 70000 }]
+confidence = "partial"
+placeholder = true
+calibration_target = "CT-007-1"
+note = "A two-hop courier relay of 3 km legs takes at most 70 minutes (Howard heard of Reynolds's fall about 11:30, I Corps having arrived about 10:20, CWV p080)."
+
+[[band]]
+id = "C3"
+family = "command"
+metric = "delivery"
+weapon = "telegraph"
+scale = 1000
+points = [{ at_mm = 3000000, high = 3000 }]
+confidence = "unverified"
+placeholder = true
+calibration_target = "CT-007-1"
+note = "A telegraph message takes at most 3 minutes."
+
+[[band]]
+id = "C4"
+family = "command"
+metric = "delivery"
+weapon = "flags"
+scale = 1000
+points = [{ at_mm = 5000000, high = 6000 }]
+confidence = "unverified"
+placeholder = true
+calibration_target = "CT-007-1"
+note = "A flag message at 5 km takes at most 6 minutes."
+
+[[band]]
+id = "C5"
+family = "command"
+metric = "lost_per_100"
+weapon = "courier"
+scale = 1000
+points = [{ at_mm = 3000000, low = 1000, high = 5000 }]
+confidence = "partial"
+placeholder = true
+calibration_target = "CT-007-2"
+note = "Of 100 courier legs of 3 km, 1 to 5 are lost (late or lost orders, CWV p116)."
+
+[[band]]
+id = "C6"
+family = "command"
+metric = "garbled_per_100"
+weapon = "courier"
+scale = 1000
+points = [{ at_mm = 3000000, low = 2000, high = 6000 }]
+confidence = "partial"
+placeholder = true
+calibration_target = "CT-007-2"
+note = "Of 100 courier legs of 3 km, 2 to 6 are garbled (Stuart perhaps misread Lee, CWV p117)."
+
+[[band]]
+id = "C7"
+family = "command"
+metric = "decline_share"
+weapon = "tired_low"
+scale = 1000
+points = [{ low = 700 }]
+confidence = "partial"
+placeholder = true
+calibration_target = "CT-007-3"
+note = "A tired (600000 ppm) low-discretion formation facing contacts declines in at least 70 percent of seeds (CWV p080)."
+
+[[band]]
+id = "C8"
+family = "command"
+metric = "go_share"
+weapon = "rested_neutral"
+scale = 1000
+points = [{ low = 900 }]
+confidence = "partial"
+placeholder = true
+calibration_target = "CT-007-3"
+note = "A rested neutral formation at 700 permille odds goes in in at least 90 percent of seeds (CWV p080)."
+
+[[band]]
+id = "C9"
+family = "command"
+metric = "chain"
+scale = 1000
+points = [{ low = 10000, high = 45000 }]
+confidence = "unverified"
+placeholder = true
+calibration_target = "CT-007-6"
+note = "Army to regiment over four hops: median 10 to 45 minutes."
+
+[[band]]
+id = "C10"
+family = "command"
+metric = "division_reach"
+scale = 1000
+points = [{ high = 10000 }]
+confidence = "partial"
+placeholder = true
+calibration_target = "CT-007-6"
+note = "A division reaches its regiments within 500 m in at most 10 minutes (counterattack window of 20 to 30 minutes, CWV p084)."
+
+[[band]]
+id = "C11"
+family = "command"
+metric = "observe_latency"
+scale = 1000
+points = [{ low = 4000, high = 30000 }]
+confidence = "unverified"
+placeholder = true
+calibration_target = "CT-007-7"
+note = "A regiment entering sight range reaches the army picture after a median 4 to 30 minutes."
+
+[[band]]
+id = "C12"
+family = "command"
+metric = "observe_confidence"
+scale = 1000
+points = [{ at_mm = 1500000, high = 700 }]
+confidence = "partial"
+placeholder = true
+calibration_target = "CT-007-7"
+note = "A contact sighted at 1.5 km has confidence under 700 permille (Meade learned of Sickles's advance too late, CWV p081)."

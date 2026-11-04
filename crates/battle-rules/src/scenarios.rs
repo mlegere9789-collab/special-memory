@@ -2,6 +2,7 @@
 //! with its orders already issued; none draws random numbers, so the seed only enters the hash
 //! through the world header.
 
+pub mod command;
 pub mod fidelity;
 pub mod fire;
 
