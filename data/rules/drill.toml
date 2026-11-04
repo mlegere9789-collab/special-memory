@@ -1,0 +1,118 @@
+# Drill table (SPEC-004 section 6). Units: ticks (_ticks), millimetres (_mm), permille (_pm).
+# Qualitative basis: units were wildly uneven in training (CWV p030 section 1.3) and a
+# well-trained regiment changed formation faster (CWV p511 section 4.5). Every number below is
+# a placeholder awaiting calibration target CT-5.
+
+[globals]
+closeup_interval_ticks = 40
+settle_tol_mm = 1000
+settle_budget_ticks = 600
+confidence = "unverified"
+placeholder = true
+calibration_target = "CT-5"
+note = "Close-up cadence and settle tolerances; set by playtest review."
+
+[[training]]
+id = "raw"
+transition_pm = 1300
+confidence = "unverified"
+placeholder = true
+calibration_target = "CT-5"
+note = "Raw regiments change formation slowest."
+
+[[training]]
+id = "trained"
+transition_pm = 1000
+confidence = "unverified"
+placeholder = true
+calibration_target = "CT-5"
+note = "Reference level: base_ticks apply unscaled."
+
+[[training]]
+id = "veteran"
+transition_pm = 750
+confidence = "unverified"
+placeholder = true
+calibration_target = "CT-5"
+note = "Veteran regiments change formation fastest."
+
+[[transition]]
+from = "column"
+to = "line"
+base_ticks = 1200
+confidence = "unverified"
+placeholder = true
+calibration_target = "CT-5"
+
+[[transition]]
+from = "line"
+to = "column"
+base_ticks = 1000
+confidence = "unverified"
+placeholder = true
+calibration_target = "CT-5"
+
+[[transition]]
+from = "line"
+to = "skirmish"
+base_ticks = 1500
+confidence = "unverified"
+placeholder = true
+calibration_target = "CT-5"
+
+[[transition]]
+from = "skirmish"
+to = "line"
+base_ticks = 1500
+confidence = "unverified"
+placeholder = true
+calibration_target = "CT-5"
+
+[[transition]]
+from = "column"
+to = "skirmish"
+base_ticks = 1800
+confidence = "unverified"
+placeholder = true
+calibration_target = "CT-5"
+
+[[transition]]
+from = "skirmish"
+to = "column"
+base_ticks = 1200
+confidence = "unverified"
+placeholder = true
+calibration_target = "CT-5"
+
+[[formation]]
+id = "column"
+cols = 8
+file_width_mm = 560
+rank_gap_mm = 900
+confidence = "unverified"
+placeholder = true
+calibration_target = "CT-5"
+note = "Column of eight files."
+
+[[formation]]
+id = "line"
+ranks = 2
+file_width_mm = 560
+rank_gap_mm = 900
+confidence = "unverified"
+placeholder = true
+calibration_target = "CT-5"
+note = "Two-rank line; remembered drill practice, unverified."
+
+[[formation]]
+id = "skirmish"
+cols = 8
+file_width_mm = 560
+rank_gap_mm = 900
+deployed_pm = 100
+interval_mm = 3500
+reserve_offset_mm = 100000
+confidence = "unverified"
+placeholder = true
+calibration_target = "CT-5"
+note = "Deployed rank at interval spacing; reserve is a column of cols files behind it."

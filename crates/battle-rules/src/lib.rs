@@ -18,3 +18,12 @@ pub use conventions::{
 pub use error::DataError;
 pub use provenance::{Confidence, Provenance, SourceRef};
 pub use reader::{parse_table, Table};
+
+// T-017
+pub mod drill;
+pub mod slots;
+pub use drill::{
+    transition_ticks, DrillGlobals, DrillTable, Formation, FormationRow, Training, TrainingRow,
+    TransitionRow,
+};
+pub use slots::{assign_slots, regiment_roster, slot_layout, SlotLocal};
