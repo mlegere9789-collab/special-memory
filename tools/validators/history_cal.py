@@ -277,6 +277,8 @@ def _validate_tables(root, schema_dir):
             except tomllib.TOMLDecodeError as e:
                 problems.append("%s: not valid TOML: %s" % (rel, e))
                 continue
+            if rec.get("schema") != "history-bands/1" and os.path.basename(path) != "gettysburg-bands.toml":
+                continue  # another family (for example the SPEC-007 command bands) with its own format
             band_ids |= {r.get("id") for r in rec.get("band", []) if isinstance(r, dict)}
             problems += _check_bands(rel, rec, validator, policy, abt)
     if os.path.exists(fixtures):

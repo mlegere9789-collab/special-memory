@@ -93,6 +93,25 @@ class GettysburgTables(unittest.TestCase):
     def test_repository_tables_pass(self):
         self.assertEqual(self.check(), [])
 
+    def test_other_band_families_are_not_history_bands(self):
+        """A `*-bands.toml` file of another family (SPEC-007 command bands) keeps its own format."""
+        other = 'family = "command"\n[[band]]\nid = "C1"\nphrase_free = true\n'
+        faulty = 'schema = "history-bands/1"\n[[band]]\nid = "X-1"\n'
+        root = tempfile.mkdtemp()
+        self.addCleanup(shutil.rmtree, root)
+        shutil.copytree(os.path.join(ROOT, "data", "schemas"), os.path.join(root, "data", "schemas"))
+        for rel in SOURCES:
+            dst = os.path.join(root, rel)
+            os.makedirs(os.path.dirname(dst), exist_ok=True)
+            shutil.copyfile(os.path.join(ROOT, rel), dst)
+        cal = os.path.join(root, "qc", "calibration")
+        with open(os.path.join(cal, "other-bands.toml"), "w", encoding="utf-8") as f:
+            f.write(other)
+        self.assertEqual(plugin.validate(root), [])
+        with open(os.path.join(cal, "faulty-bands.toml"), "w", encoding="utf-8") as f:
+            f.write(faulty)
+        self.assertTrue(plugin.validate(root), "a history-bands file with a fault must be reported")
+
     def test_band_faults(self):
         bands = "qc/calibration/gettysburg-bands.toml"
         cases = {
