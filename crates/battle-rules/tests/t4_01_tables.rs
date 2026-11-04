@@ -74,6 +74,11 @@ fn committed_terrain_loads_with_spec_values() {
         (5, "marsh", 450, 1800, 300, 0, false),
         (6, "ford", 500, 1500, 300, 0, false),
         (7, "deep_water", 0, 1000, 0, 0, true),
+        // Amendment A3 (SPEC-014 section 4.3).
+        (8, "crop", 900, 1100, 120, 50, false),
+        (9, "rocky", 500, 1600, 450, 400, false),
+        (10, "yard", 800, 1100, 200, 100, false),
+        (11, "building", 0, 1000, 0, 0, true),
     ];
     assert_eq!(t.classes().len(), want.len());
     for (id, name, speed, effort, disorder, cover, blocks) in want {
@@ -86,9 +91,19 @@ fn committed_terrain_loads_with_spec_values() {
         assert_eq!(c.cover_pm, cover);
         assert_eq!(c.blocks_movement, blocks);
         assert!(c.provenance.placeholder);
-        assert_eq!(c.provenance.calibration_target, Some(4));
+        let (spec, target) = if id < 8 { (4, 4) } else { (14, 3) };
+        assert_eq!(c.provenance.calibration_spec, Some(spec));
+        assert_eq!(c.provenance.calibration_target, Some(target));
     }
-    assert!(t.class(8).is_none());
+    // T14-03 loader half: only deep water and buildings block movement.
+    let blocking: Vec<u8> = t
+        .classes()
+        .iter()
+        .filter(|c| c.blocks_movement)
+        .map(|c| c.id)
+        .collect();
+    assert_eq!(blocking, [7, 11]);
+    assert!(t.class(12).is_none());
     // The qualitative page citations are carried for woods.
     assert_eq!(t.class(3).unwrap().provenance.sources[0].page, 511);
 }

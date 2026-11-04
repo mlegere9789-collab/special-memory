@@ -77,7 +77,9 @@ fn shipped_rows_carry_the_prefix_of_their_file() {
     }
     let terrain = TerrainTable::from_toml_str(TERRAIN).unwrap();
     for c in terrain.classes() {
-        assert_eq!(c.provenance.calibration_spec, Some(4), "{}", c.id);
+        // Rows added by SPEC-004 amendment A3 carry the SPEC-014 prefix (ADR 0011).
+        let spec = if c.id < 8 { 4 } else { 14 };
+        assert_eq!(c.provenance.calibration_spec, Some(spec), "{}", c.id);
     }
     let drill = DrillTable::from_toml_str(DRILL).unwrap();
     assert_eq!(drill.globals.provenance.calibration_spec, Some(4));

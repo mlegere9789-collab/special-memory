@@ -1,0 +1,46 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "obstacles.schema.json",
+  "title": "Obstacle kinds (SPEC-014 section 4.3)",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema", "kind"],
+  "properties": {
+    "schema": {"const": "obstacles/1"},
+    "kind": {
+      "type": "array",
+      "minItems": 1,
+      "items": {"$ref": "#/$defs/kind"},
+      "description": "id unique and ascending: enforced by tools/validators/survey.py"
+    }
+  },
+  "$defs": {
+    "kind": {
+      "type": "object",
+      "required": ["id", "name", "fire_blocking", "sight_blocking", "crossing_ticks", "confidence"],
+      "allOf": [
+        {
+          "if": {"properties": {"height_per_feature": {"const": true}}, "required": ["height_per_feature"]},
+          "then": {"not": {"required": ["height_mm"]}},
+          "else": {"required": ["height_mm"]}
+        }
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "id": {"type": "integer", "minimum": 1, "maximum": 255},
+        "name": {"type": "string", "pattern": "^[a-z][a-z_]*$"},
+        "height_mm": {"type": "integer", "minimum": 1, "maximum": 65535, "description": "above local ground; absent when height_per_feature is true"},
+        "height_per_feature": {"type": "boolean", "description": "true when each feature (a building) carries its own height_mm"},
+        "fire_blocking": {"type": "boolean"},
+        "sight_blocking": {"type": "boolean"},
+        "crossing_ticks": {"type": "integer", "minimum": 0, "maximum": 100000},
+        "confidence": {"$ref": "rules-common.schema.json#/$defs/provenance/properties/confidence"},
+        "placeholder": {"$ref": "rules-common.schema.json#/$defs/provenance/properties/placeholder"},
+        "calibration_target": {"$ref": "rules-common.schema.json#/$defs/provenance/properties/calibration_target"},
+        "sources": {"$ref": "rules-common.schema.json#/$defs/provenance/properties/sources"},
+        "second_source": {"$ref": "rules-common.schema.json#/$defs/provenance/properties/second_source"},
+        "note": {"$ref": "rules-common.schema.json#/$defs/provenance/properties/note"}
+      }
+    }
+  }
+}

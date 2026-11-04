@@ -1,0 +1,91 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "survey-sources.schema.json",
+  "title": "Survey source manifest (SPEC-014 section 3)",
+  "description": "One [[source]] per input. A field with no recorded value is omitted. A source nobody has consulted can claim no licence, no coverage result and no hash.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema", "survey", "source"],
+  "properties": {
+    "schema": {"const": "survey-sources/1"},
+    "survey": {"type": "string", "pattern": "^[a-z][a-z0-9_]*$"},
+    "note": {"type": "string"},
+    "source": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/source"}}
+  },
+  "$defs": {
+    "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "date": {"type": "string", "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}$"},
+    "text": {"type": "string", "minLength": 1},
+    "control": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["label", "map_x_mm", "map_y_mm", "easting_mm", "northing_mm"],
+      "properties": {
+        "label": {"$ref": "#/$defs/text"},
+        "map_x_mm": {"type": "integer"},
+        "map_y_mm": {"type": "integer"},
+        "easting_mm": {"type": "integer"},
+        "northing_mm": {"type": "integer"}
+      }
+    },
+    "source": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "kind", "provider", "product", "consulted", "licence_status", "coverage_status"],
+      "properties": {
+        "id": {"type": "integer", "minimum": 1, "maximum": 65535},
+        "kind": {"enum": ["dem", "map", "photo", "record"]},
+        "provider": {"$ref": "#/$defs/text"},
+        "product": {"$ref": "#/$defs/text"},
+        "acquired": {"$ref": "#/$defs/date"},
+        "retrieved": {"$ref": "#/$defs/date"},
+        "data_sha256": {"$ref": "#/$defs/sha256"},
+        "consulted": {"type": "boolean"},
+        "index_query_sha256": {"$ref": "#/$defs/sha256"},
+        "coverage_status": {"enum": ["unchecked", "passed", "failed"]},
+        "licence_status": {"enum": ["unverified", "pending", "cleared", "refused"]},
+        "licence_basis": {"$ref": "#/$defs/text"},
+        "licence_evidence_sha256": {"$ref": "#/$defs/sha256"},
+        "cleared_by": {"$ref": "#/$defs/text"},
+        "vertical_rmse_mm": {"type": "integer", "minimum": 0},
+        "georef_rms_mm": {"type": "integer", "minimum": 0},
+        "control": {"type": "array", "items": {"$ref": "#/$defs/control"}},
+        "note": {"type": "string"}
+      },
+      "allOf": [
+        {
+          "if": {"properties": {"consulted": {"const": false}}},
+          "then": {
+            "properties": {
+              "licence_status": {"const": "unverified"},
+              "coverage_status": {"const": "unchecked"}
+            },
+            "not": {"anyOf": [
+              {"required": ["acquired"]}, {"required": ["retrieved"]}, {"required": ["data_sha256"]},
+              {"required": ["index_query_sha256"]}, {"required": ["licence_basis"]},
+              {"required": ["licence_evidence_sha256"]}, {"required": ["cleared_by"]},
+              {"required": ["vertical_rmse_mm"]}, {"required": ["georef_rms_mm"]}
+            ]}
+          },
+          "else": {"properties": {"licence_status": {"enum": ["pending", "cleared", "refused"]}}}
+        },
+        {
+          "if": {"properties": {"licence_status": {"const": "cleared"}}, "required": ["licence_status"]},
+          "then": {
+            "required": ["acquired", "retrieved", "data_sha256", "index_query_sha256", "licence_basis",
+                         "licence_evidence_sha256", "cleared_by"],
+            "properties": {"consulted": {"const": true}, "coverage_status": {"const": "passed"}}
+          }
+        },
+        {
+          "if": {"properties": {"kind": {"const": "dem"}}, "required": ["kind"]},
+          "then": {"properties": {"id": {"maximum": 255}}}
+        },
+        {
+          "if": {"required": ["georef_rms_mm"]},
+          "then": {"required": ["control"], "properties": {"control": {"minItems": 3}}}
+        }
+      ]
+    }
+  }
+}
