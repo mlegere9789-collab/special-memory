@@ -343,7 +343,7 @@ impl BattleState {
 
     /// One whole tick in the order of REGISTRY section 6.2 for the steps that exist: TK-04
     /// movement, TK-05 grid rebuild and release of expired disables, TK-06 fire, TK-07 flight and
-    /// hit, TK-10 casualties, TK-12 smoke (decay, or with `env` `Some` the SPEC-009 update), TK-14 roster updates, TK-15 `advance_tick`
+    /// hit, TK-10 casualties, TK-11 morale (only with `morale` `Some`), TK-12 smoke (decay, or with `env` `Some` the SPEC-009 update), TK-14 roster updates, TK-15 `advance_tick`
     /// (SPEC-005 amendment A5); with `env` `Some`, TK-02 first (SPEC-009). A later layer adds its step here at its place.
     pub fn step(&mut self) {
         self.step_with(false);
@@ -360,6 +360,7 @@ impl BattleState {
         self.step_fire();
         self.step_flight_with(reverse_flight);
         self.step_casualties();
+        self.step_morale();
         self.step_smoke();
         self.step_rosters();
         self.world.advance_tick();

@@ -87,7 +87,14 @@ fn the_only_enable_time_draw_is_the_nerve_offset() {
     let before = b.hash();
     let streams_before = b.world.rng;
     b.enable_morale();
-    assert_eq!(b.hash(), before, "no existing state, and no hash block yet");
+    let mut without = b.clone();
+    without.morale = None;
+    assert_eq!(
+        without.hash(),
+        before,
+        "no existing state changed; only the morale block is new"
+    );
+    assert_ne!(b.hash(), before, "the SPEC-006 section 6 block is present");
     assert_eq!(b.world.rng, streams_before);
     let spread = b.tables.morale.globals.nerve_spread as i32;
     let ms = b.morale.as_ref().unwrap();
