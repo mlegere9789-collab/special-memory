@@ -35,6 +35,14 @@ jobs:
         run: python3 tools/test_validate_data.py && python3 tools/test_check_registry.py
       - name: Gettysburg audit self-tests
         run: python3 tools/test_gb_audit.py
+      - name: wave-2 tool self-tests
+        run: |
+          python3 tools/test_gb_corpus.py
+          python3 tools/test_check_assets.py
+          python3 tools/test_extract_traits.py
+          python3 tools/test_command_validator.py
+          python3 tools/test_history_cal.py
+          python3 qc/perf/test_perf.py
 
   rust:
     name: rust (fmt, clippy, tests)
