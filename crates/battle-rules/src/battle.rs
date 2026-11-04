@@ -9,6 +9,7 @@ use crate::{
     assign_slots, slot_layout, transition_ticks, DrillTable, Formation, Order, Regiment,
     RegimentId, RegimentSpec, RegimentState, SlotLocal, Tables, TerrainGrid, F_DISABLED, F_WOUNDED,
 };
+use crate::{Aggregate, RegimentStatus, RoundsAccount, F0};
 use crate::{Casualty, Counters, FireExt, Projectile, SmokeGrid, Weather};
 use core_math::{StreamId, Vec2Fx};
 use sim_state::{AgentId, AgentInit, AgentStore, SpatialGrid, WorldState};
@@ -23,7 +24,7 @@ pub const fn soldier_stream(slot_index: u32) -> StreamId {
 }
 
 /// Hit points of a freshly spawned soldier.
-const SPAWN_HP: u16 = 100;
+pub(crate) const SPAWN_HP: u16 = 100;
 
 /// Per-soldier locomotion data, indexed by agent slot index.
 #[derive(Clone, Copy, Debug, Default, PartialEq, Eq)]
@@ -79,6 +80,8 @@ pub struct BattleState {
     pub(crate) pending: Vec<QueuedHit>,
     /// F0 counters.
     pub(crate) counters: Counters,
+    /// Serial of the next materialised soldier (SPEC-005 amendment A7).
+    pub soldier_serial: u32,
 }
 
 /// Drops soldiers that are gone, disabled or wounded; marks the regiment dirty if any left.
@@ -181,6 +184,7 @@ impl BattleState {
             ranges: Vec::new(),
             pending: Vec::new(),
             counters: Counters::default(),
+            soldier_serial: 0,
         }
     }
 
@@ -231,6 +235,11 @@ impl BattleState {
             roster,
             dirty: false,
             slots: layout,
+            status: RegimentStatus::Present,
+            class: F0,
+            since: 0,
+            aggregate: Aggregate::default(),
+            acct: RoundsAccount::default(),
         });
         self.regfire.push(RegFire::NONE);
         id

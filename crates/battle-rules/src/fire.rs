@@ -27,6 +27,17 @@ pub const fn load_pm(t: Training) -> u32 {
     }
 }
 
+/// Reads the 50 words of one shot from `rng` without building the shot and returns the first,
+/// the misfire roll. An F1 shot (SPEC-008 section 6.1) uses this so that the stream after `k`
+/// shots is the same whichever of them were F0 (SPEC-005 amendment A7).
+pub fn discard_shot_words(rng: &mut Rng) -> u32 {
+    let roll = rng.next_u32();
+    for _ in 1..crate::aim::SHOT_WORDS {
+        rng.next_u64();
+    }
+    roll
+}
+
 /// What a regiment shoots at.
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub enum FireMode {
@@ -270,9 +281,15 @@ impl BattleState {
                 .resize(self.world.agents.slot_count(), FireExt::UNEQUIPPED);
         }
         let first = step_ticks(w, 0, training, 0);
+        let had = self.regfire[ri].weapon.is_some();
+        let (mut replaced, mut given) = (0u64, 0u64);
         for a in &self.regiments[ri].roster {
             let mut rng = self.world.rng.stream(soldier_stream(a.index));
             let left = rng.range_u32(0, u32::from(first)) as u16;
+            if had {
+                replaced += u64::from(self.fire[a.index as usize].rounds);
+            }
+            given += u64::from(rounds);
             self.fire[a.index as usize] = FireExt {
                 rounds,
                 ammo_sel,
@@ -284,6 +301,8 @@ impl BattleState {
                 rng: rng.state(),
             };
         }
+        self.regiments[ri].acct.lost += replaced;
+        self.regiments[ri].acct.initial += given;
         let mode = self.regfire[ri].mode;
         self.regfire[ri] = RegFire {
             weapon: Some(wi as u8),
@@ -312,11 +331,15 @@ impl BattleState {
         if self.regfire.get(ri).is_none_or(|r| r.weapon.is_none()) {
             return false;
         }
+        let mut added = 0u64;
         for a in &self.regiments[ri].roster {
             if let Some(f) = self.fire.get_mut(a.index as usize) {
+                let before = f.rounds;
                 f.rounds = f.rounds.saturating_add(n);
+                added += u64::from(f.rounds - before);
             }
         }
+        self.regiments[ri].acct.resupplied += added;
         true
     }
 
@@ -366,6 +389,7 @@ impl BattleState {
             }
         }
         shooters.sort_unstable();
+        let mut spent = vec![0u64; regiments.len()];
         for (idx, ri, j) in shooters {
             let (reg, rf) = (&regiments[usize::from(ri)], &regfire[usize::from(ri)]);
             let Some(wi) = rf.weapon else { continue };
@@ -410,6 +434,7 @@ impl BattleState {
             let d = draw_shot(&mut rng);
             f.rng = rng.state();
             counters.shots_fired += 1;
+            spent[usize::from(ri)] += 1;
             f.rounds -= 1;
             let forward = Vec2Fx::from_angle(agents.facing(id).unwrap_or(reg.heading));
             let muzzle = pos + forward.scale(fx_ratio(MUZZLE_AHEAD_MM, 1000));
@@ -460,6 +485,9 @@ impl BattleState {
                 l.fatigue = (l.fatigue + w.fire_drain_ppm).min(FATIGUE_MAX);
             }
             after_discharge(f, w, reg.training, 0);
+        }
+        for (reg, n) in regiments.iter_mut().zip(spent) {
+            reg.acct.spent += n;
         }
     }
 

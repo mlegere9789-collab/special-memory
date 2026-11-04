@@ -55,7 +55,9 @@ mod tables;
 pub use battle::{soldier_stream, BattleState, LocoExt, STREAM_SOLDIER_BASE};
 pub use battle_hash::battle_hash;
 pub use orders::{decode_order, encode_order, Order, OrderDecodeError};
-pub use regiment::{can_fire, Regiment, RegimentId, RegimentSpec, RegimentState};
+pub use regiment::{
+    can_fire, Regiment, RegimentId, RegimentSpec, RegimentState, RegimentStatus, RoundsAccount,
+};
 pub use tables::Tables;
 
 // T-021
@@ -114,6 +116,10 @@ pub use fidelity::{
     classify, ArmRow, ClassInput, FidelityClass, FidelityGlobals, FidelityTable, F0, F1, F2,
 };
 pub use sector::{HotWindow, SectorBody, SectorMap, SectorState};
+
+// T-083
+mod aggregate;
+pub use aggregate::{condense, hand_over, materialise, materialised_stream, Aggregate, Ledger};
 
 // T-091
 mod environment;

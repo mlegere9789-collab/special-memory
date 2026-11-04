@@ -1,6 +1,6 @@
 //! Regiments and the drill state machine types (SPEC-004 section 7).
 
-use crate::{Formation, Order, SlotLocal, Training};
+use crate::{Aggregate, FidelityClass, Formation, Order, SlotLocal, Training};
 use core_math::{Angle, Vec2Fx};
 use sim_state::AgentId;
 
@@ -52,6 +52,32 @@ pub struct RegimentSpec {
     pub heading: Angle,
 }
 
+/// Whether a regiment is on the field (SPEC-004 amendment A4).
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub enum RegimentStatus {
+    /// Its arrival time has not come.
+    NotArrived,
+    /// On the field.
+    Present,
+    /// Left the field.
+    Departed,
+}
+
+/// Rounds of a regiment, in the ledger of SPEC-005 amendment A7: with `held` the rounds in
+/// the hands of its live soldiers and in its aggregate, `held + spent + lost == initial +
+/// resupplied`.
+#[derive(Clone, Copy, Debug, Default, PartialEq, Eq)]
+pub struct RoundsAccount {
+    /// Rounds given by `equip_regiment`.
+    pub initial: u64,
+    /// Rounds added by `resupply`.
+    pub resupplied: u64,
+    /// Shots taken, misfires included.
+    pub spent: u64,
+    /// Rounds that left with a killed soldier, or that a re-equipment replaced.
+    pub lost: u64,
+}
+
 /// One regiment: its command state and the soldiers that belong to it.
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub struct Regiment {
@@ -77,6 +103,16 @@ pub struct Regiment {
     pub dirty: bool,
     /// The current layout, in canonical slot order, one entry per rostered soldier.
     pub slots: Vec<SlotLocal>,
+    /// On the field or not (SPEC-004 amendment A4).
+    pub status: RegimentStatus,
+    /// Fidelity class (SPEC-008): 2 means the soldiers are in `aggregate`, not in the store.
+    pub class: FidelityClass,
+    /// Tick of the last class change.
+    pub since: u64,
+    /// The soldiers of a class 2 regiment; the carried wounded and killed otherwise.
+    pub aggregate: Aggregate,
+    /// Round account.
+    pub acct: RoundsAccount,
 }
 
 /// True when the regiment may fire: `Steady(Line)` or `Steady(Skirmish)`. A regiment in column or
