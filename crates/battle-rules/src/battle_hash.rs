@@ -1,5 +1,6 @@
 //! The battle state hash (SPEC-004 section 11).
 
+use crate::command::write_command_block;
 use crate::orders::gait_tag;
 use crate::{BattleState, FireMode, Order, RegimentState};
 use sim_state::StateHasher;
@@ -16,7 +17,8 @@ fn order_fields(order: &Order) -> (u8, i64, i64, u8) {
 }
 
 /// The hash of a battle: the world, then every regiment ascending by id, then every locomotion
-/// slot ascending, then the fire block, the smoke block and the casualty block of SPEC-005. FNV-1a 64 over little-endian fields.
+/// slot ascending, then the fire block, the smoke block and the casualty block of SPEC-005, then
+/// the command block when `cmd` is `Some` (SPEC-007). FNV-1a 64 over little-endian fields.
 ///
 /// Per regiment: `id u16, team u8, training u8, state tag u8 (0 steady, 1 forming), from u8,
 /// to u8, ticks_left u32, anchor x i64, anchor y i64, heading u32, order tag u8, order x i64,
@@ -68,6 +70,11 @@ pub fn battle_hash(state: &BattleState) -> u64 {
     write_fire(&mut h, state);
     write_smoke(&mut h, state);
     write_casualties(&mut h, state);
+    // Optional blocks follow in REGISTRY order (morale, command, environment); the morale block
+    // goes before the command block when the morale layer lands.
+    if let Some(cmd) = &state.cmd {
+        write_command_block(&mut h, cmd);
+    }
     h.finish()
 }
 

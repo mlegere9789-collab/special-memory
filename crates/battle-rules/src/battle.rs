@@ -2,6 +2,7 @@
 //! machine (SPEC-004 sections 7 and 11). Steering and anchor movement belong to the movement
 //! step; this module owns orders, the `Forming` countdown and the close-up of a thinned line.
 
+use crate::command::CommandState;
 use crate::fire::{RangeEntry, RegFire};
 use crate::hit::{ObstacleLayer, QueuedHit};
 use crate::{
@@ -64,6 +65,9 @@ pub struct BattleState {
     pub weather: Weather,
     /// `seq` of the next projectile.
     pub seq: u64,
+    /// The command layer (SPEC-007); `None` leaves every SPEC-004 and SPEC-005 behaviour and the
+    /// hash unchanged.
+    pub cmd: Option<CommandState>,
     /// Weapon and fire mode per regiment.
     pub(crate) regfire: Vec<RegFire>,
     /// Range tables built for the equipped weapon and ammunition pairs.
@@ -168,6 +172,7 @@ impl BattleState {
             casualties: Vec::new(),
             weather: Weather::DRY,
             seq: 0,
+            cmd: None,
             regfire: Vec::new(),
             ranges: Vec::new(),
             pending: Vec::new(),

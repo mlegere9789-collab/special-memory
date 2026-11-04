@@ -1,16 +1,31 @@
 //! Command friction and the information model (SPEC-007): couriers, flags and telegraph, the
 //! chain of officers, and what each officer knows.
 //!
-//! This part holds the data layer: the friction table ([`CommandTable`]), the officers sidecar
+//! This part holds the data layer and the state: the friction table ([`CommandTable`]), the officers sidecar
 //! ([`load_officers`]), the identifier and enumeration types the data use, and the trait masks of
 //! historical commanders ([`trait_mask`]). The command layer is optional state of a battle
 //! (ADR 0006): none of this changes a battle that does not enable it.
 
+mod codec;
 mod data;
+mod hash;
+mod input;
+mod state;
 
+pub use codec::{
+    decode_dispatch, decode_options, decode_script, encode_dispatch, encode_options, encode_script,
+    Dispatch, ScriptEvent,
+};
 pub use data::{
     load_officers, CommandGlobals, CommandTable, LevelRow, LinkSpec, MediumRow, OfficerSet,
     OfficerSpec, TraitRow,
+};
+pub use hash::write_command_block;
+pub use input::{DispatchError, InputError};
+pub use state::{
+    AckRecord, CommandOptions, CommandState, Contact, Fate, FriendEntry, GarbleKind, Link, Message,
+    MessageId, MessageKind, MessagePayload, ModKind, Officer, OrderBody, OrderRecord, Picture,
+    Truth,
 };
 
 use crate::registry::{
