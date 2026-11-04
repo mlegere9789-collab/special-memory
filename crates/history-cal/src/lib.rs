@@ -8,17 +8,23 @@
 
 #![forbid(unsafe_code)]
 
+mod codec;
 mod compile;
+mod driver;
 mod error;
 mod policy;
 mod script;
+mod stage;
 mod units;
 
+pub use codec::{decode_trigger, encode_trigger};
 pub use compile::{compile_script, ScriptInput};
+pub use driver::{apply_variant, DriverError, MarkerHook, ReplayDriver, TriggerHook, Variant};
 pub use error::ScriptError;
 pub use policy::Policy;
 pub use script::{
     ObserveKind, ObserveRow, OrderKind, OrderRow, OverrideRow, OverrideTarget, OverrideVariant,
     ReplayScript, ScriptMeta, TriggerRow,
 };
+pub use stage::stage_battle;
 pub use units::{units_from_toml_str, Level, UnitRecord};

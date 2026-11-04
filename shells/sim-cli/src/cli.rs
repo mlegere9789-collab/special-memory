@@ -3,6 +3,7 @@
 //! Exit codes: `0` success or match, `1` replay mismatch, `2` malformed file or usage error.
 
 use crate::bench::{micros, run_bench};
+use crate::history::{is_history_replay, verify_history};
 use crate::scenario::{final_hash, run_replay, verify_replay, ToyParams, Verdict};
 use sim_state::ReplayReader;
 use std::io::Write;
@@ -13,9 +14,10 @@ usage: hd-sim <command> [options]
 commands:
   run    --agents K --ticks N --seed S --checkpoint-interval C --out FILE
          run the toy scenario and write a replay (defaults: K 1000, S 1, C 100)
-  verify FILE
+  verify FILE [--root DIR]
          re-run a replay and compare every checkpoint and the final hash
-         (exit 0 match, 1 mismatch, 2 malformed file)
+         (exit 0 match, 1 mismatch, 2 malformed file); a replay-mode header
+         `<scenario>/<variant>` reads data/ under DIR (default .)
   hash   --agents K --ticks N --seed S
          print the final state hash
   bench  --agents K --ticks N [--seed S]
@@ -129,13 +131,20 @@ fn cmd_run(args: &[String], out: &mut dyn Write) -> CliResult {
 }
 
 fn cmd_verify(args: &[String], out: &mut dyn Write, errw: &mut dyn Write) -> CliResult {
-    let [path] = args else {
-        return err("verify takes exactly one FILE argument");
+    let (path, root) = match args {
+        [path] => (path, "."),
+        [path, flag, root] | [flag, root, path] if flag == "--root" => (path, root.as_str()),
+        _ => return err("verify takes one FILE argument and an optional --root DIR"),
     };
     let bytes = std::fs::read(path).or_else(|e| err(format!("cannot read {path}: {e}")))?;
     let replay =
         ReplayReader::parse(&bytes).or_else(|e| err(format!("{path}: malformed replay: {e}")))?;
-    match verify_replay(&replay) {
+    let verdict = if is_history_replay(&replay) {
+        verify_history(&replay, std::path::Path::new(root))
+    } else {
+        verify_replay(&replay)
+    };
+    match verdict {
         Verdict::Match => {
             let _ = writeln!(
                 out,

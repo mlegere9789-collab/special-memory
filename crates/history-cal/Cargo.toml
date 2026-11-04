@@ -13,3 +13,6 @@ workspace = true
 core-math = { path = "../core-math" }
 sim-state = { path = "../sim-state" }
 battle-rules = { path = "../battle-rules" }
+
+[dev-dependencies]
+proptest = "1"
