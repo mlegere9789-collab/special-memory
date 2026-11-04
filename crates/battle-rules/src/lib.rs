@@ -67,3 +67,7 @@ pub use flight::{advance_projectile, step_projectile, Ballistics, Flight, Flight
 pub use gauss::{angle_from_urad, gauss_unit};
 pub use range::RangeTable;
 pub use vec3::Vec3Fx;
+
+// T-019
+mod movement;
+pub mod scenarios;
