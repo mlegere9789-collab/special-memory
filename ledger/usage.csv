@@ -49,3 +49,6 @@ date,ticket,class,estimated_usage,actual_usage,review_defects,rework_count,notes
 2026-11-04,T-132 evidence ladder known-conflict fixtures (SPEC-013 GB04 to GB06 GB17),M,,172521 tokens,0,0,fresh implementer; 41 tests; C01 to C14; over 400 lines (tests and fixtures)
 2026-11-04,T-123 acoustics propagation on flat ground (SPEC-012 section 6),M,,163263 tokens,0,0,fresh implementer; 25 tests; reference fixture 230 rows; spec formula corrected (spherical loss)
 2026-11-04,T-133 chain sums casualties arms (SPEC-013 GB10 to GB12 GB18),M,,146408 tokens,0,0,fresh implementer; 36 tests; probes and good chain
+2026-11-04,T-023 hit casualties bursts tick order (SPEC-005 A5),L,,228398 tokens,0,0,fresh implementer; 36 tests; about 450 code lines; BattleState::step TK-04 to TK-15; casualty hash block
+2026-11-04,T-141 terrain amendment A3 and survey source manifest (offline part),M,,160162 tokens,0,0,fresh implementer; 19 Python tests; two Rust tests extended for A3 rows; all sources consulted=false
+2026-11-04,T-082 fidelity table classifier sectors (SPEC-008),M,,153230 tokens,0,0,fresh implementer; 31 tests
