@@ -240,5 +240,89 @@ class Plugins(unittest.TestCase):
         self.assertIn("example", names)
 
 
+GB_UNIT = """schema = "gb-unit/1"
+id = "us_probe_army"
+side = "union"
+level = "army"
+name = "Probe Army"
+
+[[commanders]]
+person = { id = "probe_person", name = "Probe Person" }
+kind = "command"
+confidence = "unverified"
+sources = [{ document = "CWV", page = 72 }]
+"""
+
+
+def run_gb(files):
+    """Run the real validator over a throw-away root holding the real schemas, the real plugins and `files`
+    (a map of paths under data/history/gettysburg to text)."""
+    with tempfile.TemporaryDirectory() as root:
+        shutil.copytree(os.path.join(REPO, "data", "schemas"), os.path.join(root, "data", "schemas"))
+        for rel, text in files.items():
+            p = os.path.join(root, "data", "history", "gettysburg", rel)
+            os.makedirs(os.path.dirname(p), exist_ok=True)
+            with open(p, "w", encoding="utf-8") as f:
+                f.write(text)
+        p = subprocess.run([sys.executable, os.path.join(TOOLS, "validate_data.py"), root],
+                           capture_output=True, text=True, check=False)
+        return p.returncode, p.stdout
+
+
+class GettysburgPlugin(unittest.TestCase):
+    """T13-12: the gettysburg plugin runs from validate_data.py."""
+
+    def test_repository_is_clean(self):
+        p = subprocess.run([sys.executable, os.path.join(TOOLS, "validate_data.py")], capture_output=True, text=True, check=False)
+        self.assertEqual(p.returncode, 0, p.stdout)
+
+    def test_absent_directory_checks_nothing(self):
+        code, out = run(None)
+        self.assertEqual(code, 0, out)
+        self.assertNotIn("gettysburg", out)
+
+    def test_good_unit_passes(self):
+        code, out = run_gb({"units/us_probe_army.toml": GB_UNIT})
+        self.assertEqual(code, 0, out)
+
+    def test_bad_units_fail_with_rule_codes(self):
+        cases = {
+            "schema": (GB_UNIT.replace('side = "union"', 'side = "blue"'), "GB01"),
+            "float": (GB_UNIT.replace("page = 72", "page = 72.5"), "GB02"),
+            "stem": (GB_UNIT.replace("us_probe_army", "us_probe_other"), "GB03"),
+        }
+        for name, (text, rule) in cases.items():
+            with self.subTest(case=name):
+                code, out = run_gb({"units/us_probe_army.toml": text})
+                self.assertEqual(code, 1, out)
+                self.assertRegex(out, r"gettysburg: data/history/gettysburg/units/us_probe_army\.toml: %s " % rule)
+
+    def test_unit_with_missing_parent_fails(self):
+        text = GB_UNIT.replace('level = "army"', 'level = "corps"') + (
+            '\n[[assignments]]\nparent = "us_nowhere"\nkind = "organic"\nconfidence = "unverified"\n'
+            'sources = [{ document = "CWV", page = 72 }]\n')
+        code, out = run_gb({"units/us_probe_army.toml": text})
+        self.assertEqual(code, 1, out)
+        self.assertIn("GB09", out)
+
+    def test_bad_source_registry_fails(self):
+        code, out = run_gb({"sources.toml": 'schema = "gb-sources/1"\n'})
+        self.assertEqual(code, 1, out)
+        self.assertIn("sources.toml: GB01", out)
+
+    def test_plugin_module_exposes_the_extension_points(self):
+        sys.path.insert(0, TOOLS)
+        try:
+            import importlib.util
+            spec = importlib.util.spec_from_file_location("gb_plugin", os.path.join(TOOLS, "validators", "gettysburg.py"))
+            module = importlib.util.module_from_spec(spec)
+            spec.loader.exec_module(module)
+        finally:
+            sys.path.pop(0)
+        self.assertEqual(sorted(module.GB_SCHEMAS), ["arrivals", "batteries", "events", "terrain", "units", "weather"])
+        self.assertEqual(module.check_gettysburg(REPO)[1], [])
+        self.assertEqual(module.check_gettysburg(os.path.join(REPO, "qc"))[0], 0)
+
+
 if __name__ == "__main__":
     unittest.main()

@@ -1,0 +1,18 @@
+# expect: GB09
+schema = "gb-unit/1"
+id = "us_probe_gb09_absent"
+side = "union"
+level = "brigade"
+name = "Probe"
+
+[[assignments]]
+parent = "us_probe_nowhere"
+kind = "organic"
+confidence = "unverified"
+sources = [{ document = "CWV", page = 72 }]
+
+[[commanders]]
+person = { id = "probe_person_a", name = "Probe Person" }
+kind = "command"
+confidence = "unverified"
+sources = [{ document = "CWV", page = 72 }]

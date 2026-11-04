@@ -1,0 +1,11 @@
+# expect: GB08
+schema = "gb-event/1"
+id = "ev_probe_gb08_date"
+kind = "attack_begins"
+role = "validation"
+summary = "A probe attack begins in the afternoon."
+
+[at]
+at = "1863-06-31T10:00"
+confidence = "unverified"
+sources = [{ document = "CWV", page = 72 }]

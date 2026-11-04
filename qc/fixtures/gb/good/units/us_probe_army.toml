@@ -1,0 +1,11 @@
+schema = "gb-unit/1"
+id = "us_probe_army"
+side = "union"
+level = "army"
+name = "Probe Army"
+
+[[commanders]]
+person = { id = "probe_person_a", name = "Probe Person" }
+kind = "command"
+confidence = "unverified"
+sources = [{ document = "CWV", page = 72 }]

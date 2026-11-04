@@ -1,0 +1,27 @@
+# expect: GB09
+schema = "gb-unit/1"
+id = "us_probe_gb09_overlap"
+side = "union"
+level = "brigade"
+name = "Probe"
+
+[[assignments]]
+parent = "us_probe_division"
+kind = "organic"
+confidence = "unverified"
+sources = [{ document = "CWV", page = 72 }]
+from = "1863-07-01T06:00"
+to = "1863-07-02T06:00"
+[[commanders]]
+person = { id = "probe_person_a", name = "Probe Person" }
+kind = "command"
+confidence = "unverified"
+sources = [{ document = "CWV", page = 72 }]
+
+[[assignments]]
+parent = "us_probe_division"
+kind = "organic"
+confidence = "unverified"
+sources = [{ document = "CWV", page = 72 }]
+from = "1863-07-02T00:00"
+to = "1863-07-03T00:00"

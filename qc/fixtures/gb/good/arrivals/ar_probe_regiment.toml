@@ -1,0 +1,17 @@
+schema = "gb-arrival/1"
+id = "ar_probe_regiment"
+formation = "us_probe_regiment"
+event = "arrive"
+
+[at]
+at = "1863-07-01T10:20"
+early = "1863-07-01T10:00"
+late = "1863-07-01T10:30"
+confidence = "unverified"
+sources = [{ document = "CWV", page = 72 }]
+claims = [{ document = "CWV", page = 80, at = "1863-07-01T10:20" }]
+
+[place]
+name = "Probe Ridge"
+confidence = "unverified"
+sources = [{ document = "CWV", page = 72 }]

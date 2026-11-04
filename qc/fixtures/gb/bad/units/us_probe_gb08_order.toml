@@ -1,0 +1,19 @@
+# expect: GB08
+schema = "gb-unit/1"
+id = "us_probe_gb08_order"
+side = "union"
+level = "brigade"
+name = "Probe"
+
+[[assignments]]
+parent = "us_probe_division"
+kind = "organic"
+confidence = "unverified"
+sources = [{ document = "CWV", page = 72 }]
+from = "1863-07-02T10:00"
+to = "1863-07-02T09:00"
+[[commanders]]
+person = { id = "probe_person_a", name = "Probe Person" }
+kind = "command"
+confidence = "unverified"
+sources = [{ document = "CWV", page = 72 }]

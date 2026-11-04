@@ -1,0 +1,13 @@
+schema = "gb-event/1"
+id = "ev_probe_attack"
+kind = "attack_begins"
+role = "validation"
+summary = "A probe attack begins in the afternoon."
+
+[at]
+at = "1863-07-02T16:00"
+early = "1863-07-02T16:00"
+late = "1863-07-02T16:30"
+confidence = "unverified"
+sources = [{ document = "CWV", page = 72 }]
+claims = [{ document = "CWV", page = 81, at = "1863-07-02T16:00" }, { document = "CWV", page = 81, at = "1863-07-02T16:30" }]

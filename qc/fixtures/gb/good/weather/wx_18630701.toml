@@ -1,0 +1,10 @@
+schema = "gb-weather/1"
+id = "wx_18630701"
+date = "1863-07-01"
+
+[[segment]]
+from = "1863-07-01T06:00"
+to = "1863-07-01T18:00"
+sky = "clear"
+confidence = "unverified"
+sources = [{ document = "CWV", page = 72 }]

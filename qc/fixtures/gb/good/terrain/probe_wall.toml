@@ -1,0 +1,17 @@
+schema = "gb-terrain/1"
+id = "probe_wall"
+name = "Probe Wall"
+kind = "stone_wall"
+position_tolerance_mm = 5000
+confidence = "unverified"
+sources = [{ document = "CWV", page = 72 }]
+
+[geometry]
+type = "polyline"
+frame = "gb_local_v1"
+points = [[0, 0], [1000, 0]]
+
+[height_mm]
+value = 1200
+confidence = "unverified"
+sources = [{ document = "CWV", page = 72 }]
