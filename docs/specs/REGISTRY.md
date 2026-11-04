@@ -327,7 +327,7 @@ Labels are sequential per base spec in landing order (wave, then ticket id). A l
 | A3 | data deviations (shot speed, pellet masses, ammo rows) | T-020 | T-020 | landed | landed |
 | A4 | sub-step form, ground interpolation, range table, `angle_from_urad` | T-021 | T-021 | landed | landed |
 | A5 | section 7: the full tick order is REGISTRY section 6 | registry | T-023 | 3 | landed |
-| A6 | section 8: `SmokeGrid::density_at` | SPEC-007 | T-073 | 4 | pending |
+| A6 | section 8: `SmokeGrid::density_at` | SPEC-007 | T-073 | 4 | landed |
 | A7 | section 4: streams of materialised soldiers (`0x8000_0000 + serial`), shot-word discard, hand-over fields | SPEC-008 | T-083 | 4 | pending |
 | A8 | sections 4 and 8: with `env` `Some`, the SPEC-009 smoke source and update replace section 8; firing drain scaled by heat; `Weather` filled by the weather timeline | SPEC-009 | T-092, T-093 | 4 | pending |
 | A9 | sections 3 and 4: targeting gate, range-error multiplier, `smoke_at_shooter` | SPEC-009 | T-095 | 5 | pending |

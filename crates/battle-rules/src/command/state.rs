@@ -411,9 +411,10 @@ impl BattleState {
         }
     }
 
-    /// One tick of the command layer. This part refreshes officer positions every
-    /// `pos_interval_ticks`; later parts add observation, reports and arrivals. Nothing happens
-    /// while the layer is off.
+    /// One tick of the command layer: refreshes officer positions every `pos_interval_ticks`,
+    /// then handles message arrivals ([`BattleState::step_messages`]); the chain takes the
+    /// arrivals in a later part, and observation and reports are added later still. Nothing
+    /// happens while the layer is off.
     pub fn step_command(&mut self, table: &CommandTable) {
         if self.cmd.is_some()
             && self
@@ -423,5 +424,6 @@ impl BattleState {
         {
             self.refresh_officer_positions();
         }
+        let _ = self.step_messages(table);
     }
 }

@@ -8,8 +8,11 @@
 
 mod codec;
 mod data;
+mod garble;
 mod hash;
 mod input;
+mod leg;
+mod media;
 mod state;
 
 pub use codec::{
@@ -20,8 +23,10 @@ pub use data::{
     load_officers, CommandGlobals, CommandTable, LevelRow, LinkSpec, MediumRow, OfficerSet,
     OfficerSpec, TraitRow,
 };
+pub use garble::read_order;
 pub use hash::write_command_block;
 pub use input::{DispatchError, InputError};
+pub use media::{words, Arrival, Estimate, Reading};
 pub use state::{
     AckRecord, CommandOptions, CommandState, Contact, Fate, FriendEntry, GarbleKind, Link, Message,
     MessageId, MessageKind, MessagePayload, ModKind, Officer, OrderBody, OrderRecord, Picture,
