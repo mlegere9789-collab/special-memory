@@ -91,3 +91,10 @@ pub use fire::{
     Weather,
 };
 pub use smoke::{SmokeGrid, SMOKE_REF_UNITS};
+
+// T-081
+mod scenario;
+pub use scenario::{
+    scenario_hash, Arm, Arrival, Departure, MapSpec, Objective, Scenario, ScenarioError, Side,
+    StrengthCheck, TerrainSpec, Trigger, TriggerKind, TriggerOrder, Unit, WeatherRow,
+};

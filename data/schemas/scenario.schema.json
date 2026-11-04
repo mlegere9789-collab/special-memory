@@ -1,0 +1,211 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "scenario.schema.json",
+  "title": "Data scenario",
+  "description": "A battle scenario (SPEC-008 section 2.3, schema scenario/1). Integers only, unknown keys refused, every row carries provenance flattened beside its own keys. Times are whole seconds from scenario start; lengths are mm.",
+  "type": "object",
+  "required": ["schema", "id", "title", "date", "clock_start_s", "duration_s", "tick_hz", "fidelity_class", "f0_cap", "agent_cap", "map", "terrain", "unit", "arrival"],
+  "additionalProperties": false,
+  "properties": {
+    "schema": {"const": "scenario/1"},
+    "id": {"$ref": "#/$defs/id"},
+    "title": {"type": "string", "minLength": 1},
+    "date": {"type": "string"},
+    "clock_start_s": {"type": "integer", "minimum": 0, "maximum": 31536000},
+    "duration_s": {"type": "integer", "minimum": 1, "maximum": 31536000},
+    "tick_hz": {"const": 20},
+    "family": {"$ref": "#/$defs/id"},
+    "fidelity_class": {"type": "integer", "minimum": 0, "maximum": 2},
+    "f0_cap": {"type": "integer", "minimum": 0, "maximum": 200000},
+    "agent_cap": {"type": "integer", "minimum": 0, "maximum": 200000},
+    "map": {
+      "type": "object",
+      "required": ["width_mm", "height_mm", "origin_x_mm", "origin_y_mm"],
+      "additionalProperties": false,
+      "properties": {
+        "width_mm": {"type": "integer", "minimum": 1, "maximum": 12000000},
+        "height_mm": {"type": "integer", "minimum": 1, "maximum": 12000000},
+        "origin_x_mm": {"type": "integer"},
+        "origin_y_mm": {"type": "integer"}
+      }
+    },
+    "terrain": {
+      "type": "object",
+      "required": ["legend"],
+      "additionalProperties": false,
+      "properties": {
+        "cell_mm": {"type": "integer", "minimum": 1, "maximum": 1000000},
+        "origin_x_mm": {"type": "integer"},
+        "origin_y_mm": {"type": "integer"},
+        "legend": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "required": ["ch", "class"],
+            "additionalProperties": false,
+            "properties": {
+              "ch": {"type": "string", "minLength": 1, "maxLength": 1},
+              "class": {"type": "integer", "minimum": 0, "maximum": 255}
+            }
+          }
+        },
+        "rows": {"type": "string", "minLength": 1, "description": "one string per line, row 0 at the south"},
+        "source": {"type": "string", "pattern": "^terrain/[a-z0-9_-]{1,32}\\.rows$"},
+        "source_hash": {"type": "string", "pattern": "^[0-9a-f]{16}$", "description": "FNV-1a 64 of the rows, each followed by a newline"}
+      },
+      "oneOf": [
+        {"required": ["rows"], "not": {"anyOf": [{"required": ["source"]}, {"required": ["source_hash"]}]}},
+        {"required": ["source", "source_hash"], "not": {"required": ["rows"]}}
+      ]
+    },
+    "unit": {"type": "array", "minItems": 1, "maxItems": 4096, "items": {"$ref": "#/$defs/unit"}},
+    "arrival": {"type": "array", "maxItems": 4096, "items": {"$ref": "#/$defs/arrival"}},
+    "departure": {"type": "array", "maxItems": 4096, "items": {"$ref": "#/$defs/departure"}},
+    "strength_check": {"type": "array", "items": {"$ref": "#/$defs/strength_check"}},
+    "objective": {"type": "array", "items": {"$ref": "#/$defs/objective"}},
+    "trigger": {"type": "array", "items": {"$ref": "#/$defs/trigger"}},
+    "weather": {"type": "array", "items": {"$ref": "#/$defs/weather"}}
+  },
+  "$defs": {
+    "id": {"type": "string", "pattern": "^[a-z0-9_-]{1,32}$"},
+    "count": {"type": "integer", "minimum": 0, "maximum": 31536000},
+    "pos": {"type": "integer", "minimum": -200000000, "maximum": 200000000},
+    "side": {"enum": ["union", "confederate"]},
+    "formation": {"enum": ["column", "line", "skirmish"]},
+    "heading": {"type": "integer", "minimum": 0, "maximum": 359},
+    "provenance": {
+      "type": "object",
+      "required": ["confidence"],
+      "properties": {
+        "confidence": {"$ref": "common.schema.json#/$defs/confidence"},
+        "placeholder": {"type": "boolean"},
+        "calibration_target": {"type": "string", "pattern": "^CT-[0-9]{3}-[0-9]+$"},
+        "sources": {"$ref": "common.schema.json#/$defs/sources"},
+        "second_source": {"type": "string"},
+        "note": {"type": "string"}
+      },
+      "allOf": [
+        {
+          "if": {"properties": {"placeholder": {"const": true}}, "required": ["placeholder"]},
+          "then": {"required": ["calibration_target"]},
+          "else": {"required": ["sources"]}
+        },
+        {
+          "if": {"properties": {"confidence": {"const": "verified"}}, "required": ["confidence"]},
+          "then": {"required": ["second_source"], "properties": {"second_source": {"minLength": 1}}}
+        }
+      ]
+    },
+    "unit": {
+      "type": "object",
+      "required": ["id", "side", "parent", "arm", "men", "guns", "training", "weapon", "rounds_per_man", "commander"],
+      "allOf": [{"$ref": "#/$defs/provenance"}],
+      "unevaluatedProperties": false,
+      "properties": {
+        "id": {"$ref": "#/$defs/id"},
+        "side": {"$ref": "#/$defs/side"},
+        "parent": {"type": "string", "pattern": "^([a-z0-9_-]{1,32})?$"},
+        "arm": {"enum": ["infantry", "cavalry", "battery", "hq"]},
+        "men": {"type": "integer", "minimum": 0, "maximum": 1000000},
+        "guns": {"type": "integer", "minimum": 0, "maximum": 1000},
+        "training": {"enum": ["raw", "trained", "veteran"]},
+        "weapon": {"type": "string", "pattern": "^[a-z0-9_]*$"},
+        "rounds_per_man": {"type": "integer", "minimum": 0, "maximum": 1000},
+        "commander": {"type": "string", "pattern": "^[a-z0-9_]{0,32}$"}
+      }
+    },
+    "arrival": {
+      "type": "object",
+      "required": ["unit", "at_s", "x_mm", "y_mm", "heading_deg", "formation", "low_s", "high_s"],
+      "allOf": [{"$ref": "#/$defs/provenance"}],
+      "unevaluatedProperties": false,
+      "properties": {
+        "unit": {"$ref": "#/$defs/id"},
+        "at_s": {"$ref": "#/$defs/count"},
+        "x_mm": {"$ref": "#/$defs/pos"},
+        "y_mm": {"$ref": "#/$defs/pos"},
+        "heading_deg": {"$ref": "#/$defs/heading"},
+        "formation": {"$ref": "#/$defs/formation"},
+        "low_s": {"$ref": "#/$defs/count"},
+        "high_s": {"$ref": "#/$defs/count"}
+      }
+    },
+    "departure": {
+      "type": "object",
+      "required": ["unit", "at_s"],
+      "allOf": [{"$ref": "#/$defs/provenance"}],
+      "unevaluatedProperties": false,
+      "properties": {"unit": {"$ref": "#/$defs/id"}, "at_s": {"$ref": "#/$defs/count"}}
+    },
+    "strength_check": {
+      "type": "object",
+      "required": ["at_s", "side", "men", "tol_men"],
+      "allOf": [{"$ref": "#/$defs/provenance"}],
+      "unevaluatedProperties": false,
+      "properties": {
+        "at_s": {"$ref": "#/$defs/count"},
+        "side": {"$ref": "#/$defs/side"},
+        "men": {"type": "integer", "minimum": 0, "maximum": 10000000},
+        "tol_men": {"type": "integer", "minimum": 0, "maximum": 10000000}
+      }
+    },
+    "objective": {
+      "type": "object",
+      "required": ["id", "side", "x_mm", "y_mm", "radius_mm", "points"],
+      "allOf": [{"$ref": "#/$defs/provenance"}],
+      "unevaluatedProperties": false,
+      "properties": {
+        "id": {"$ref": "#/$defs/id"},
+        "side": {"$ref": "#/$defs/side"},
+        "x_mm": {"$ref": "#/$defs/pos"},
+        "y_mm": {"$ref": "#/$defs/pos"},
+        "radius_mm": {"type": "integer", "minimum": 1, "maximum": 12000000},
+        "points": {"type": "integer", "minimum": 0, "maximum": 1000000}
+      }
+    },
+    "trigger": {
+      "type": "object",
+      "required": ["id", "at_s", "kind", "unit"],
+      "unevaluatedProperties": false,
+      "properties": {
+        "id": {"$ref": "#/$defs/id"},
+        "at_s": {"$ref": "#/$defs/count"},
+        "kind": {"enum": ["order", "fire_mode", "resupply", "marker"]},
+        "unit": {"$ref": "#/$defs/id"},
+        "order": {"enum": ["hold", "move", "form", "face"]},
+        "x_mm": {"$ref": "#/$defs/pos"},
+        "y_mm": {"$ref": "#/$defs/pos"},
+        "gait": {"enum": ["walk", "quick", "double_quick", "run"]},
+        "formation": {"$ref": "#/$defs/formation"},
+        "heading_deg": {"$ref": "#/$defs/heading"},
+        "target": {"$ref": "#/$defs/id"},
+        "rounds": {"type": "integer", "minimum": 0, "maximum": 1000}
+      },
+      "allOf": [
+        {"$ref": "#/$defs/provenance"},
+        {"if": {"properties": {"kind": {"const": "order"}}}, "then": {"required": ["order"]}, "else": {"allOf": [{"not": {"required": ["order"]}}, {"not": {"required": ["x_mm"]}}, {"not": {"required": ["y_mm"]}}, {"not": {"required": ["gait"]}}, {"not": {"required": ["formation"]}}, {"not": {"required": ["heading_deg"]}}]}},
+        {"if": {"properties": {"order": {"const": "move"}}, "required": ["order"]}, "then": {"required": ["x_mm", "y_mm", "gait"], "not": {"anyOf": [{"required": ["formation"]}, {"required": ["heading_deg"]}]}}},
+        {"if": {"properties": {"order": {"const": "form"}}, "required": ["order"]}, "then": {"required": ["formation"], "not": {"anyOf": [{"required": ["x_mm"]}, {"required": ["y_mm"]}, {"required": ["gait"]}, {"required": ["heading_deg"]}]}}},
+        {"if": {"properties": {"order": {"const": "face"}}, "required": ["order"]}, "then": {"required": ["heading_deg"], "not": {"anyOf": [{"required": ["x_mm"]}, {"required": ["y_mm"]}, {"required": ["gait"]}, {"required": ["formation"]}]}}},
+        {"if": {"properties": {"order": {"const": "hold"}}, "required": ["order"]}, "then": {"not": {"anyOf": [{"required": ["x_mm"]}, {"required": ["y_mm"]}, {"required": ["gait"]}, {"required": ["formation"]}, {"required": ["heading_deg"]}]}}},
+        {"if": {"properties": {"kind": {"const": "fire_mode"}}, "required": ["kind"]}, "then": {"required": ["target"]}, "else": {"not": {"required": ["target"]}}},
+        {"if": {"properties": {"kind": {"const": "resupply"}}, "required": ["kind"]}, "then": {"required": ["rounds"]}, "else": {"not": {"required": ["rounds"]}}}
+      ]
+    },
+    "weather": {
+      "type": "object",
+      "required": ["from_s", "wind_x_mm_s", "wind_y_mm_s", "wet_pm", "ground_pm", "visibility_m"],
+      "allOf": [{"$ref": "#/$defs/provenance"}],
+      "unevaluatedProperties": false,
+      "properties": {
+        "from_s": {"$ref": "#/$defs/count"},
+        "wind_x_mm_s": {"type": "integer", "minimum": -100000, "maximum": 100000},
+        "wind_y_mm_s": {"type": "integer", "minimum": -100000, "maximum": 100000},
+        "wet_pm": {"type": "integer", "minimum": 0, "maximum": 1000},
+        "ground_pm": {"type": "integer", "minimum": 0, "maximum": 1000},
+        "visibility_m": {"type": "integer", "minimum": 0, "maximum": 100000}
+      }
+    }
+  }
+}
