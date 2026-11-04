@@ -8,6 +8,8 @@ Rules beyond the schema:
   R4 ids unique per kind and equal to the file name stem
   R5 start_date <= end_date and both are ISO dates
   R6 regression fixtures in qc/fixtures/*.toml: a listed (file, path) must NOT hold the listed bad value as verified
+  R7 rules data: every data/rules/<name>.toml validates against data/schemas/<name>.schema.json, holds no float, and
+     every table with a 'confidence' key passes the provenance definition in rules-common.schema.json
 Exit 1 on any problem.
 """
 import json
@@ -32,6 +34,72 @@ def load_registry():
                 doc = json.load(f)
             reg = reg.with_resource(name, Resource.from_contents(doc))
     return reg
+
+
+PROVENANCE_KEYS = ("confidence", "placeholder", "calibration_target", "sources", "second_source", "note")
+
+
+def walk_rows(node, path=""):
+    """Yield (path, table) for every table that carries provenance fields (a 'confidence' key)."""
+    if isinstance(node, dict):
+        if "confidence" in node:
+            yield path or "(root)", node
+        for k, v in node.items():
+            yield from walk_rows(v, path + "/" + k if path else k)
+    elif isinstance(node, list):
+        for i, v in enumerate(node):
+            yield from walk_rows(v, "%s[%d]" % (path, i))
+
+
+def find_floats(node, path=""):
+    if isinstance(node, float):
+        yield path or "(root)"
+    elif isinstance(node, dict):
+        for k, v in node.items():
+            yield from find_floats(v, path + "/" + k if path else k)
+    elif isinstance(node, list):
+        for i, v in enumerate(node):
+            yield from find_floats(v, "%s[%d]" % (path, i))
+
+
+def check_rules(reg):
+    """R7: validate data/rules/*.toml. Returns (files checked, problems found)."""
+    d = os.path.join(ROOT, "data", "rules")
+    if not os.path.isdir(d):
+        return 0, 0
+    prov = Draft202012Validator({"$ref": "rules-common.schema.json#/$defs/provenance"}, registry=reg)
+    files = problems = 0
+    for name in sorted(os.listdir(d)):
+        if not name.endswith(".toml"):
+            continue
+        files += 1
+        rel = os.path.relpath(os.path.join(d, name), ROOT)
+        schema_path = os.path.join(SCHEMA_DIR, os.path.splitext(name)[0] + ".schema.json")
+        try:
+            with open(os.path.join(d, name), "rb") as f:
+                rec = tomllib.load(f)
+        except tomllib.TOMLDecodeError as e:
+            print("%s: R7 not valid TOML: %s" % (rel, e))
+            problems += 1
+            continue
+        if not os.path.exists(schema_path):
+            print("%s: R7 no schema %s" % (rel, os.path.relpath(schema_path, ROOT)))
+            problems += 1
+        else:
+            with open(schema_path, encoding="utf-8") as f:
+                validator = Draft202012Validator(json.load(f), registry=reg)
+            for err in validator.iter_errors(rec):
+                print("%s: schema: %s at /%s" % (rel, err.message[:160], "/".join(map(str, err.absolute_path))))
+                problems += 1
+        for p in find_floats(rec):
+            print("%s: R7 float at %s (rules data are integers only)" % (rel, p))
+            problems += 1
+        for p, row in walk_rows(rec):
+            fields = {k: row[k] for k in PROVENANCE_KEYS if k in row}
+            for err in prov.iter_errors(fields):
+                print("%s: R7 provenance at %s: %s" % (rel, p, err.message[:160]))
+                problems += 1
+    return files, problems
 
 
 def walk_facts(node, path=""):
@@ -119,6 +187,9 @@ def main():
                 if node.get("value") == item["bad_value"] and node.get("confidence") == "verified":
                     print("%s: R6 known-bad value %r held as verified at %s" % (item["file"], item["bad_value"], item["path"]))
                     problems += 1
+    rule_files, rule_problems = check_rules(reg)
+    count += rule_files
+    problems += rule_problems
     print("validate_data: %d records, %d problems" % (count, problems))
     return 1 if problems else 0
 

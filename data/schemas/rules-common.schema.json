@@ -1,0 +1,32 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "rules-common.schema.json",
+  "title": "Shared provenance definition for rules data",
+  "description": "Rows carry these fields flattened beside their own keys. A placeholder needs a calibration target, any other row needs sources, and a verified fact needs a second source.",
+  "$defs": {
+    "provenance": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["confidence"],
+      "properties": {
+        "confidence": {"$ref": "common.schema.json#/$defs/confidence"},
+        "placeholder": {"type": "boolean"},
+        "calibration_target": {"type": "string", "pattern": "^CT-[0-9]+$"},
+        "sources": {"$ref": "common.schema.json#/$defs/sources"},
+        "second_source": {"type": "string"},
+        "note": {"type": "string"}
+      },
+      "allOf": [
+        {
+          "if": {"properties": {"placeholder": {"const": true}}, "required": ["placeholder"]},
+          "then": {"required": ["calibration_target"]},
+          "else": {"required": ["sources"]}
+        },
+        {
+          "if": {"properties": {"confidence": {"const": "verified"}}, "required": ["confidence"]},
+          "then": {"required": ["second_source"], "properties": {"second_source": {"minLength": 1}}}
+        }
+      ]
+    }
+  }
+}

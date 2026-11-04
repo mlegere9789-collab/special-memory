@@ -29,6 +29,8 @@ jobs:
         run: python3 tools/lint_process_text.py
       - name: historical data validation
         run: python3 tools/validate_data.py
+      - name: validator self-tests
+        run: python3 tools/test_validate_data.py
 
   rust:
     name: rust (fmt, clippy, tests)
