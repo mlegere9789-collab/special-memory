@@ -1,0 +1,551 @@
+# Battle-AI trait rows (SPEC-010 section 4), generated from data/history/commanders by
+# tools/extract_traits.py; regenerate rather than edit. Calibration of the trait deltas is in ai.toml.
+
+[[trait]]
+commander = "albert_sidney_johnston"
+trait = "aggressive"
+confidence = "partial"
+source_page = 304
+source_tag = "[V]"
+sources = [{ document = "CWV", page = 304, tag = "[V]" }]
+note = "Was leading a charge in person when fatally wounded at Shiloh on 1862-04-06."
+
+[[trait]]
+commander = "ap_hill"
+trait = "aggressive"
+confidence = "partial"
+source_page = 307
+source_tag = "[V]"
+sources = [{ document = "CWV", page = 307, tag = "[V]" }]
+note = "Attacked too hastily at Bristoe Station in October 1863 and was repulsed."
+
+[[trait]]
+commander = "braxton_bragg"
+trait = "feuding"
+confidence = "partial"
+source_page = 305
+source_tag = "[V]"
+sources = [{ document = "CWV", page = 305, tag = "[V]" }]
+note = "Quarreled with Polk, Hardee, D.H. Hill, Longstreet, Buckner and Forrest."
+
+[[trait]]
+commander = "daniel_e_sickles"
+trait = "low_discretion"
+confidence = "partial"
+source_page = 81
+source_tag = "untagged"
+sources = [{ document = "CWV", page = 81, tag = "untagged" }, { document = "CWV", page = 283, tag = "[V]" }]
+note = "Advanced III Corps on 1863-07-02 to the Peach Orchard line ahead of Cemetery Ridge on his own judgment of the ground; the line was too long for his two divisions and Meade learned of it too late."
+
+[[trait]]
+commander = "emory_upton"
+trait = "aggressive"
+confidence = "partial"
+source_page = 287
+source_tag = "[V]"
+sources = [{ document = "CWV", page = 287, tag = "[V]" }]
+note = "Led a narrow, fast assault of twelve regiments against the Mule Shoe at Spotsylvania on 1864-05-10 that broke in but lacked support."
+
+[[trait]]
+commander = "francis_c_barlow"
+trait = "aggressive"
+confidence = "partial"
+source_page = 273
+source_tag = "[V]"
+sources = [{ document = "CWV", page = 273, tag = "[V]" }]
+note = "Advanced his division on 1863-07-01 to Blocher's Knoll ahead of the XI Corps line, which gained ground early but exposed both flanks."
+
+[[trait]]
+commander = "george_a_custer"
+trait = "cavalry_flair"
+confidence = "partial"
+source_page = 83
+source_tag = "untagged"
+sources = [{ document = "CWV", page = 83, tag = "untagged" }, { document = "CWV", page = 278, tag = "[V]" }]
+note = "Led the 1st Michigan in a mounted charge against Hampton's and Fitz Lee's brigades at East Cavalry Field on 1863-07-03."
+
+[[trait]]
+commander = "george_b_mcclellan"
+trait = "cautious"
+confidence = "unverified"
+source_page = 264
+source_tag = "untagged"
+sources = [{ document = "CWV", page = 264, tag = "untagged" }]
+note = "At Antietam he held back reserves and did not pursue Lee decisively, and he repeatedly demanded reinforcements on the strength of Pinkerton's inflated estimates of Confederate numbers."
+
+[[trait]]
+commander = "george_g_meade"
+trait = "defensive_skill"
+confidence = "partial"
+source_page = 268
+source_tag = "[V]"
+sources = [{ document = "CWV", page = 268, tag = "[V]" }]
+note = "Won at Gettysburg with a defense in depth, relying on Hancock, Warren and Hunt."
+
+[[trait]]
+commander = "george_g_meade"
+trait = "cautious"
+confidence = "unverified"
+source_page = 268
+source_tag = "[U]"
+sources = [{ document = "CWV", page = 268, tag = "[U]" }]
+note = "Critics fault his pursuit of Lee after Gettysburg and the aborted Mine Run operation of November 1863."
+
+[[trait]]
+commander = "george_h_thomas"
+trait = "defensive_skill"
+confidence = "partial"
+source_page = 268
+source_tag = "[V]"
+sources = [{ document = "CWV", page = 268, tag = "[V]" }]
+note = "Held his line at Chickamauga on 1863-09-20 while Rosecrans retreated to Chattanooga, earning the name Rock of Chickamauga."
+
+[[trait]]
+commander = "george_s_greene"
+trait = "defensive_skill"
+confidence = "partial"
+source_page = 82
+source_tag = "untagged"
+sources = [{ document = "CWV", page = 82, tag = "untagged" }, { document = "CWV", page = 273, tag = "[U unless named in the rosters]" }]
+note = "Held the crest of Culp's Hill on the night of 1863-07-02 with one brigade behind hastily built breastworks while the rest of XII Corps had been moved."
+
+[[trait]]
+commander = "gouverneur_k_warren"
+trait = "engineer"
+confidence = "partial"
+source_page = 271
+source_tag = "[V]"
+sources = [{ document = "CWV", page = 271, tag = "[V]" }]
+note = "A topographical engineer who on 1863-07-02 spotted that Little Round Top was unoccupied and sent Vincent's brigade to hold it."
+
+[[trait]]
+commander = "h_judson_kilpatrick"
+trait = "aggressive"
+confidence = "partial"
+source_page = 278
+source_tag = "[V]"
+sources = [{ document = "CWV", page = 278, tag = "[V]" }, { document = "CWV", page = 83, tag = "untagged" }]
+note = "Ordered a mounted charge against infantry behind a stone wall on 1863-07-03 despite Farnsworth's protest."
+
+[[trait]]
+commander = "henry_heth"
+trait = "low_discretion"
+confidence = "partial"
+source_page = 80
+source_tag = "untagged"
+sources = [{ document = "CWV", page = 80, tag = "untagged" }]
+note = "On 1863-07-01 his full division advanced into contact and brought on a general engagement that Lee had told Hill to avoid until the army was concentrated."
+
+[[trait]]
+commander = "henry_j_hunt"
+trait = "logistics"
+confidence = "partial"
+source_page = 280
+source_tag = "[V]"
+sources = [{ document = "CWV", page = 280, tag = "[V]" }, { document = "CWV", page = 83, tag = "untagged" }]
+note = "Ordered batteries to cease or slow fire on 1863-07-03 to conserve ammunition for the expected assault."
+
+[[trait]]
+commander = "henry_w_halleck"
+trait = "engineer"
+confidence = "partial"
+source_page = 264
+source_tag = "[V]"
+sources = [{ document = "CWV", page = 264, tag = "[V]" }]
+note = "An engineer who wrote Elements of Military Art and Science (1846) and translated Jomini."
+
+[[trait]]
+commander = "henry_w_halleck"
+trait = "cautious"
+confidence = "unverified"
+source_page = 264
+source_tag = "untagged"
+sources = [{ document = "CWV", page = 264, tag = "untagged" }]
+note = "Captured Corinth in May 1862 by a slow siege."
+
+[[trait]]
+commander = "henry_w_slocum"
+trait = "defensive_skill"
+confidence = "partial"
+source_page = 271
+source_tag = "[V]"
+sources = [{ document = "CWV", page = 271, tag = "[V]" }, { document = "CWV", page = 83, tag = "untagged" }]
+note = "Held the right of the Union line at Culp's Hill at Gettysburg, and at dawn on 1863-07-03 XII Corps under Slocum took part in the attack to retake the lost trenches."
+
+[[trait]]
+commander = "jeb_stuart"
+trait = "cavalry_flair"
+confidence = "partial"
+source_page = 315
+source_tag = "[V]"
+sources = [{ document = "CWV", page = 315, tag = "[V]" }]
+note = "Rode around McClellan's army on 1862-06-12 to 1862-06-15 and led the Chambersburg raid of 1862-10-10 to 1862-10-12 (126 miles in under 60 hours)."
+
+[[trait]]
+commander = "john_bell_hood"
+trait = "aggressive"
+confidence = "partial"
+source_page = 305
+source_tag = "[V]"
+sources = [{ document = "CWV", page = 305, tag = "[V]" }]
+note = "Ordered the frontal assault at Franklin on 1864-11-30 after a failed night flank at Spring Hill on 1864-11-29."
+
+[[trait]]
+commander = "john_buford"
+trait = "defensive_skill"
+confidence = "partial"
+source_page = 80
+source_tag = "untagged"
+sources = [{ document = "CWV", page = 80, tag = "untagged" }, { document = "CWV", page = 278, tag = "[V]" }]
+note = "Delayed Heth's larger force with dismounted cavalry for roughly 90 minutes on 1863-07-01, giving I Corps time to arrive."
+
+[[trait]]
+commander = "john_buford"
+trait = "high_discretion"
+confidence = "partial"
+source_page = 80
+source_tag = "untagged"
+sources = [{ document = "CWV", page = 80, tag = "untagged" }]
+note = "Decided on 1863-06-30 to hold the high ground south of the town in expectation of a general engagement and sent word to Reynolds."
+
+[[trait]]
+commander = "john_d_imboden"
+trait = "defensive_skill"
+confidence = "partial"
+source_page = 84
+source_tag = "untagged"
+sources = [{ document = "CWV", page = 84, tag = "untagged" }]
+note = "At Williamsport on 1863-07-06 his artillery and the teamsters turned back Buford's cavalry attack on the trains."
+
+[[trait]]
+commander = "jonathan_letterman"
+trait = "logistics"
+confidence = "partial"
+source_page = 281
+source_tag = "[V]"
+sources = [{ document = "CWV", page = 281, tag = "[V]" }]
+note = "Placed the ambulance corps under medical rather than quartermaster control in August 1862 and set up forward aid stations with triage."
+
+[[trait]]
+commander = "joseph_e_johnston"
+trait = "cautious"
+confidence = "partial"
+source_page = 305
+source_tag = "[V]"
+sources = [{ document = "CWV", page = 305, tag = "[V]" }]
+note = "Fell back from Dalton toward Atlanta in 1864 until Davis removed him in July 1864."
+
+[[trait]]
+commander = "joseph_hooker"
+trait = "logistics"
+confidence = "partial"
+source_page = 267
+source_tag = "[V]"
+sources = [{ document = "CWV", page = 267, tag = "[V]" }]
+note = "After Fredericksburg he improved food, furloughs and hospitals, consolidated the cavalry into a corps, introduced corps badges and set up the Bureau of Military Information under Sharpe."
+
+[[trait]]
+commander = "joshua_l_chamberlain"
+trait = "aggressive"
+confidence = "unverified"
+source_page = 285
+source_tag = "[V]"
+sources = [{ document = "CWV", page = 285, tag = "[V]" }]
+note = "Ordered a downhill bayonet charge by swinging his left wing when the 20th Maine was low on ammunition on 1863-07-02; the page notes the account rests largely on his own later writing."
+
+[[trait]]
+commander = "jubal_a_early"
+trait = "aggressive"
+confidence = "partial"
+source_page = 307
+source_tag = "[V]"
+sources = [{ document = "CWV", page = 307, tag = "[V]" }]
+note = "In July 1864 he won at Monocacy on 1864-07-09 and skirmished at Fort Stevens on 1864-07-11/12 after taking his corps into the Valley and north."
+
+[[trait]]
+commander = "lewis_a_armistead"
+trait = "inspiring"
+confidence = "partial"
+source_page = 84
+source_tag = "untagged"
+sources = [{ document = "CWV", page = 84, tag = "untagged" }, { document = "CWV", page = 317, tag = "[V]" }]
+note = "On 1863-07-03 he led his brigade on foot, waving his hat on his sword, to the stone wall at the Angle."
+
+[[trait]]
+commander = "nathan_bedford_forrest"
+trait = "cavalry_flair"
+confidence = "partial"
+source_page = 312
+source_tag = "[V]"
+sources = [{ document = "CWV", page = 312, tag = "[V]" }]
+note = "Beat a Union force about twice his size at Brice's Crossroads in June 1864."
+
+[[trait]]
+commander = "nathan_bedford_forrest"
+trait = "aggressive"
+confidence = "partial"
+source_page = 312
+source_tag = "[V]"
+sources = [{ document = "CWV", page = 312, tag = "[V]" }]
+note = "Led his men out of Fort Donelson rather than surrender in February 1862."
+
+[[trait]]
+commander = "oliver_o_howard"
+trait = "low_discretion"
+confidence = "partial"
+source_page = 75
+source_tag = "untagged"
+sources = [{ document = "CWV", page = 75, tag = "untagged" }, { document = "CWV", page = 269, tag = "[V]" }]
+note = "Was warned by Hooker at 9:30 a.m. and again at 4 p.m. on 1863-05-02 to guard his flank but did little to reorient the line before Jackson struck."
+
+[[trait]]
+commander = "patrick_h_orourke"
+trait = "aggressive"
+confidence = "partial"
+source_page = 285
+source_tag = "[V]"
+sources = [{ document = "CWV", page = 285, tag = "[V]" }]
+note = "Led the 140th New York over the crest of Little Round Top and down the western slope in a counterattack on 1863-07-02."
+
+[[trait]]
+commander = "pgt_beauregard"
+trait = "defensive_skill"
+confidence = "partial"
+source_page = 305
+source_tag = "[V]"
+sources = [{ document = "CWV", page = 305, tag = "[V]" }]
+note = "On 1864-06-15 held Petersburg with about 5,400 men against roughly 16,000 until Lee's army arrived."
+
+[[trait]]
+commander = "pgt_beauregard"
+trait = "cautious"
+confidence = "partial"
+source_page = 305
+source_tag = "[V]"
+sources = [{ document = "CWV", page = 305, tag = "[V]" }]
+note = "Broke off the Shiloh attack at nightfall on 1862-04-06."
+
+[[trait]]
+commander = "philip_h_sheridan"
+trait = "aggressive"
+confidence = "partial"
+source_page = 271
+source_tag = "[V]"
+sources = [{ document = "CWV", page = 271, tag = "[V]" }, { document = "CWV", page = 277, tag = "[V]" }]
+note = "Relieved Warren on the spot at Five Forks on 1865-04-01 for slowness."
+
+[[trait]]
+commander = "philip_h_sheridan"
+trait = "cavalry_flair"
+confidence = "partial"
+source_page = 277
+source_tag = "[V]"
+sources = [{ document = "CWV", page = 277, tag = "[V]" }]
+note = "Took over the Cavalry Corps on 1864-04-05 and fought at Yellow Tavern on 1864-05-11, where Stuart was mortally wounded."
+
+[[trait]]
+commander = "richard_s_ewell"
+trait = "low_discretion"
+confidence = "partial"
+source_page = 307
+source_tag = "[V]"
+sources = [{ document = "CWV", page = 307, tag = "[V]" }]
+note = "On 1863-07-01 he was ordered to take Cemetery Hill if practicable and did not attack, a debated choice; the page notes he does best with explicit objectives."
+
+[[trait]]
+commander = "robert_e_lee"
+trait = "high_discretion"
+confidence = "partial"
+source_page = 303
+source_tag = "[V]"
+sources = [{ document = "CWV", page = 303, tag = "[V]" }, { document = "CWV", page = 307, tag = "[V]" }]
+note = "On 1863-07-01 he ordered Ewell to take Cemetery Hill if practicable, leaving the decision to him; Ewell did not attack."
+
+[[trait]]
+commander = "robert_e_lee"
+trait = "aggressive"
+confidence = "partial"
+source_page = 303
+source_tag = "[V]"
+sources = [{ document = "CWV", page = 303, tag = "[V]" }]
+note = "Ordered costly frontal assaults at Malvern Hill and in Pickett's Charge."
+
+[[trait]]
+commander = "robert_e_rodes"
+trait = "aggressive"
+confidence = "partial"
+source_page = 80
+source_tag = "untagged"
+sources = [{ document = "CWV", page = 80, tag = "untagged" }, { document = "CWV", page = 309, tag = "[V]" }]
+note = "Launched the attacks from Oak Hill on 1863-07-01 before they were fully coordinated, taking heavy losses while driving off Robinson's division."
+
+[[trait]]
+commander = "strong_vincent"
+trait = "high_discretion"
+confidence = "partial"
+source_page = 285
+source_tag = "[V]"
+sources = [{ document = "CWV", page = 285, tag = "[V]" }]
+note = "Occupied Little Round Top with his brigade on 1863-07-02 on his own responsibility before the attack arrived."
+
+[[trait]]
+commander = "thomas_j_jackson"
+trait = "aggressive"
+confidence = "partial"
+source_page = 306
+source_tag = "[V]"
+sources = [{ document = "CWV", page = 306, tag = "[V]" }]
+note = "Won in the Valley in spring 1862 against three separate Union forces."
+
+[[trait]]
+commander = "ulysses_s_grant"
+trait = "aggressive"
+confidence = "unverified"
+source_page = 265
+source_tag = "untagged"
+sources = [{ document = "CWV", page = 265, tag = "untagged" }]
+note = "In 1864 coordinated simultaneous offensives in several theaters (Meade and Butler against Lee, Sherman against Johnston, Sheridan in the Valley) and pressed Lee by continuous contact in the Overland Campaign, accepting heavy losses."
+
+[[trait]]
+commander = "wade_hampton_iii"
+trait = "cavalry_flair"
+confidence = "partial"
+source_page = 78
+source_tag = "untagged"
+sources = [{ document = "CWV", page = 78, tag = "untagged" }, { document = "CWV", page = 83, tag = "untagged" }]
+note = "At Brandy Station his brigade took part in a ferocious series of charges that cleared Fleetwood Hill, and at East Cavalry Field it met a mounted clash with Custer's 1st Michigan."
+
+[[trait]]
+commander = "william_barksdale"
+trait = "aggressive"
+confidence = "partial"
+source_page = 82
+source_tag = "untagged"
+sources = [{ document = "CWV", page = 82, tag = "untagged" }, { document = "CWV", page = 318, tag = "[V]" }]
+note = "On 1863-07-02 he rode at the head of his brigade in a charge that broke Graham's brigade at the Peach Orchard."
+
+[[trait]]
+commander = "william_barksdale"
+trait = "defensive_skill"
+confidence = "partial"
+source_page = 318
+source_tag = "[V]"
+sources = [{ document = "CWV", page = 318, tag = "[V]" }]
+note = "His brigade held the Fredericksburg waterfront against the Union bridge builders in December 1862."
+
+[[trait]]
+commander = "william_t_sherman"
+trait = "aggressive"
+confidence = "unverified"
+source_page = 269
+source_tag = "untagged"
+sources = [{ document = "CWV", page = 269, tag = "untagged" }]
+note = "Launched frontal assaults at Chickasaw Bayou and Kennesaw Mountain."
+
+[[trait]]
+commander = "winfield_scott_hancock"
+trait = "aggressive"
+confidence = "partial"
+source_page = 270
+source_tag = "[V]"
+sources = [{ document = "CWV", page = 270, tag = "[V]" }]
+note = "Won the Hancock the Superb nickname at Williamsburg in 1862 for a counterattack praised in a telegram from McClellan."
+
+[[relationship]]
+commander = "braxton_bragg"
+kind = "feud"
+partner = "leonidas_polk"
+partner_name = "Leonidas Polk"
+confidence = "partial"
+source_page = 305
+source_tag = "[V]"
+sources = [{ document = "CWV", page = 305, tag = "[V]" }]
+note = "The page lists Polk among the generals with whom Bragg quarreled."
+
+[[relationship]]
+commander = "daniel_e_sickles"
+kind = "feud"
+partner = "george_g_meade"
+partner_name = "George G. Meade"
+confidence = "unverified"
+source_page = 291
+source_tag = "[U]"
+sources = [{ document = "CWV", page = 291, tag = "[U]" }, { document = "CWV", page = 85, tag = "untagged" }]
+note = "The page names Sickles's insubordination and says feuds of Hooker and Sickles with Meade rest on memory."
+
+[[relationship]]
+commander = "george_b_mcclellan"
+kind = "rivalry"
+partner = "abraham_lincoln"
+partner_name = "Abraham Lincoln"
+confidence = "partial"
+source_page = 264
+source_tag = "[V]"
+sources = [{ document = "CWV", page = 264, tag = "[V]" }]
+note = "Antagonized Lincoln and Stanton; Lincoln ordered his removal on 1862-11-05, and he then ran against Lincoln in 1864."
+
+[[relationship]]
+commander = "gouverneur_k_warren"
+kind = "feud"
+partner = "philip_h_sheridan"
+partner_name = "Philip H. Sheridan"
+confidence = "partial"
+source_page = 271
+source_tag = "[V]"
+sources = [{ document = "CWV", page = 271, tag = "[V]" }]
+note = "Sheridan relieved him on the spot at Five Forks on 1865-04-01 for slowness; a later court of inquiry found the relief unjustified."
+
+[[relationship]]
+commander = "james_longstreet"
+kind = "feud"
+partner = "jubal_a_early"
+partner_name = "Jubal A. Early"
+confidence = "partial"
+source_page = 306
+source_tag = "[V]"
+sources = [{ document = "CWV", page = 306, tag = "[V]" }]
+note = "After the war Early and others led Lost Cause attacks on Longstreet."
+
+[[relationship]]
+commander = "jubal_a_early"
+kind = "feud"
+partner = "james_longstreet"
+partner_name = "James Longstreet"
+confidence = "partial"
+source_page = 306
+source_tag = "[V]"
+sources = [{ document = "CWV", page = 306, tag = "[V]" }]
+note = "Early led Lost Cause attacks on Longstreet after the war."
+
+[[relationship]]
+commander = "pgt_beauregard"
+kind = "feud"
+partner = "jefferson_davis"
+partner_name = "Jefferson Davis"
+confidence = "partial"
+source_page = 305
+source_tag = "[V]"
+sources = [{ document = "CWV", page = 305, tag = "[V]" }, { document = "CWV", page = 302, tag = "untagged" }]
+note = "Davis replaced him with Bragg after Shiloh, and the page lists a feud with Davis among his weaknesses."
+
+[[relationship]]
+commander = "philip_h_sheridan"
+kind = "feud"
+partner = "gouverneur_k_warren"
+partner_name = "Gouverneur K. Warren"
+confidence = "partial"
+source_page = 271
+source_tag = "[V]"
+sources = [{ document = "CWV", page = 271, tag = "[V]" }]
+note = "Relieved Warren at Five Forks on 1865-04-01; a court of inquiry convened in 1879 found the relief unjustified."
+
+[[relationship]]
+commander = "william_n_pendleton"
+kind = "feud"
+partner = "james_longstreet"
+partner_name = "james_longstreet"
+confidence = "partial"
+source_page = 311
+source_tag = "[V]"
+sources = [{ document = "CWV", page = 311, tag = "[V]" }]
+note = "In 1873 he publicly blamed Longstreet for the Gettysburg defeat."

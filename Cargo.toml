@@ -1,6 +1,6 @@
 [workspace]
 resolver = "2"
-members = ["crates/core-math", "crates/sim-state", "crates/battle-rules", "crates/acoustics-model", "shells/sim-cli", "shells/viewer-web", "shells/perf-kit"]
+members = ["crates/core-math", "crates/sim-state", "crates/battle-rules", "crates/acoustics-model", "shells/sim-cli", "shells/viewer-web", "shells/perf-kit", "crates/battle-ai"]
 
 [workspace.package]
 edition = "2021"
