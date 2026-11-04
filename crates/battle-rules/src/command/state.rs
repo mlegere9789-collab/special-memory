@@ -2,6 +2,7 @@
 //! pictures, with enabling and the officer position refresh. Everything here is hashed by
 //! [`write_command_block`](super::hash::write_command_block) when the layer is on.
 
+use super::chain::StaffJob;
 use super::{CommandTable, Latitude, Level, LinkSpec, Medium, OfficerId, OfficerSpec, TraitMask};
 use crate::{fx_ratio, BattleState, DataError, Order, RegimentId};
 use core_math::{Fx, Vec2Fx};
@@ -307,6 +308,11 @@ pub struct OrderRecord {
     pub eta_lo: u64,
     /// Latest estimated arrival.
     pub eta_hi: u64,
+    /// The latest tick the addressee's ack should reach the issuer: `eta_hi` plus the latest
+    /// estimate of the return trip, both taken when the order was sent.
+    pub ack_deadline: u64,
+    /// The medium the order was sent by.
+    pub medium: Medium,
     /// The order as sent.
     pub sent: OrderBody,
     /// The addressee's receipt, once it reached the issuer.
@@ -334,6 +340,8 @@ pub struct CommandState {
     pub next_msg: u32,
     /// One picture per officer, in officer order.
     pub pics: Vec<Picture>,
+    /// Orders read and waiting for the staff of their addressee, ascending by `(ready, id)`.
+    pub staff: Vec<StaffJob>,
 }
 
 impl CommandState {
@@ -411,10 +419,12 @@ impl BattleState {
         }
     }
 
-    /// One tick of the command layer: refreshes officer positions every `pos_interval_ticks`,
-    /// then handles message arrivals ([`BattleState::step_messages`]); the chain takes the
-    /// arrivals in a later part, and observation and reports are added later still. Nothing
-    /// happens while the layer is off.
+    /// One tick of the command layer (step TK-03): refreshes officer positions every
+    /// `pos_interval_ticks`, observation, reports, message arrivals
+    /// ([`BattleState::step_messages`]), report merging, then the chain
+    /// ([`BattleState::step_chain`]): acks reach their issuers and the orders whose staff time
+    /// has run out are interpreted, acknowledged and passed down. Nothing happens while the
+    /// layer is off.
     pub fn step_command(&mut self, table: &CommandTable) {
         if self.cmd.is_some()
             && self
@@ -428,5 +438,6 @@ impl BattleState {
         self.step_reports(table);
         let arrivals = self.step_messages(table);
         self.receive_reports(table, &arrivals);
+        self.step_chain(table, &arrivals);
     }
 }

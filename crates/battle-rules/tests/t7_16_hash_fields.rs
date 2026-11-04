@@ -53,6 +53,8 @@ fn record() -> OrderRecord {
         sent_tick: 5,
         eta_lo: 50,
         eta_hi: 70,
+        ack_deadline: 120,
+        medium: battle_rules::command::Medium::Courier,
         sent: body(),
         ack: Some(AckRecord {
             tick: 90,

@@ -232,6 +232,7 @@ impl BattleState {
             Fate::Lost => Truth::Lost,
             Fate::Captured => Truth::Captured,
         };
+        let back = self.return_trip(table, to, from);
         let cmd = self.cmd.as_mut().expect("layer is on");
         cmd.records.push(OrderRecord {
             id,
@@ -240,6 +241,8 @@ impl BattleState {
             sent_tick: tick,
             eta_lo: est.eta_lo,
             eta_hi: est.eta_hi,
+            ack_deadline: est.eta_hi + back,
+            medium: est.medium,
             sent: body,
             ack: None,
             truth,
