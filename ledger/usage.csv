@@ -47,3 +47,5 @@ date,ticket,class,estimated_usage,actual_usage,review_defects,rework_count,notes
 2026-11-04,T-081 scenario format loader validation hash (SPEC-008 2.3 and 3),M,,218944 tokens,0,0,fresh implementer; 12 Rust tests and 8 Python tests; fixtures v01 to v12; no new dependency
 2026-11-04,T-022 fire phase with smoke source,L,,242568 tokens,0,0,fresh implementer; 27 tests; over 400 lines (tests and data); Counters landed early
 2026-11-04,T-132 evidence ladder known-conflict fixtures (SPEC-013 GB04 to GB06 GB17),M,,172521 tokens,0,0,fresh implementer; 41 tests; C01 to C14; over 400 lines (tests and fixtures)
+2026-11-04,T-123 acoustics propagation on flat ground (SPEC-012 section 6),M,,163263 tokens,0,0,fresh implementer; 25 tests; reference fixture 230 rows; spec formula corrected (spherical loss)
+2026-11-04,T-133 chain sums casualties arms (SPEC-013 GB10 to GB12 GB18),M,,146408 tokens,0,0,fresh implementer; 36 tests; probes and good chain
