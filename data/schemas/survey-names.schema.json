@@ -1,0 +1,27 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "survey-names.schema.json",
+  "title": "Named features, names.toml (SPEC-014 section 3)",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema"],
+  "properties": {
+    "schema": {"const": "survey-names/1"},
+    "name": {"type": "array", "items": {"$ref": "#/$defs/name"}}
+  },
+  "$defs": {
+    "name": {
+      "allOf": [{"$ref": "survey-common.schema.json#/$defs/provenance"}],
+      "required": ["id", "name", "kind", "anchor"],
+      "unevaluatedProperties": false,
+      "properties": {
+        "id": {"$ref": "survey-common.schema.json#/$defs/id"},
+        "name": {"$ref": "survey-common.schema.json#/$defs/text"},
+        "kind": {"$ref": "survey-common.schema.json#/$defs/text"},
+        "anchor": {"$ref": "survey-common.schema.json#/$defs/point"},
+        "polygon": {"$ref": "survey-common.schema.json#/$defs/ring"}
+
+      }
+    }
+  }
+}

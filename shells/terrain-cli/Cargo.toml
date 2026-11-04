@@ -1,0 +1,23 @@
+[package]
+name = "hd-terrain"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+publish.workspace = true
+description = "Battlefield data compiler: survey geometry checks and the height, class and cover pack (SPEC-014)"
+
+[lints]
+workspace = true
+
+[lib]
+name = "hd_terrain"
+path = "src/lib.rs"
+
+[[bin]]
+name = "hd-terrain"
+path = "src/main.rs"
+
+[dependencies]
+core-math = { path = "../../crates/core-math" }
+terrain = { path = "../../crates/terrain" }
+toml = { version = "=1.2.0", default-features = false, features = ["std", "parse", "serde"] }

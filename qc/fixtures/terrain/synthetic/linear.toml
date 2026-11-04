@@ -1,0 +1,26 @@
+# Synthetic linear features: a 6 m road, a creek that flows downhill, a wall. Not historical data.
+schema = "survey-linear/1"
+
+[[line]]
+id = 10
+kind = "road"
+half_width_mm = 3000
+dead_end = true
+points = [[20000, 200000], [120000, 200000]]
+confidence = "unverified"
+sources = [{ source = 1, sheet = "synthetic" }]
+
+[[line]]
+id = 20
+kind = "creek"
+half_width_mm = 2000
+points = [[300000, 300000], [300000, 200000]]
+confidence = "unverified"
+sources = [{ source = 1, sheet = "synthetic" }]
+
+[[line]]
+id = 30
+kind = "stone_wall"
+points = [[400000, 100000], [400000, 160000], [440000, 160000]]
+confidence = "unverified"
+sources = [{ source = 1, sheet = "synthetic" }]

@@ -201,6 +201,15 @@ dependencies = [
 ]
 
 [[package]]
+name = "hd-terrain"
+version = "0.0.1"
+dependencies = [
+ "core-math",
+ "terrain",
+ "toml",
+]
+
+[[package]]
 name = "history-cal"
 version = "0.0.1"
 dependencies = [

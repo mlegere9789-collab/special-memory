@@ -1,0 +1,9 @@
+# Synthetic building footprint (16 cells): not historical data.
+schema = "survey-buildings/1"
+
+[[building]]
+id = 1
+height_mm = 6000
+outer = [[320000, 320000], [336000, 320000], [336000, 336000], [320000, 336000]]
+confidence = "unverified"
+sources = [{ source = 1, sheet = "synthetic" }]

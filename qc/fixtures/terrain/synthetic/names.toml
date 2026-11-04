@@ -1,0 +1,10 @@
+# Synthetic named feature: not historical data.
+schema = "survey-names/1"
+
+[[name]]
+id = 1
+name = "Test Knoll"
+kind = "summit"
+anchor = [88000, 88000]
+confidence = "unverified"
+sources = [{ source = 1, sheet = "synthetic" }]
