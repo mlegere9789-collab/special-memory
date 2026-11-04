@@ -99,7 +99,12 @@ fn neutral_weather_march_single_equals_the_none_run() {
         assert_eq!(fatigue_of(&plain), fatigue_of(&env));
     }
     assert!(plain.loco.iter().any(|l| l.fatigue > 0));
-    assert_eq!(plain.hash(), env.hash());
+    // The environment block (SPEC-009 section 9) is the only difference between the two hashes.
+    let with_block = env.hash();
+    let mut stripped = env.clone();
+    stripped.env = None;
+    assert_eq!(plain.hash(), stripped.hash());
+    assert_ne!(plain.hash(), with_block);
     assert_eq!(env.weather.wet_pm, 1000);
     assert_eq!(env.weather.ground_pm, 1000);
 }

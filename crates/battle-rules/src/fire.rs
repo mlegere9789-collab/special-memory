@@ -349,8 +349,10 @@ impl BattleState {
             ranges,
             weather,
             counters,
+            env,
             ..
         } = self;
+        let source = env.as_ref().map(|e| &e.table().smoke);
         if regfire.iter().all(|r| r.weapon.is_none()) {
             return;
         }
@@ -417,7 +419,10 @@ impl BattleState {
             let chance = misfire_ppm(w, u32::from(f.fouling), weather.wet_pm);
             if d.misfire_roll % 1_000_000 < chance {
                 counters.misfires += 1;
-                smoke.add(muzzle, shot_units(w.powder_mg, true));
+                match source {
+                    Some(p) => smoke.add_smoke(muzzle, w.powder_mg, true, p),
+                    None => smoke.add(muzzle, shot_units(w.powder_mg, true)),
+                }
                 after_discharge(f, w, reg.training, usize::from(w.misfire_restart_step));
                 continue;
             }
@@ -455,7 +460,10 @@ impl BattleState {
             });
             *seq += 1;
             counters.projectiles_spawned += 1;
-            smoke.add(muzzle, shot_units(w.powder_mg, false));
+            match source {
+                Some(p) => smoke.add_smoke(muzzle, w.powder_mg, false, p),
+                None => smoke.add(muzzle, shot_units(w.powder_mg, false)),
+            }
             f.fouling = (u32::from(f.fouling) + w.fouling_per_shot).min(1000) as u16;
             if let Some(l) = loco.get_mut(idx as usize) {
                 let drain = u64::from(w.fire_drain_ppm) * u64::from(drain_pm) / 1000;
@@ -467,9 +475,15 @@ impl BattleState {
         }
     }
 
-    /// The smoke part of the end of a tick: every cell decays (SPEC-005 section 8).
+    /// The smoke part of the end of a tick (TK-12): with `env` `None` every cell decays
+    /// (SPEC-005 section 8); with `env` `Some` the SPEC-009 update runs when
+    /// `tick % smoke.period_ticks == period_ticks - 1` and nothing else changes the grid.
     pub fn step_smoke(&mut self) {
-        self.smoke.decay();
+        if self.env.is_some() {
+            self.update_smoke_env();
+        } else {
+            self.smoke.decay();
+        }
     }
 }
 

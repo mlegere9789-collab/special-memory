@@ -18,7 +18,8 @@ fn order_fields(order: &Order) -> (u8, i64, i64, u8) {
 
 /// The hash of a battle: the world, then every regiment ascending by id, then every locomotion
 /// slot ascending, then the fire block, the smoke block and the casualty block of SPEC-005, then
-/// the command block when `cmd` is `Some` (SPEC-007). FNV-1a 64 over little-endian fields.
+/// the command block when `cmd` is `Some` (SPEC-007), then the environment block when `env` is
+/// `Some` (SPEC-009). FNV-1a 64 over little-endian fields.
 ///
 /// Per regiment: `id u16, team u8, training u8, state tag u8 (0 steady, 1 forming), from u8,
 /// to u8, ticks_left u32, anchor x i64, anchor y i64, heading u32, order tag u8, order x i64,
@@ -75,6 +76,7 @@ pub fn battle_hash(state: &BattleState) -> u64 {
     if let Some(cmd) = &state.cmd {
         write_command_block(&mut h, cmd);
     }
+    write_environment(&mut h, state);
     h.finish()
 }
 
@@ -158,4 +160,31 @@ fn write_casualties(h: &mut StateHasher, state: &BattleState) {
         h.write_u32(c.shooter_unit);
         h.write_u8(c.ammo);
     }
+}
+
+/// Marks the environment block: "ENV1".
+const ENV_MAGIC: u32 = 0x45_4E_56_31;
+
+/// The environment block (SPEC-009 section 9), written only when `env` is `Some`: `u32
+/// 0x45_4E_56_31`, then `WeatherNow` (`temp i32, humidity i32, wind x i64, wind y i64, rain i32,
+/// clear_vis i32, light i32`), powder damp `u32`, ground wetness `u32`, and the smoke losses
+/// `lost_edge u64, lost_decay u64, lost_cap u64`. Later tickets append the sight fields.
+fn write_environment(h: &mut StateHasher, state: &BattleState) {
+    let Some(env) = &state.env else {
+        return;
+    };
+    h.write_u32(ENV_MAGIC);
+    let n = env.now();
+    h.write_u32(n.temp_f10 as u32);
+    h.write_u32(n.humidity_pm as u32);
+    h.write_i64(n.wind_x_mm_s);
+    h.write_i64(n.wind_y_mm_s);
+    h.write_u32(n.rain_pm as u32);
+    h.write_u32(n.clear_vis_mm as u32);
+    h.write_u32(n.light_pm as u32);
+    h.write_u32(env.powder_damp_ppm());
+    h.write_u32(env.ground_wet_ppm());
+    h.write_u64(state.smoke.lost_edge);
+    h.write_u64(state.smoke.lost_decay);
+    h.write_u64(state.smoke.lost_cap);
 }
