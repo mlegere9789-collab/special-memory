@@ -1,0 +1,126 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "replay-script.schema.json",
+  "title": "Replay script (SPEC-011 section 3, amendment A1)",
+  "description": "Orders, trigger hooks, observations and overrides on the scenario clock. Arrivals, departures and weather belong to the SPEC-008 scenario (ADR 0010, D-06). Times are clock seconds since 00:00 on 1863-07-01; tick = (at_s - clock_start_s) * 20.",
+  "type": "object",
+  "required": ["schema", "meta"],
+  "additionalProperties": false,
+  "properties": {
+    "schema": {"const": "replay-script/1"},
+    "meta": {
+      "type": "object",
+      "required": ["scenario", "fidelity_class", "end_s"],
+      "additionalProperties": false,
+      "properties": {
+        "scenario": {"type": "string", "minLength": 1},
+        "fidelity_class": {"type": "integer", "minimum": 0, "maximum": 2},
+        "clock_start_s": {"type": "integer", "minimum": 0},
+        "end_s": {"type": "integer", "minimum": 1}
+      }
+    },
+    "order": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "unit", "at_s", "kind"],
+        "allOf": [
+          {"$ref": "#/$defs/provenance_fields"},
+          {"if": {"properties": {"kind": {"const": "move"}}, "required": ["kind"]}, "then": {"required": ["x_m", "y_m", "gait"]}},
+          {"if": {"properties": {"kind": {"const": "form"}}, "required": ["kind"]}, "then": {"required": ["formation"]}},
+          {"if": {"properties": {"kind": {"const": "face"}}, "required": ["kind"]}, "then": {"required": ["heading_deg"]}},
+          {"if": {"properties": {"kind": {"const": "fire_at"}}, "required": ["kind"]}, "then": {"required": ["target_unit"]}}
+        ],
+        "unevaluatedProperties": false,
+        "properties": {
+          "id": {"$ref": "#/$defs/ident"},
+          "unit": {"$ref": "#/$defs/ident"},
+          "at_s": {"type": "integer", "minimum": 0},
+          "kind": {"enum": ["hold", "move", "form", "face", "fire_at"]},
+          "x_m": {"$ref": "#/$defs/metres"},
+          "y_m": {"$ref": "#/$defs/metres"},
+          "gait": {"enum": ["walk", "quick", "double_quick", "run"]},
+          "formation": {"enum": ["column", "line", "skirmish"]},
+          "heading_deg": {"type": "integer", "minimum": 0, "maximum": 359},
+          "target_unit": {"$ref": "#/$defs/ident"}
+        }
+      }
+    },
+    "trigger": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "at_s"],
+        "allOf": [{"$ref": "#/$defs/provenance_fields"}],
+        "unevaluatedProperties": false,
+        "properties": {
+          "id": {"$ref": "#/$defs/ident"},
+          "at_s": {"type": "integer", "minimum": 0},
+          "early_s": {"type": "integer", "minimum": 0},
+          "late_s": {"type": "integer", "minimum": 0},
+          "hook": {"$ref": "#/$defs/ident"}
+        }
+      }
+    },
+    "observe": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "kind", "lo_s", "hi_s"],
+        "allOf": [
+          {"$ref": "#/$defs/provenance_fields"},
+          {"if": {"properties": {"kind": {"enum": ["first_casualty", "last_casualty_by"]}}, "required": ["kind"]}, "then": {"required": ["a", "b"]}},
+          {"if": {"properties": {"kind": {"const": "reached"}}, "required": ["kind"]}, "then": {"required": ["unit", "x_m", "y_m", "radius_m"]}},
+          {"if": {"properties": {"kind": {"const": "loss_rate_at_least"}}, "required": ["kind"]}, "then": {"required": ["unit", "rate_pm"]}}
+        ],
+        "unevaluatedProperties": false,
+        "properties": {
+          "id": {"$ref": "#/$defs/ident"},
+          "kind": {"enum": ["first_casualty", "reached", "loss_rate_at_least", "last_casualty_by"]},
+          "a": {"$ref": "#/$defs/ident"},
+          "b": {"$ref": "#/$defs/ident"},
+          "unit": {"$ref": "#/$defs/ident"},
+          "x_m": {"$ref": "#/$defs/metres"},
+          "y_m": {"$ref": "#/$defs/metres"},
+          "radius_m": {"type": "integer", "minimum": 0, "maximum": 1000000},
+          "rate_pm": {"type": "integer", "minimum": 0, "maximum": 1000},
+          "lo_s": {"type": "integer", "minimum": 0},
+          "hi_s": {"type": "integer", "minimum": 1},
+          "after": {"$ref": "#/$defs/ident"}
+        }
+      }
+    },
+    "override": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "target_kind", "target", "variant", "at_s"],
+        "allOf": [{"$ref": "#/$defs/provenance_fields"}],
+        "unevaluatedProperties": false,
+        "properties": {
+          "id": {"$ref": "#/$defs/ident"},
+          "target_kind": {"enum": ["arrival", "departure", "trigger"]},
+          "target": {"$ref": "#/$defs/ident"},
+          "variant": {"enum": ["early", "late"]},
+          "at_s": {"type": "integer", "minimum": 0}
+        }
+      }
+    }
+  },
+  "$defs": {
+    "ident": {"type": "string", "pattern": "^[a-z0-9_]+$"},
+    "metres": {"type": "integer", "minimum": -1000000, "maximum": 1000000},
+    "provenance_fields": {
+      "type": "object",
+      "required": ["confidence"],
+      "properties": {
+        "confidence": {"$ref": "common.schema.json#/$defs/confidence"},
+        "placeholder": {"type": "boolean"},
+        "calibration_target": {"type": "string", "pattern": "^CT-[0-9]{3}-[0-9]+$"},
+        "sources": {"$ref": "common.schema.json#/$defs/sources"},
+        "second_source": {"type": "string"},
+        "note": {"type": "string"}
+      }
+    }
+  }
+}

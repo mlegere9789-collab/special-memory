@@ -1,0 +1,62 @@
+# Toy replay script (SPEC-011 section 3, amendment A1). Times are invented; every row is a placeholder.
+schema = "replay-script/1"
+
+[meta]
+scenario = "toy_replay"
+fidelity_class = 0
+clock_start_s = 0
+end_s = 60
+
+[[order]]
+id = "o_bde_move"
+unit = "toy_bde"
+at_s = 10
+kind = "move"
+x_m = 500
+y_m = 0
+gait = "quick"
+confidence = "unverified"
+placeholder = true
+calibration_target = "CT-011-1101"
+
+[[order]]
+id = "o_r1_line"
+unit = "toy_r1"
+at_s = 10
+kind = "form"
+formation = "line"
+confidence = "unverified"
+placeholder = true
+calibration_target = "CT-011-1101"
+
+[[trigger]]
+id = "t_marker"
+at_s = 5
+early_s = 4
+late_s = 6
+confidence = "unverified"
+placeholder = true
+calibration_target = "CT-011-1101"
+
+[[observe]]
+id = "ob_reached"
+kind = "reached"
+unit = "toy_r1"
+x_m = 500
+y_m = -50
+radius_m = 5
+lo_s = 20
+hi_s = 60
+confidence = "unverified"
+placeholder = true
+calibration_target = "CT-011-1101"
+
+[[override]]
+id = "ov_r2_late"
+target_kind = "arrival"
+target = "toy_r2"
+variant = "late"
+at_s = 7
+confidence = "unverified"
+placeholder = true
+calibration_target = "CT-011-1101"
