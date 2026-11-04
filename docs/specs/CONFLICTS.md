@@ -140,3 +140,8 @@ Each item gives the options and a recommendation. Until a decision is recorded (
 ## E. Decisions taken
 
 All of D-01 to D-10 are resolved as recommended (option (a) each) by `docs/adr/0010-resolution-of-design-decisions-d01-d10.md`. The first step of each blocked ticket is to amend its spec text to match that ADR.
+
+## F. Follow-ups found during wave 1
+
+- Stream id blocks in REGISTRY have no upper bounds; T-026 set 24-bit and 28-bit limits in `registry.rs`. Add the bounds to the REGISTRY tables in the next registry edit.
+- Test-only stream id `0x0F01` in `crates/battle-rules/tests/gauss_unit.rs` is not registered; register a test-only band or move the id into `registry.rs`.
