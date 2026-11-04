@@ -7,3 +7,6 @@ date,ticket,class,estimated_usage,actual_usage,review_defects,rework_count,notes
 2026-11-04,T-H1 A1 hardening (SPEC-001..003 amendments),L,,90894 tokens (finish pass; first pass stopped mid-run),0,1,fresh implementer agent; 224 debug / 225 release tests; 10 mutants proved killed; goldens unchanged
 2026-11-04,T-014 SpatialGrid::query_segment,M,,100730 tokens,0,0,fresh implementer agent; proptest vs brute force; 1000 segments of 15 m in 942 us (20k agents)
 2026-11-04,T-015 battle-rules crate + loader,M,,100728 tokens,0,0,fresh implementer agent; toml =1.2.0 serde =1.0.229 exact pins; ADR 0004
+2026-11-04,T-016 locomotion terrain fatigue,M,,131661 tokens,0,0,fresh implementer agent; 25 tests; placeholders with CT-1..CT-4
+2026-11-04,T-017 drill table slots assignment,M,,127058 tokens,0,0,fresh implementer agent; 23 tests; placeholders CT-5
+2026-11-04,T-020 ammo weapon damage tables,M,,158321 tokens,0,0,fresh implementer agent; 32 tests; 7 spec deviations recorded in SPEC-005 A3

@@ -131,3 +131,6 @@ Baseline: toy scenario mean 11.8 ms, p99 17 ms per tick at 20,000 agents, single
 
 ## 15. Done when
 fmt, clippy `-D warnings`, `cargo test --workspace` (also `--release`) and all T4 tests pass; the tools scans pass; schemas, data and golden hashes committed and verified on three platforms; public items documented; no floating point outside `#[cfg(test)]`; T4-13 numbers recorded.
+
+## Amendment A1 (from T-016 implementation, 2026-11-04)
+Open inconsistency to settle in calibration ticket T-024: calibration target CT-4 says woods slow a line to 50 percent of its open-ground speed or less, but the `woods` terrain row is `speed_pm = 600`. The data keep the 600 value (a placeholder); the calibration run decides which of the two is changed. `Gait` is defined in `crates/battle-rules/src/locomotion.rs` and T-018 must reuse it. `TerrainGrid::from_rows` takes the `TerrainTable` so it can reject unknown legend classes and record which classes block movement. `fatigue_step` takes the applied speed as `Fx`; zero means the displacement was blocked. Blocking is applied per axis, x then y. `assign_slots` returns pairs in ascending slot index and surplus soldiers receive no slot; `transition_ticks` is 0 when `from == to`; `regiment_roster` skips disabled and wounded soldiers.

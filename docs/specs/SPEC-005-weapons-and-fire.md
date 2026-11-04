@@ -124,3 +124,12 @@ Hypothesis H5: 20,000 soldiers firing at will give about 42 shots per tick (20,0
 
 ## 13. Done when
 fmt, clippy `-D warnings`, `cargo test --workspace` (also `--release`) and T5-01 to T5-21 pass; schemas, data, goldens and `f0-curves.json` committed and verified on three platforms; scans pass; public items documented; no floating point outside `#[cfg(test)]`; T5-21 numbers recorded in a cycle report.
+
+## Amendment A3 (from T-020 implementation, 2026-11-04)
+1. `shot_12` muzzle speed is 452628 mm/s (1485 feet per second exactly), not 452600, so that acceptance test T5-02 holds as written.
+2. Pellet masses are derived from the stated diameter and iron density: the canister pellet is 207 g (a 38 mm sphere at 7.2 g/cm3 gives 206.9 g; 208 g would need 38.1 mm) and case pellets are 19 g. The earlier 208 g figure is superseded.
+3. Table schema: `ammo` is an array of `{ id, rounds }` rows rather than an `ammo[]` list plus a separate `rounds` field, because the data reader supports tables of integers and strings but not string arrays.
+4. Shell sphere speed is 375 permille of muzzle speed (150 m/s for the field gun reference).
+5. `misfire_restart_step` is a step id in data and an index in code.
+6. Gun muzzle height (1000 mm) and gun cover factor (500 permille) are placeholders with calibration targets; the original text gave neither.
+7. The 1000-permille cumulative row-sum rule is enforced by the Rust loader; `tools/validate_data.py` does not check it.
