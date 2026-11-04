@@ -1,0 +1,150 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "fidelity.schema.json",
+  "title": "Fidelity table (SPEC-008 section 2.1)",
+  "description": "Rows of data/rules/fidelity.toml. Lengths in mm, durations in ticks. Each arm row's F1 limit must exceed its F0 limit; JSON Schema cannot compare two fields, so the loader (FidelityTable::from_toml_str) enforces that and that infantry, cavalry and battery each appear once.",
+  "$defs": {
+    "provenance_fields": {
+      "properties": {
+        "confidence": {
+          "$ref": "common.schema.json#/$defs/confidence"
+        },
+        "placeholder": {
+          "type": "boolean"
+        },
+        "calibration_target": {
+          "type": "string",
+          "pattern": "^CT-[0-9]{3}-[0-9]+$"
+        },
+        "sources": {
+          "$ref": "common.schema.json#/$defs/sources"
+        },
+        "second_source": {
+          "type": "string"
+        },
+        "note": {
+          "type": "string"
+        }
+      }
+    }
+  },
+  "type": "object",
+  "required": [
+    "schema",
+    "globals",
+    "arm"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "schema": {
+      "const": "fidelity/1"
+    },
+    "globals": {
+      "type": "object",
+      "required": [
+        "assign_interval_ticks",
+        "hysteresis_mm",
+        "min_dwell_ticks",
+        "bundle_ticks",
+        "f2_interval_ticks",
+        "sector_mm",
+        "hot_margin_sectors",
+        "grid_cell_mm",
+        "max_grid_cells",
+        "confidence"
+      ],
+      "allOf": [
+        {
+          "$ref": "#/$defs/provenance_fields"
+        }
+      ],
+      "unevaluatedProperties": false,
+      "properties": {
+        "assign_interval_ticks": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 6000
+        },
+        "hysteresis_mm": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 12000000
+        },
+        "min_dwell_ticks": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 1000000
+        },
+        "bundle_ticks": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 6000
+        },
+        "f2_interval_ticks": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 6000
+        },
+        "sector_mm": {
+          "type": "integer",
+          "minimum": 1000,
+          "maximum": 12000000
+        },
+        "hot_margin_sectors": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 16
+        },
+        "grid_cell_mm": {
+          "type": "integer",
+          "minimum": 100,
+          "maximum": 1000000
+        },
+        "max_grid_cells": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 268435456
+        }
+      }
+    },
+    "arm": {
+      "type": "array",
+      "minItems": 3,
+      "maxItems": 3,
+      "items": {
+        "type": "object",
+        "required": [
+          "id",
+          "f0_mm",
+          "f1_mm",
+          "confidence"
+        ],
+        "allOf": [
+          {
+            "$ref": "#/$defs/provenance_fields"
+          }
+        ],
+        "unevaluatedProperties": false,
+        "properties": {
+          "id": {
+            "enum": [
+              "infantry",
+              "cavalry",
+              "battery"
+            ]
+          },
+          "f0_mm": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 12000000
+          },
+          "f1_mm": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 12000000
+          }
+        }
+      }
+    }
+  }
+}

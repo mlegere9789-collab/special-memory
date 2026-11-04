@@ -98,3 +98,11 @@ pub use scenario::{
     scenario_hash, Arm, Arrival, Departure, MapSpec, Objective, Scenario, ScenarioError, Side,
     StrengthCheck, TerrainSpec, Trigger, TriggerKind, TriggerOrder, Unit, WeatherRow,
 };
+
+// T-082
+mod fidelity;
+mod sector;
+pub use fidelity::{
+    classify, ArmRow, ClassInput, FidelityClass, FidelityGlobals, FidelityTable, F0, F1, F2,
+};
+pub use sector::{HotWindow, SectorBody, SectorMap, SectorState};
