@@ -33,6 +33,8 @@ jobs:
         run: python3 tools/check_registry.py
       - name: validator self-tests
         run: python3 tools/test_validate_data.py && python3 tools/test_check_registry.py
+      - name: Gettysburg audit self-tests
+        run: python3 tools/test_gb_audit.py
 
   rust:
     name: rust (fmt, clippy, tests)

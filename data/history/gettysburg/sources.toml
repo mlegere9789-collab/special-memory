@@ -1,0 +1,86 @@
+schema = "gb-sources/1"
+
+# Source registry for the Gettysburg order-of-battle audit (SPEC-013 section 4).
+# Only CWV has been consulted. Every other row is a candidate: it records no edition, access,
+# licence text or date until a Librarian confirms the source exists in the assumed form.
+# Candidate lineages are placeholders (one lineage per source) until derivation is recorded.
+
+[[source]]
+code = "CWV"
+title = "Civil War research volume"
+kind = "internal_research"
+lineage = "web_compilation"
+licence_class = "internal"
+consulted = true
+edition = "Research volume as supplied to the project; no edition statement recorded"
+access = "Project research volume (PDF)"
+licence_text = "Internal research material (licence class internal, SPEC-013 section 4); no external licence text recorded"
+consulted_on = "2026-11-04"
+page_scheme = "PDF page number; each page carries its own tag, untagged when none"
+note = "The volume states it was compiled mainly from web encyclopedias and a battlefield-trust site, so it shares a lineage with them."
+
+[[source]]
+code = "OR"
+title = "Official Records"
+kind = "primary_official"
+lineage = "official_records"
+licence_class = "unknown"
+consulted = false
+
+[[source]]
+code = "NPS"
+title = "Park-service historic resource and order-of-battle materials"
+kind = "park_material"
+lineage = "park_service"
+licence_class = "permission_required"
+consulted = false
+note = "Park-service material needs written permission (plan section 9)."
+
+[[source]]
+code = "BACH"
+title = "Bachelder papers and maps"
+kind = "primary_map"
+lineage = "bachelder"
+licence_class = "unknown"
+consulted = false
+
+[[source]]
+code = "WARREN"
+title = "Warren survey map"
+kind = "primary_map"
+lineage = "warren_survey"
+licence_class = "unknown"
+consulted = false
+
+[[source]]
+code = "LOSS"
+title = "Specialist strength and loss compilations"
+kind = "specialist_compilation"
+lineage = "loss_compilations"
+licence_class = "unknown"
+consulted = false
+
+[[source]]
+code = "STUDY"
+title = "Multi-volume studies of the campaign and the three days"
+kind = "study"
+lineage = "campaign_studies"
+licence_class = "unknown"
+consulted = false
+
+[[source]]
+code = "LOC"
+title = "Library of Congress photographs"
+kind = "primary_photo"
+lineage = "loc_photographs"
+licence_class = "unknown"
+consulted = false
+
+[[source]]
+code = "BMI"
+title = "Union Bureau of Military Information order-of-battle reports"
+kind = "primary_official"
+lineage = "bureau_military_information"
+licence_class = "unknown"
+consulted = false
+note = "Named at CWV p258; existence and form unconfirmed."
