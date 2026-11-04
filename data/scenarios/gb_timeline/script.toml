@@ -1,0 +1,160 @@
+# SPEC-011 section 7, timeline rows TL-01 to TL-15 (clock seconds since 00:00 on 1863-07-01).
+# Row ids are the TL ids in lower case (`tl_06` is TL-06). Arrivals live in the SPEC-008 scenario
+# (ADR 0010 D-06), so each arrival time is kept here as a marker trigger that fixes the logged tick.
+# A trigger with `early_s` or `late_s` runs as three variants (nominal, early, late); the ledger time is
+# `at_s` and the conflicting account is the other value (SPEC-011 section 4.5). Orders name units of the
+# scenario's unit list; `hold` is the inert order kind until the scenario supplies objectives, so only
+# the order time is evidence. Observation positions and unit ids wait for the SPEC-014 map and the
+# SPEC-008 scenario; rows that need a position are placeholders.
+schema = "replay-script/1"
+
+[meta]
+scenario = "gb_timeline"
+fidelity_class = 2
+clock_start_s = 0
+end_s = 259200
+
+[[trigger]]
+id = "tl_01"
+at_s = 37200
+confidence = "unverified"
+sources = [{ document = "CWV", page = 80, tag = "untagged" }]
+note = "TL-01 arrival, I Corps lead."
+
+[[trigger]]
+id = "tl_02"
+at_s = 56700
+early_s = 55800
+late_s = 57600
+confidence = "unverified"
+sources = [{ document = "CWV", page = 80, tag = "untagged" }]
+note = "TL-02 arrival, Hancock; the stated range is 55800 to 57600."
+
+[[order]]
+id = "tl_03"
+unit = "cs_army_northern_virginia"
+at_s = 52200
+kind = "hold"
+confidence = "unverified"
+sources = [{ document = "CWV", page = 80, tag = "untagged" }]
+note = "TL-03 order, Lee lifts the restriction."
+
+[[trigger]]
+id = "tl_04"
+at_s = 86400
+confidence = "unverified"
+sources = [{ document = "CWV", page = 81, tag = "untagged" }]
+note = "TL-04 arrival, Meade."
+
+[[order]]
+id = "tl_05"
+unit = "us_iii_corps"
+at_s = 140400
+kind = "hold"
+confidence = "unverified"
+sources = [{ document = "CWV", page = 81, tag = "untagged" }]
+note = "TL-05 order, III Corps advances."
+
+[[trigger]]
+id = "tl_06"
+at_s = 145800
+early_s = 144000
+hook = "hood_step_off"
+confidence = "partial"
+sources = [{ document = "CWV", page = 69, tag = "V" }, { document = "CWV", page = 81, tag = "untagged" }]
+note = "TL-06 order, Hood steps off; 16:30 on the ledger page, 16:00 in the narrative (early)."
+
+[[trigger]]
+id = "tl_07"
+at_s = 154800
+early_s = 153000
+hook = "ewell_evening_attack"
+confidence = "partial"
+sources = [{ document = "CWV", page = 69, tag = "V" }, { document = "CWV", page = 82, tag = "untagged" }]
+note = "TL-07 order, Ewell's evening attacks; 19:00 on the ledger page, 18:30 in the narrative (early)."
+
+[[order]]
+id = "tl_08"
+unit = "cs_johnson_division"
+at_s = 189000
+kind = "hold"
+confidence = "unverified"
+sources = [{ document = "CWV", page = 83, tag = "untagged" }]
+note = "TL-08 order, Johnson's second attack."
+
+[[trigger]]
+id = "tl_09"
+at_s = 219600
+hook = "cannonade_begins"
+confidence = "partial"
+sources = [{ document = "CWV", page = 69, tag = "V" }, { document = "CWV", page = 83, tag = "untagged" }]
+note = "TL-09 trigger, cannonade begins."
+
+[[trigger]]
+id = "tl_10"
+at_s = 223200
+late_s = 226800
+hook = "charge_step_off"
+confidence = "partial"
+sources = [{ document = "CWV", page = 69, tag = "P" }, { document = "CWV", page = 83, tag = "untagged", note = "older accounts give 15:00" }]
+note = "TL-10 order, charge steps off; 14:00 on the ledger page, 15:00 on older accounts (late)."
+
+[[observe]]
+id = "tl_11"
+kind = "first_casualty"
+a = "us_buford_division"
+b = "cs_heth_division"
+lo_s = 26100
+hi_s = 28800
+confidence = "partial"
+sources = [{ document = "CWV", page = 69, tag = "V" }, { document = "CWV", page = 80, tag = "untagged" }]
+note = "TL-11 first Buford and Heth casualty; the source gives no direction, Buford's fire on Heth is read."
+
+[[observe]]
+id = "tl_12"
+kind = "last_casualty_by"
+a = "cs_davis_brigade"
+b = "us_i_corps"
+lo_s = 38700
+hi_s = 40500
+confidence = "partial"
+sources = [{ document = "CWV", page = 69, tag = "V" }, { document = "CWV", page = 80, tag = "untagged" }]
+note = "TL-12 Davis repulsed at the cut, read as the last casualty his brigade inflicts on I Corps."
+
+[[observe]]
+id = "tl_13"
+kind = "reached"
+unit = "us_xi_corps"
+x_m = 0
+y_m = 0
+radius_m = 300
+lo_s = 58500
+hi_s = 60300
+confidence = "partial"
+sources = [{ document = "CWV", page = 69, tag = "V" }, { document = "CWV", page = 80, tag = "untagged" }]
+placeholder = true
+calibration_target = "CT-011-1101"
+note = "TL-13 Union centroid on Cemetery Hill; the unit, point and radius are placeholders until the scenario and map exist; the window is the evidence."
+
+[[observe]]
+id = "tl_14"
+kind = "last_casualty_by"
+a = "cs_johnson_division"
+b = "us_xii_corps"
+lo_s = 172800
+hi_s = 213300
+confidence = "unverified"
+sources = [{ document = "CWV", page = 83, tag = "untagged" }]
+note = "TL-14 Confederates off Culp's Hill by 213300; only the upper bound is stated, the lower edge is the start of day 3."
+
+[[observe]]
+id = "tl_15"
+kind = "last_casualty_by"
+a = "cs_pickett_charge_force"
+b = "us_army_potomac"
+lo_s = 1200
+hi_s = 1800
+after = "tl_10"
+confidence = "unverified"
+sources = [{ document = "CWV", page = 84, tag = "untagged" }]
+note = "TL-15 last casualty by the charging units, 1200 to 1800 s after TL-10."

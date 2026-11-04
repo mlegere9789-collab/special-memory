@@ -1,0 +1,402 @@
+# SPEC-011 section 7: the Gettysburg bands HB-01 to HB-24. Every `low` and `high` is widened from the
+# stated figure by the rule named in `phrase` (policy.toml, CT-011-1101); `tools/validators/history_cal.py`
+# and `history_cal::check_bands` recompute them. Phrase grammar: `exact`, `about`, `about_open`
+# (top left open, other estimates higher), `nearly` and `over` take `source_value`; `range A B` and
+# `range_open A` carry their own figures. Rate rows are permille (`source_value` is the permille figure).
+# Windows are clock seconds (day N is (N-1)*86400 to N*86400). Rows of `total` basis wait for `capture`
+# and then gate on their upper edge only. Unit `any` stands for every regiment of the scenario.
+# A band changes only through an amendment that cites a page; simulation output never sets an edge.
+schema = "history-bands/1"
+
+[[band]]
+id = "HB-01"
+scenario = "gb_day1"
+unit = "us_army_potomac"
+metric = "count"
+basis = "total"
+from_s = 0
+to_s = 86400
+low = 7650
+high = 9000
+phrase = "nearly"
+source_value = 9000
+needs = "capture"
+confidence = "partial"
+sources = [{ document = "CWV", page = 69, tag = "V" }, { document = "CWV", page = 80, tag = "untagged" }]
+note = "Union day-1 loss, nearly 9,000."
+
+[[band]]
+id = "HB-02"
+scenario = "gb_day1"
+unit = "cs_army_northern_virginia"
+metric = "count"
+basis = "total"
+from_s = 0
+to_s = 86400
+low = 6000
+high = 6900
+phrase = "over"
+source_value = 6000
+needs = "capture"
+confidence = "partial"
+sources = [{ document = "CWV", page = 69, tag = "V" }, { document = "CWV", page = 80, tag = "untagged" }]
+note = "Confederate day-1 loss, slightly over 6,000."
+
+[[band]]
+id = "HB-03"
+scenario = "gb_day2"
+unit = "us_army_potomac"
+metric = "count"
+basis = "total"
+from_s = 86400
+to_s = 172800
+low = 8000
+phrase = "about_open"
+source_value = 10000
+needs = "capture"
+confidence = "partial"
+sources = [{ document = "CWV", page = 69, tag = "V" }, { document = "CWV", page = 82, tag = "untagged" }]
+note = "Union day-2 loss, about 10,000 (Trudeau); other estimates are higher, so the top is open."
+
+[[band]]
+id = "HB-04"
+scenario = "gb_day2"
+unit = "cs_army_northern_virginia"
+metric = "count"
+basis = "total"
+from_s = 86400
+to_s = 172800
+low = 5440
+phrase = "about_open"
+source_value = 6800
+needs = "capture"
+confidence = "partial"
+sources = [{ document = "CWV", page = 69, tag = "V" }, { document = "CWV", page = 82, tag = "untagged" }]
+note = "Confederate day-2 loss, about 6,800; other estimates are higher, so the top is open."
+
+[[band]]
+id = "HB-05"
+scenario = "gb_v_pickett"
+unit = "us_army_potomac"
+metric = "count"
+basis = "total"
+from_s = 172800
+to_s = 259200
+low = 1200
+high = 1800
+phrase = "about"
+source_value = 1500
+needs = "capture"
+confidence = "partial"
+sources = [{ document = "CWV", page = 69, tag = "P" }, { document = "CWV", page = 84, tag = "untagged" }]
+note = "Union loss in the charge, about 1,500."
+
+[[band]]
+id = "HB-06"
+scenario = "gb_v_pickett"
+unit = "cs_pickett_charge_force"
+metric = "count"
+basis = "total"
+from_s = 172800
+to_s = 259200
+low = 6555
+high = 8892
+phrase = "range 6555 8892"
+needs = "capture"
+confidence = "unverified"
+sources = [{ document = "CWV", page = 69, tag = "P", note = "unsettled" }, { document = "CWV", page = 84, tag = "untagged" }]
+note = "Headline 6,555 against the component sum 1,123 + 4,019 + 3,750 = 8,892; both are kept (CF-02)."
+
+[[band]]
+id = "HB-07"
+scenario = "gb_full"
+unit = "us_army_potomac"
+metric = "count"
+basis = "total"
+from_s = 0
+to_s = 259200
+low = 19591
+high = 26507
+phrase = "exact"
+source_value = 23049
+needs = "capture"
+confidence = "unverified"
+sources = [{ document = "CWV", page = 79, tag = "untagged", note = "cited to ABT" }, { document = "CWV", page = 84, tag = "untagged" }]
+note = "Union battle total 23,049 = 3,155 + 14,529 + 5,365 (ABT, a known headline)."
+
+[[band]]
+id = "HB-08"
+scenario = "gb_full"
+unit = "cs_army_northern_virginia"
+metric = "count"
+basis = "total"
+from_s = 0
+to_s = 259200
+low = 23000
+high = 28063
+phrase = "range 23000 28063"
+needs = "capture"
+confidence = "unverified"
+sources = [{ document = "CWV", page = 79, tag = "untagged", note = "cited to ABT" }, { document = "CWV", page = 84, tag = "untagged" }]
+note = "Confederate battle total from about 23,000 to 28,063 = 3,903 + 18,735 + 5,425 (ABT) (CF-01)."
+
+[[band]]
+id = "HB-09"
+scenario = "gb_full"
+unit = "us_army_potomac"
+metric = "count"
+basis = "kw"
+from_s = 0
+to_s = 259200
+low = 15031
+high = 20337
+phrase = "exact"
+source_value = 17684
+confidence = "unverified"
+sources = [{ document = "CWV", page = 79, tag = "untagged", note = "cited to ABT" }]
+note = "Union killed and wounded, 3,155 + 14,529 = 17,684 (derived by summing two stated components of one basis)."
+
+[[band]]
+id = "HB-10"
+scenario = "gb_full"
+unit = "cs_army_northern_virginia"
+metric = "count"
+basis = "kw"
+from_s = 0
+to_s = 259200
+low = 19242
+high = 26034
+phrase = "exact"
+source_value = 22638
+confidence = "unverified"
+sources = [{ document = "CWV", page = 79, tag = "untagged", note = "cited to ABT" }]
+note = "Confederate killed and wounded, 3,903 + 18,735 = 22,638 (derived by summing two stated components of one basis)."
+
+[[band]]
+id = "HB-11"
+scenario = "gb_v_east_cav"
+unit = "us_gregg_division"
+metric = "count"
+basis = "total"
+from_s = 172800
+to_s = 259200
+low = 215
+high = 293
+phrase = "exact"
+source_value = 254
+needs = "capture"
+confidence = "partial"
+sources = [{ document = "CWV", page = 69, tag = "V" }, { document = "CWV", page = 83, tag = "untagged" }]
+note = "Union loss at East Cavalry Field, 254."
+
+[[band]]
+id = "HB-12"
+scenario = "gb_v_east_cav"
+unit = "us_custer_brigade"
+metric = "count"
+basis = "total"
+from_s = 172800
+to_s = 259200
+low = 186
+high = 252
+phrase = "exact"
+source_value = 219
+needs = "capture"
+confidence = "partial"
+sources = [{ document = "CWV", page = 69, tag = "V" }, { document = "CWV", page = 83, tag = "untagged" }]
+note = "Custer's brigade, 219 of the 254."
+
+[[band]]
+id = "HB-13"
+scenario = "gb_v_east_cav"
+unit = "cs_stuart_division"
+metric = "count"
+basis = "total"
+from_s = 172800
+to_s = 259200
+low = 153
+high = 209
+phrase = "exact"
+source_value = 181
+needs = "capture"
+confidence = "partial"
+sources = [{ document = "CWV", page = 69, tag = "V" }, { document = "CWV", page = 83, tag = "untagged" }]
+note = "Confederate loss at East Cavalry Field, 181."
+
+[[band]]
+id = "HB-14"
+scenario = "gb_v_wheatfield"
+unit = "us_wheatfield_force"
+metric = "rate_pm"
+basis = "total"
+from_s = 86400
+to_s = 172800
+low = 240
+high = 360
+phrase = "about"
+source_value = 300
+needs = "capture"
+confidence = "partial"
+sources = [{ document = "CWV", page = 69, tag = "V" }, { document = "CWV", page = 82, tag = "untagged" }]
+note = "Eleven brigades, about 30 percent of 20,444 engaged."
+
+[[band]]
+id = "HB-15"
+scenario = "gb_v_wheatfield"
+unit = "us_wheatfield_force"
+metric = "count"
+basis = "total"
+from_s = 86400
+to_s = 172800
+low = 4000
+phrase = "range_open 4000"
+needs = "capture"
+confidence = "unverified"
+sources = [{ document = "CWV", page = 82, tag = "untagged" }]
+note = "Losses over 6,000; some say 4,000 to 6,000, so the floor is 4,000 and the top is open (CF-07)."
+
+[[band]]
+id = "HB-16"
+scenario = "gb_v_wheatfield"
+unit = "us_wheatfield_force"
+metric = "rate_pm_median"
+basis = "total"
+from_s = 86400
+to_s = 172800
+low = 300
+high = 500
+phrase = "range 300 500"
+needs = "capture"
+confidence = "unverified"
+sources = [{ document = "CWV", page = 85, tag = "untagged" }]
+note = "Regiment median loss rate, 30 to 50 percent."
+
+[[band]]
+id = "HB-17"
+scenario = "gb_v_minnesota"
+unit = "us_1st_minnesota"
+metric = "rate_pm"
+basis = "kw"
+from_s = 86400
+to_s = 172800
+low = 697
+high = 943
+phrase = "exact"
+source_value = 820
+confidence = "partial"
+sources = [{ document = "CWV", page = 286, tag = "V" }, { document = "CWV", page = 82, tag = "untagged" }]
+note = "215 of 262 is 820.6 permille, entered as 820."
+
+[[band]]
+id = "HB-18"
+scenario = "gb_v_iron_brigade"
+unit = "us_iron_brigade"
+metric = "rate_pm"
+basis = "total"
+from_s = 0
+to_s = 86400
+low = 520
+high = 704
+phrase = "exact"
+source_value = 612
+needs = "capture"
+confidence = "unverified"
+sources = [{ document = "CWV", page = 286, tag = "untagged", note = "no tag shown" }]
+note = "1,153 of 1,885 is 611.7 permille, entered as 612."
+
+[[band]]
+id = "HB-19"
+scenario = "gb_v_iron_brigade"
+unit = "us_24th_michigan"
+metric = "rate_pm"
+basis = "total"
+from_s = 0
+to_s = 86400
+low = 680
+high = 920
+phrase = "exact"
+source_value = 800
+needs = "capture"
+confidence = "unverified"
+sources = [{ document = "CWV", page = 286, tag = "untagged" }]
+note = "397 of 496 is 800.4 permille, entered as 800."
+
+[[band]]
+id = "HB-20"
+scenario = "gb_v_iron_brigade"
+unit = "us_2nd_wisconsin"
+metric = "rate_pm"
+basis = "total"
+from_s = 0
+to_s = 86400
+low = 654
+high = 886
+phrase = "exact"
+source_value = 770
+needs = "capture"
+confidence = "unverified"
+sources = [{ document = "CWV", page = 286, tag = "untagged" }]
+note = "The source states 77 percent."
+
+[[band]]
+id = "HB-21"
+scenario = "gb_day1"
+unit = "us_i_corps"
+metric = "rate_pm"
+basis = "total"
+from_s = 0
+to_s = 86400
+low = 500
+phrase = "range_open 500"
+needs = "capture"
+confidence = "unverified"
+sources = [{ document = "CWV", page = 80, tag = "[UNVERIFIED]" }]
+note = "More than half the corps was lost; the source marks the claim unverified."
+
+[[band]]
+id = "HB-22"
+scenario = "gb_v_south_cav"
+unit = "us_1st_west_virginia"
+metric = "rate_pm"
+basis = "total"
+from_s = 172800
+to_s = 259200
+low = 208
+high = 282
+phrase = "exact"
+source_value = 245
+needs = "capture"
+confidence = "unverified"
+sources = [{ document = "CWV", page = 83, tag = "untagged" }]
+note = "98 of about 400 is 245 permille."
+
+[[band]]
+id = "HB-23"
+scenario = "any"
+unit = "any"
+metric = "rate_pm"
+basis = "kw"
+from_s = 0
+to_s = 259200
+low = 250
+high = 300
+phrase = "range 250 300"
+needs = "morale"
+confidence = "unverified"
+sources = [{ document = "CWV", page = 116, tag = "untagged" }]
+note = "Loss rate at which units halted, 25 to 30 percent."
+
+[[band]]
+id = "HB-24"
+scenario = "any"
+unit = "any"
+metric = "rate_pm"
+basis = "kw"
+from_s = 0
+to_s = 259200
+low = 500
+phrase = "range_open 500"
+needs = "morale"
+confidence = "unverified"
+sources = [{ document = "CWV", page = 116, tag = "untagged" }]
+note = "Loss rate at which a unit was destroyed for the battle: 500 permille or more."
