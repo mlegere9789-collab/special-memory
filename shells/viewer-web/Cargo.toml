@@ -1,0 +1,23 @@
+[package]
+name = "viewer-web"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+publish.workspace = true
+description = "WebAssembly debug viewer: runs the toy scenario and exposes read-only snapshots to JavaScript"
+
+[lib]
+crate-type = ["cdylib", "rlib"]
+
+# The workspace forbids unsafe code. The wasm-bindgen macro expands to unsafe glue
+# (extern blocks and exported symbols), which `forbid` rejects, so this crate alone relaxes
+# the lint to `deny`. Hand-written code here contains no `unsafe`; see README.
+[lints.rust]
+unsafe_code = "deny"
+
+[dependencies]
+hd-sim = { path = "../sim-cli" }
+core-math = { path = "../../crates/core-math" }
+sim-state = { path = "../../crates/sim-state" }
+# Exact pin: the wasm-bindgen CLI used to post-process the module must be the same version.
+wasm-bindgen = "=0.2.130"

@@ -1,3 +1,5 @@
 target/
 *.swp
 __pycache__/
+shells/viewer-web/www/pkg/
+node_modules/
