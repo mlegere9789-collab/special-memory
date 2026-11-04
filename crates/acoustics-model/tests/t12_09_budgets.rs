@@ -31,6 +31,7 @@ fn caps_and_order_hold() {
         &cl,
         &t,
         &preset(&t, "calm"),
+        None,
     );
     let b = t.budget();
     assert!(p.sources.len() <= b.max_total as usize);
@@ -55,7 +56,7 @@ fn power_is_conserved_between_sources_and_bed() {
     // A distant listener, so that every band has clusters near the drop threshold.
     for (lx, ly) in [(1200, 1200), (3000, 2500)] {
         let lis = listener(lx, ly);
-        let p = render_packet(&lis, &mut ListenerState::default(), &cl, &t, &w);
+        let p = render_packet(&lis, &mut ListenerState::default(), &cl, &t, &w, None);
         let mut kept = [0u128; 3];
         for c in &cl {
             let r = path_result(
@@ -65,6 +66,7 @@ fn power_is_conserved_between_sources_and_bed() {
                 c.height_mm,
                 [to_mm(lis.pos.x), to_mm(lis.pos.y)],
                 lis.height_mm,
+                None,
             )
             .unwrap();
             let lv = c.level_cdb(&t);
@@ -110,6 +112,7 @@ fn bed_counts_cover_the_unselected_clusters() {
         &cl,
         &t,
         &preset(&t, "calm"),
+        None,
     );
     let in_sources: u64 = p.sources.iter().map(|s| u64::from(s.count)).sum();
     let in_bed: u64 = p.bed.iter().map(|s| u64::from(s.count)).sum();
@@ -143,6 +146,7 @@ fn bed_sector_follows_the_bearing() {
             &cl,
             &t,
             &preset(&t, "calm"),
+            None,
         );
         assert_eq!(p.sources.len(), 8);
         assert_eq!(p.bed.len(), 1, "({x},{y})");
@@ -163,6 +167,7 @@ fn faint_clusters_are_dropped() {
         &cl,
         &t,
         &preset(&t, "calm"),
+        None,
     );
     assert!(p.sources.is_empty() && p.bed.is_empty());
 }

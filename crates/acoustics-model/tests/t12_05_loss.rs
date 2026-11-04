@@ -37,7 +37,7 @@ fn calm_flat_loss_follows_the_inverse_square_law() {
     let t = tables();
     let calm = preset(&t, "calm");
     for d in distances() {
-        let p = path_result(&t, &calm, [0, 0], 1500, [d, 0], 1500).unwrap();
+        let p = path_result(&t, &calm, [0, 0], 1500, [d, 0], 1500, None).unwrap();
         assert_eq!(p.distance_mm, d);
         for (b, band) in t.bands().iter().enumerate() {
             let sphere = 2000.0 * (d as f64 / 1000.0).log10();
@@ -58,15 +58,15 @@ fn ducting_beats_spherical_spreading_beyond_the_horizon() {
     let duct = preset(&t, "toward_plus_x_inversion");
     // The ducting loss of 1 dB per km makes the duct worse than open spreading past about 20 km.
     for d in [1_000_000, 8_000_000, 16_000_000] {
-        let a = path_result(&t, &calm, [0, 0], 1500, [d, 0], 1500).unwrap();
-        let b = path_result(&t, &duct, [0, 0], 1500, [d, 0], 1500).unwrap();
+        let a = path_result(&t, &calm, [0, 0], 1500, [d, 0], 1500, None).unwrap();
+        let b = path_result(&t, &duct, [0, 0], 1500, [d, 0], 1500, None).unwrap();
         for k in 0..3 {
             assert!(b.loss_cdb[k] < a.loss_cdb[k], "d {d} band {k}");
         }
     }
     // Inside the horizon the ducted path is the spherical one.
-    let a = path_result(&t, &calm, [0, 0], 1500, [50_000, 0], 1500).unwrap();
-    let b = path_result(&t, &duct, [0, 0], 1500, [50_000, 0], 1500).unwrap();
+    let a = path_result(&t, &calm, [0, 0], 1500, [50_000, 0], 1500, None).unwrap();
+    let b = path_result(&t, &duct, [0, 0], 1500, [50_000, 0], 1500, None).unwrap();
     assert_eq!(a.loss_cdb, b.loss_cdb);
 }
 
@@ -87,8 +87,8 @@ fn shadow_adds_loss_downwind_of_nothing() {
     let into = preset(&t, "toward_minus_x");
     // The listener sits on the +x side, the wind blows toward -x: away from the listener.
     for d in [1_000_000, 10_000_000, 40_000_000] {
-        let a = path_result(&t, &calm, [0, 0], 1500, [d, 0], 1500).unwrap();
-        let b = path_result(&t, &into, [0, 0], 1500, [d, 0], 1500).unwrap();
+        let a = path_result(&t, &calm, [0, 0], 1500, [d, 0], 1500, None).unwrap();
+        let b = path_result(&t, &into, [0, 0], 1500, [d, 0], 1500, None).unwrap();
         for k in 0..3 {
             assert!(b.loss_cdb[k] > a.loss_cdb[k], "d {d} band {k}");
         }
@@ -106,7 +106,7 @@ fn reference_file_agrees_within_2_cdb() {
         assert_eq!(f.len(), 9, "{line}");
         let n = |i: usize| f[i].parse::<i64>().unwrap();
         let w = preset(&t, f[1]);
-        let p = path_result(&t, &w, [0, 0], n(3) as u16, [n(2), 0], n(4) as u16).unwrap();
+        let p = path_result(&t, &w, [0, 0], n(3) as u16, [n(2), 0], n(4) as u16, None).unwrap();
         assert!(
             (p.delay_ms as i64 - n(5)).abs() <= 1,
             "{line}: delay {}",

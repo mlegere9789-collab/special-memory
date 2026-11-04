@@ -1,9 +1,11 @@
-//! Delay, gradient, horizon and flat-ground loss (SPEC-012 section 6 items 1 to 5, no terrain).
+//! Delay, gradient, horizon and loss (SPEC-012 section 6 items 1 to 5); terrain enters through
+//! an optional [`Relief`].
 //!
 //! Distances are millimetres, speeds mm/s, gradients mm/s per metre, losses centibels. All
 //! arithmetic is integer; divisions truncate unless a function says it rounds up.
 
 use crate::intmath::{isqrt_u128, log2_q16};
+use crate::relief::{terrain_loss_cdb, Relief};
 use crate::tables::AcousticTables;
 use crate::weather::Weather;
 use battle_rules::fx_ratio;
@@ -121,9 +123,9 @@ pub fn shadow_cdb(t: &AcousticTables, band: usize, g: i64, d_mm: i64, d_h: Optio
     cap.min(slope) as i32
 }
 
-/// The path from a source to a listener over flat ground; `None` beyond `max_range_mm`.
-/// Positions are millimetres, heights are above the ground in mm. The loss is spreading, plus
-/// absorption, plus shadow, per band.
+/// The path from a source to a listener; `None` beyond `max_range_mm`. Positions are
+/// millimetres, heights are above the ground in mm. The loss is spreading, plus absorption,
+/// plus shadow, plus (with a `relief`) barrier and foliage, per band.
 pub fn path_result(
     t: &AcousticTables,
     weather: &Weather,
@@ -131,6 +133,7 @@ pub fn path_result(
     hs_mm: u16,
     lis_mm: [i64; 2],
     hr_mm: u16,
+    relief: Option<&Relief>,
 ) -> Option<PathResult> {
     let (dx, dy) = (lis_mm[0] - src_mm[0], lis_mm[1] - src_mm[1]);
     let raw =
@@ -144,9 +147,13 @@ pub fn path_result(
     let g = gradient(t, i32::from(weather.lapse_mk_per_m), w);
     let d_h = horizon_mm(t, c, g, i64::from(hs_mm), i64::from(hr_mm));
     let spread = spreading_cdb(t, d, g, d_h);
+    let terrain = relief.map_or([0; 3], |r| {
+        let path = (src_mm, i64::from(hs_mm), lis_mm, i64::from(hr_mm));
+        terrain_loss_cdb(t, r, c, path, d)
+    });
     let mut loss_cdb = [0i32; 3];
     for (b, out) in loss_cdb.iter_mut().enumerate() {
-        *out = spread + absorption_cdb(t, b, d) + shadow_cdb(t, b, g, d, d_h);
+        *out = spread + absorption_cdb(t, b, d) + shadow_cdb(t, b, g, d, d_h) + terrain[b];
     }
     // Direction listener to source, in metres.
     let bearing = if raw == 0 {
