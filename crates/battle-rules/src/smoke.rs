@@ -98,6 +98,11 @@ impl SmokeGrid {
         self.cell_index(pos).map_or(0, |i| self.density[i])
     }
 
+    /// Smoke units in the cell that holds `pos` (SPEC-005 amendment A6); zero for an empty grid.
+    pub fn density_at(&self, pos: Vec2Fx) -> u32 {
+        self.cell_density(pos)
+    }
+
     /// One tick of decay: every cell loses `ceil(d * SMOKE_DECAY_PPM / 10^6)`.
     pub fn decay(&mut self) {
         for d in &mut self.density {
