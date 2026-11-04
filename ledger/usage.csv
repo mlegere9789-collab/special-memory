@@ -62,3 +62,4 @@ date,ticket,class,estimated_usage,actual_usage,review_defects,rework_count,notes
 2026-11-04,T-092 heat and rain effects (SPEC-009 SPEC-004 A5 SPEC-005 A8),M,,163604 tokens,0,0,fresh implementer; 13 tests; movement.rs call site touched
 2026-11-04,T-083 aggregates hand-overs ledger stream continuity (SPEC-008 SPEC-004 A4 SPEC-005 A7),L,,217762 tokens,0,0,fresh implementer; 16 tests; goldens unchanged
 2026-11-04,T-075 observation contacts reports pictures (SPEC-007 D-03),M,,191174 tokens,0,0,fresh implementer; 7 tests; Visibility trait and OwnVisibility
+2026-11-04,T-094 relief grid and sight query (SPEC-009 D-02),M,,153586 tokens,0,0,fresh implementer; 22 Rust tests and 1 Python test
