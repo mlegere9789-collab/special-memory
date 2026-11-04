@@ -14,9 +14,11 @@ pub mod intmath;
 mod listener;
 mod packet;
 pub mod propagation;
+mod relief;
 mod tables;
 mod weather;
 
+pub use relief::Relief;
 pub use tables::{
     AcousticTables, BandRow, Budget, Globals, GroundRow, SourceRow, WeatherPreset, CLASS_COUNT,
 };

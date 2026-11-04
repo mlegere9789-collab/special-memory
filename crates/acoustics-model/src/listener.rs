@@ -4,6 +4,7 @@ use crate::aggregate::Cluster;
 use crate::intmath::{cdb_of_power, power_of_cdb};
 use crate::packet::{BedOut, MixPacket, SourceOut};
 use crate::propagation::{along_wind_mm_s, delay_ms, path_result, sound_speed_mm_s};
+use crate::relief::Relief;
 use crate::tables::{AcousticTables, CLASS_COUNT};
 use crate::weather::{to_mm, Weather};
 use core_math::Vec2Fx;
@@ -71,13 +72,15 @@ fn rank(h: &mut [&Heard], cl: &[Cluster]) {
 /// Builds the camera packet for one listener and one window. `clusters` must come from one
 /// `flush`. Clusters beyond the range limit or quieter than `drop_below_cdb` are lost; per class
 /// and overall budgets pick the individual sources, with a bonus for last window's selection; the
-/// rest become the bed. `state` is updated to the new selection.
+/// rest become the bed. `state` is updated to the new selection. With a `relief`, barrier and
+/// foliage losses join the path loss.
 pub fn render_packet(
     listener: &Listener,
     state: &mut ListenerState,
     clusters: &[Cluster],
     t: &AcousticTables,
     weather: &Weather,
+    relief: Option<&Relief>,
 ) -> MixPacket {
     let g = t.globals();
     let lis_mm = [to_mm(listener.pos.x), to_mm(listener.pos.y)];
@@ -91,6 +94,7 @@ pub fn render_packet(
             cl.height_mm,
             lis_mm,
             listener.height_mm,
+            relief,
         ) else {
             continue;
         };

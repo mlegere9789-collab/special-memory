@@ -58,10 +58,10 @@ fn presets_convert() {
 #[test]
 fn close_paths_use_one_metre() {
     let t = tables();
-    let p = path_result(&t, &CALM, [0, 0], 1500, [300, 400], 1500).unwrap();
+    let p = path_result(&t, &CALM, [0, 0], 1500, [300, 400], 1500, None).unwrap();
     assert_eq!(p.distance_mm, 1000);
     assert_eq!(p.loss_cdb, [0, 0, 0]);
-    let q = path_result(&t, &CALM, [5, 5], 1500, [5, 5], 1500).unwrap();
+    let q = path_result(&t, &CALM, [5, 5], 1500, [5, 5], 1500, None).unwrap();
     assert_eq!(q.distance_mm, 1000);
     assert_eq!(q.bearing, Angle::ZERO, "coincident points have no bearing");
 }
@@ -69,16 +69,25 @@ fn close_paths_use_one_metre() {
 #[test]
 fn range_limit() {
     let t = tables();
-    assert!(path_result(&t, &CALM, [0, 0], 1500, [100_000_000, 0], 1500).is_some());
-    assert!(path_result(&t, &CALM, [0, 0], 1500, [100_000_001, 0], 1500).is_none());
-    assert!(path_result(&t, &CALM, [0, 0], 1500, [75_000_000, 75_000_000], 1500).is_none());
+    assert!(path_result(&t, &CALM, [0, 0], 1500, [100_000_000, 0], 1500, None).is_some());
+    assert!(path_result(&t, &CALM, [0, 0], 1500, [100_000_001, 0], 1500, None).is_none());
+    assert!(path_result(
+        &t,
+        &CALM,
+        [0, 0],
+        1500,
+        [75_000_000, 75_000_000],
+        1500,
+        None
+    )
+    .is_none());
 }
 
 #[test]
 fn bearing_points_from_the_listener_to_the_source() {
     let t = tables();
     let at = |lis: [i64; 2]| {
-        path_result(&t, &CALM, [0, 0], 1500, lis, 1500)
+        path_result(&t, &CALM, [0, 0], 1500, lis, 1500, None)
             .unwrap()
             .bearing
     };
@@ -92,8 +101,26 @@ fn bearing_points_from_the_listener_to_the_source() {
 #[test]
 fn swapping_source_and_listener_gives_the_same_loss_without_wind() {
     let t = tables();
-    let a = path_result(&t, &CALM, [1000, 2000], 1500, [9_000_000, 4_000_000], 1700).unwrap();
-    let b = path_result(&t, &CALM, [9_000_000, 4_000_000], 1700, [1000, 2000], 1500).unwrap();
+    let a = path_result(
+        &t,
+        &CALM,
+        [1000, 2000],
+        1500,
+        [9_000_000, 4_000_000],
+        1700,
+        None,
+    )
+    .unwrap();
+    let b = path_result(
+        &t,
+        &CALM,
+        [9_000_000, 4_000_000],
+        1700,
+        [1000, 2000],
+        1500,
+        None,
+    )
+    .unwrap();
     assert_eq!(a.loss_cdb, b.loss_cdb);
     assert_eq!(a.delay_ms, b.delay_ms);
     assert_eq!(a.distance_mm, b.distance_mm);

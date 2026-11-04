@@ -53,7 +53,7 @@ fn path_delay_follows_the_along_wind_component() {
         ..calm
     };
     let at = |w: &Weather| {
-        path_result(&t, w, [0, 0], 1500, [1_000_000, 0], 1500)
+        path_result(&t, w, [0, 0], 1500, [1_000_000, 0], 1500, None)
             .unwrap()
             .delay_ms
     };
@@ -72,7 +72,7 @@ proptest! {
     ) {
         let t = tables();
         let w = Weather { temp_dc, wind_mm_s: [wind, 0], lapse_mk_per_m: 0 };
-        let got = path_result(&t, &w, [0, 0], 1500, [d, 0], 1500).unwrap().delay_ms;
+        let got = path_result(&t, &w, [0, 0], 1500, [d, 0], 1500, None).unwrap().delay_ms;
         // The sound-speed law truncates to whole mm/s (SPEC-012 section 6); the rest is f64.
         let c = (331_300.0 + (606.0 * f64::from(temp_dc) / 10.0).trunc()) / 1000.0;
         let c_eff = (c + f64::from(wind) / 1000.0).max(c / 2.0);
