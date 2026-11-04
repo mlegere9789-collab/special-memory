@@ -168,3 +168,9 @@ Section 5 gains four terrain classes for the battlefield pipeline (SPEC-014 sect
 - **Provenance prefix.** A row added by a later spec carries that spec's calibration prefix (ADR 0011), so rows 8 to 11 carry `CT-014-3` while rows 0 to 7 keep `CT-004-4`.
 - **Slope.** Ground slope (`slope_pm`, SPEC-014 section 5) is data only; no movement, fatigue or fire rule reads it yet.
 - **Grids and sidecars.** A scenario `legend` may name classes 8 to 11. No class has a hash of its own, so no recorded golden changes. Matching `environment.toml` `[[retain]]` rows belong to the SPEC-009 data ticket; `acoustics.toml` `[[ground]]` has no row for a class that adds no foliage loss, so none is added.
+
+## Amendment A5 (from T-092, SPEC-009)
+Section 4 gains the heat multipliers of SPEC-009 section 7; REGISTRY section 6.5 owns the composition.
+- **Moving.** `fatigue += drain_ppm_per_tick(gait) * effort_pm * drain_pm / 10^6` (one floor over the whole product); at `drain_pm = 1000` this equals `drain_ppm_per_tick * effort_pm / 1000`.
+- **Resting.** `fatigue -= rest_recover_ppm_per_tick * rest_pm / 1000` (floor, saturating at 0); at `rest_pm = 1000` this equals the plain recovery.
+- **Code.** `fatigue_step_scaled(fatigue, gait, effort, applied_speed, table, drain_pm, rest_pm)` is the general form; `fatigue_step` is it with both multipliers 1000, so every caller and golden with `env = None` is unchanged. The movement step passes the multipliers of `BattleState.env` (1000 and 1000 with `env = None`).

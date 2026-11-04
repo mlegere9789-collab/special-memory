@@ -6,7 +6,7 @@
 //! fatigue and snapping, ascending id), and finally advance the tick counter.
 
 use crate::{
-    fatigue_speed_pm, fatigue_step, fx_ratio, BattleState, Formation, Gait, LocoExt, Order,
+    fatigue_speed_pm, fatigue_step_scaled, fx_ratio, BattleState, Formation, Gait, LocoExt, Order,
     Regiment, RegimentState, F_DISABLED, F_WOUNDED, TICK_HZ,
 };
 use core_math::{Angle, Fx, Vec2Fx};
@@ -321,6 +321,7 @@ impl BattleState {
         }
 
         // Phase B.
+        let heat = self.heat_pm();
         for &id in &ids {
             let p = plans[id.index as usize];
             let Some(a) = self.world.agents.get(id) else {
@@ -340,12 +341,14 @@ impl BattleState {
             let mut fatigue = None;
             if let (Some(reg), Some(l)) = (reg, self.loco.get(id.index as usize)) {
                 let (_, effort, _) = self.terrain_row(p.class);
-                fatigue = Some(fatigue_step(
+                fatigue = Some(fatigue_step_scaled(
                     l.fatigue,
                     p.gait,
                     effort,
                     applied,
                     &self.tables.locomotion,
+                    heat.0,
+                    heat.1,
                 ));
                 let slot = slot_world(reg, frames[usize::from(reg.id.0)], l.slot);
                 let reach = Fx::from_raw(vel.length_sq().raw() / 400);

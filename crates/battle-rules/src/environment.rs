@@ -6,7 +6,8 @@
 //! retention per terrain class; [`WeatherTable`] holds the timeline and answers
 //! [`WeatherNow`] at a battle tick; [`exp_table`] turns an optical depth into a transmission.
 
-use crate::{parse_table, DataError, Provenance, Table, TerrainTable, TICK_HZ};
+use crate::{fx_ratio, parse_table, DataError, Provenance, Table, TerrainTable, Weather, TICK_HZ};
+use core_math::Vec2Fx;
 
 const ENV_SCHEMA: &str = "environment/1";
 const WEATHER_SCHEMA: &str = "weather/1";
@@ -558,4 +559,178 @@ pub fn exp_table(tau_micro: u64) -> u32 {
     let (hi, lo) = (EXP_TABLE[i as usize], EXP_TABLE[i as usize + 1]);
     let drop = u64::from(hi - lo) * (tau_micro % EXP_STEP) / EXP_STEP;
     hi - u32::try_from(drop).unwrap_or(0)
+}
+
+/// Apparent temperature in tenths of a degree F (SPEC-009 section 7):
+/// `temp + max(0, temp - floor) * max(0, humidity - humid_floor) / div`, integer floor.
+pub fn apparent_f10(heat: &HeatParams, temp_f10: i32, humidity_pm: i32) -> i32 {
+    let over = (i64::from(temp_f10) - i64::from(heat.floor_f10)).max(0);
+    let humid = (i64::from(humidity_pm) - i64::from(heat.humid_floor_pm)).max(0);
+    let v = i64::from(temp_f10) + over * humid / i64::from(heat.div.max(1));
+    i32::try_from(v).unwrap_or(i32::MAX)
+}
+
+impl EnvTable {
+    /// `(drain_pm, rest_pm)` at an apparent temperature: linear interpolation between the two
+    /// bracketing heat-curve rows, truncating toward zero like `fatigue_speed_pm`, and clamped at
+    /// the ends of the curve.
+    pub fn heat_multipliers(&self, apparent_f10: i32) -> (u32, u32) {
+        let curve = &self.heat_curve;
+        let upper = curve.partition_point(|p| p.apparent_f10 < apparent_f10);
+        let pair = |p: &HeatPoint| (p.drain_pm, p.rest_pm);
+        let (Some(p1), Some(p0)) = (curve.get(upper), upper.checked_sub(1).map(|i| &curve[i]))
+        else {
+            return curve.get(upper).or(curve.last()).map_or((1000, 1000), pair);
+        };
+        if p1.apparent_f10 == apparent_f10 {
+            return pair(p1);
+        }
+        let run = i64::from(p1.apparent_f10) - i64::from(p0.apparent_f10);
+        let at = i64::from(apparent_f10) - i64::from(p0.apparent_f10);
+        let lerp = |a: u32, b: u32| {
+            let v = i64::from(a) + (i64::from(b) - i64::from(a)) * at / run;
+            u32::try_from(v).unwrap_or(0)
+        };
+        (lerp(p0.drain_pm, p1.drain_pm), lerp(p0.rest_pm, p1.rest_pm))
+    }
+}
+
+/// The heat state of the battle: the apparent temperature and the fatigue multipliers read from
+/// the heat curve (permille; 1000 is neutral).
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub struct HeatNow {
+    /// Apparent temperature, tenths of a degree F.
+    pub apparent_f10: i32,
+    /// Multiplier of fatigue drain, permille.
+    pub drain_pm: u32,
+    /// Multiplier of rest recovery, permille.
+    pub rest_pm: u32,
+}
+
+/// The environment layer of a battle (`BattleState.env`): the rules table, the weather timeline
+/// and the state they drive each period: the weather now, powder damp, ground wetness and heat
+/// (SPEC-009 sections 3.2 and 7). Damp and ground are ppm in `0..=1_000_000`.
+#[derive(Clone, Debug)]
+pub struct Environment {
+    table: EnvTable,
+    weather: WeatherTable,
+    now: WeatherNow,
+    damp: u32,
+    ground: u32,
+    heat: HeatNow,
+}
+
+/// One rain step: `v + rain_pm * rise / 1000` while it rains, else `v - fall`, in `0..=10^6`.
+fn rain_step(v: u32, rain_pm: i32, rise_ppm: u32, fall_ppm: u32) -> u32 {
+    let v = i64::from(v);
+    let next = if rain_pm > 0 {
+        v + i64::from(rain_pm) * i64::from(rise_ppm) / 1000
+    } else {
+        v - i64::from(fall_ppm)
+    };
+    u32::try_from(next.clamp(0, 1_000_000)).unwrap_or(0)
+}
+
+impl Environment {
+    /// An environment at battle tick `tick`: dry powder and ground, the weather and heat of the
+    /// period that tick lies in.
+    pub fn new(table: EnvTable, weather: WeatherTable, tick: u64) -> Environment {
+        let period = u64::from(table.smoke.period_ticks);
+        let now = weather.at_period(tick, period);
+        let mut env = Environment {
+            table,
+            weather,
+            now,
+            damp: 0,
+            ground: 0,
+            heat: HeatNow {
+                apparent_f10: 0,
+                drain_pm: 1000,
+                rest_pm: 1000,
+            },
+        };
+        env.heat = env.heat_of(&now);
+        env
+    }
+
+    fn heat_of(&self, now: &WeatherNow) -> HeatNow {
+        let apparent_f10 = apparent_f10(&self.table.heat, now.temp_f10, now.humidity_pm);
+        let (drain_pm, rest_pm) = self.table.heat_multipliers(apparent_f10);
+        HeatNow {
+            apparent_f10,
+            drain_pm,
+            rest_pm,
+        }
+    }
+
+    /// Step TK-02: when `tick % smoke.period_ticks == 0`, re-reads the weather, takes one rain
+    /// step and refreshes the heat; returns whether it did.
+    pub fn refresh(&mut self, tick: u64) -> bool {
+        if !tick.is_multiple_of(u64::from(self.table.smoke.period_ticks.max(1))) {
+            return false;
+        }
+        self.now = self.weather.at(tick);
+        let r = &self.table.rain;
+        self.damp = rain_step(
+            self.damp,
+            self.now.rain_pm,
+            r.powder_rise_ppm,
+            r.powder_fall_ppm,
+        );
+        self.ground = rain_step(
+            self.ground,
+            self.now.rain_pm,
+            r.ground_rise_ppm,
+            r.ground_fall_ppm,
+        );
+        self.heat = self.heat_of(&self.now);
+        true
+    }
+
+    /// The `Weather` the fire and flight rules read: wind from the timeline in m/s,
+    /// `wet_pm = 1000 + damp * wet_extra_pm / 10^6`,
+    /// `ground_pm = 1000 - ground * (1000 - ground_min_pm) / 10^6`.
+    pub fn weather_state(&self) -> Weather {
+        let r = &self.table.rain;
+        let wet = 1000 + u64::from(self.damp) * u64::from(r.wet_extra_pm) / 1_000_000;
+        let drop = u64::from(self.ground) * u64::from(1000 - r.ground_min_pm) / 1_000_000;
+        Weather {
+            wind: Vec2Fx::new(
+                fx_ratio(self.now.wind_x_mm_s, 1000),
+                fx_ratio(self.now.wind_y_mm_s, 1000),
+            ),
+            wet_pm: u32::try_from(wet).unwrap_or(u32::MAX),
+            ground_pm: u32::try_from(1000 - drop).unwrap_or(0),
+        }
+    }
+
+    /// The rules table.
+    pub fn table(&self) -> &EnvTable {
+        &self.table
+    }
+
+    /// The weather timeline.
+    pub fn timeline(&self) -> &WeatherTable {
+        &self.weather
+    }
+
+    /// The weather as of the last refresh.
+    pub fn now(&self) -> &WeatherNow {
+        &self.now
+    }
+
+    /// Powder dampness in ppm.
+    pub fn powder_damp_ppm(&self) -> u32 {
+        self.damp
+    }
+
+    /// Ground wetness in ppm.
+    pub fn ground_wet_ppm(&self) -> u32 {
+        self.ground
+    }
+
+    /// The heat state as of the last refresh.
+    pub fn heat(&self) -> HeatNow {
+        self.heat
+    }
 }

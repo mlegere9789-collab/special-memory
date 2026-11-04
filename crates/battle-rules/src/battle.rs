@@ -9,7 +9,10 @@ use crate::{
     assign_slots, slot_layout, transition_ticks, DrillTable, Formation, Order, Regiment,
     RegimentId, RegimentSpec, RegimentState, SlotLocal, Tables, TerrainGrid, F_DISABLED, F_WOUNDED,
 };
-use crate::{Casualty, Counters, FireExt, Projectile, SmokeGrid, Weather};
+use crate::{
+    Casualty, Counters, EnvTable, Environment, FireExt, Projectile, SmokeGrid, Weather,
+    WeatherTable,
+};
 use core_math::{StreamId, Vec2Fx};
 use sim_state::{AgentId, AgentInit, AgentStore, SpatialGrid, WorldState};
 
@@ -71,6 +74,9 @@ pub struct BattleState {
     /// Morale and cohesion (SPEC-006); `None` leaves every earlier behaviour and the hash
     /// unchanged.
     pub morale: Option<crate::morale::MoraleState>,
+    /// The environment layer (SPEC-009): weather timeline, heat, powder damp, ground wetness;
+    /// `None` leaves every SPEC-004 and SPEC-005 behaviour and the hash unchanged.
+    pub env: Option<Environment>,
     /// Weapon and fire mode per regiment.
     pub(crate) regfire: Vec<RegFire>,
     /// Range tables built for the equipped weapon and ammunition pairs.
@@ -177,6 +183,7 @@ impl BattleState {
             seq: 0,
             cmd: None,
             morale: None,
+            env: None,
             regfire: Vec::new(),
             ranges: Vec::new(),
             pending: Vec::new(),
@@ -328,7 +335,7 @@ impl BattleState {
     /// One whole tick in the order of REGISTRY section 6.2 for the steps that exist: TK-04
     /// movement, TK-05 grid rebuild and release of expired disables, TK-06 fire, TK-07 flight and
     /// hit, TK-10 casualties, TK-12 smoke decay, TK-14 roster updates, TK-15 `advance_tick`
-    /// (SPEC-005 amendment A5). A later layer adds its step here at its place.
+    /// (SPEC-005 amendment A5); with `env` `Some`, TK-02 first (SPEC-009). A later layer adds its step here at its place.
     pub fn step(&mut self) {
         self.step_with(false);
     }
@@ -337,6 +344,7 @@ impl BattleState {
     /// the result is the same).
     #[doc(hidden)]
     pub fn step_with(&mut self, reverse_flight: bool) {
+        self.step_environment();
         self.move_agents();
         self.grid.rebuild(&self.world.agents);
         self.release_disables();
@@ -346,6 +354,35 @@ impl BattleState {
         self.step_smoke();
         self.step_rosters();
         self.world.advance_tick();
+    }
+
+    /// Switches the environment layer on at the current tick: dry powder and ground, and
+    /// `weather` set from the timeline for the period the tick lies in (no rain step), so the
+    /// first tick is consistent. Setting `env` to `None` switches it off.
+    pub fn set_environment(&mut self, table: EnvTable, weather: WeatherTable) {
+        let env = Environment::new(table, weather, self.world.tick);
+        self.weather = env.weather_state();
+        self.env = Some(env);
+    }
+
+    /// Step TK-02 (SPEC-009 section 7): when `tick % smoke.period_ticks == 0`, refreshes the
+    /// weather, powder damp, ground wetness and heat, and fills `weather`. Does nothing with
+    /// `env` `None`.
+    pub fn step_environment(&mut self) {
+        let tick = self.world.tick;
+        if let Some(env) = self.env.as_mut() {
+            if env.refresh(tick) {
+                self.weather = env.weather_state();
+            }
+        }
+    }
+
+    /// `(drain_pm, rest_pm)`, the heat multipliers of fatigue; both 1000 with `env` `None`.
+    pub(crate) fn heat_pm(&self) -> (u32, u32) {
+        self.env.as_ref().map_or((1000, 1000), |e| {
+            let h = e.heat();
+            (h.drain_pm, h.rest_pm)
+        })
     }
 
     /// The state hash, see [`battle_hash`](crate::battle_hash).

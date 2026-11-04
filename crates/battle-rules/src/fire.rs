@@ -335,6 +335,7 @@ impl BattleState {
     ///
     /// A shooter with no valid target draws nothing and keeps its place in the loading cycle.
     pub fn step_fire(&mut self) {
+        let (drain_pm, _) = self.heat_pm();
         let BattleState {
             world,
             regiments,
@@ -457,7 +458,10 @@ impl BattleState {
             smoke.add(muzzle, shot_units(w.powder_mg, false));
             f.fouling = (u32::from(f.fouling) + w.fouling_per_shot).min(1000) as u16;
             if let Some(l) = loco.get_mut(idx as usize) {
-                l.fatigue = (l.fatigue + w.fire_drain_ppm).min(FATIGUE_MAX);
+                let drain = u64::from(w.fire_drain_ppm) * u64::from(drain_pm) / 1000;
+                l.fatigue = u32::try_from(u64::from(l.fatigue) + drain)
+                    .unwrap_or(FATIGUE_MAX)
+                    .min(FATIGUE_MAX);
             }
             after_discharge(f, w, reg.training, 0);
         }
