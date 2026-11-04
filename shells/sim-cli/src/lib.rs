@@ -4,6 +4,7 @@
 //! * [`scenario`]: the toy scenario, replay recording and verification. Integer and [`core_math::Fx`]
 //!   arithmetic only; randomness only from named streams.
 //! * [`golden`]: the parameters of the committed golden replays and the `expected.json` format.
+//! * [`history`]: `verify` for replay-mode headers (`<scenario>/<variant>`, SPEC-011).
 //! * [`cli`]: the command-line front end (`run`, `verify`, `hash`, `bench`).
 //! * [`bench`]: tick timing, the only place a wall clock is read.
 #![forbid(unsafe_code)]
@@ -12,4 +13,5 @@
 pub mod bench;
 pub mod cli;
 pub mod golden;
+pub mod history;
 pub mod scenario;
