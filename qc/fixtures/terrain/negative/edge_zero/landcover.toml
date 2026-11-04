@@ -1,0 +1,9 @@
+# Negative fixture for the geometry check: the first vertex repeated at the end, so the closing edge has zero length (edge_zero)
+schema = "survey-landcover/1"
+
+[[polygon]]
+id = 1
+class = "crop"
+outer = [[80000, 80000], [96000, 80000], [96000, 96000], [80000, 96000], [80000, 80000]]
+confidence = "unverified"
+sources = [{ source = 1, sheet = "synthetic" }]

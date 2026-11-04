@@ -1,0 +1,9 @@
+# Negative fixture for the geometry check: a ring of two vertices (ring_short)
+schema = "survey-landcover/1"
+
+[[polygon]]
+id = 1
+class = "crop"
+outer = [[80000, 80000], [96000, 80000]]
+confidence = "unverified"
+sources = [{ source = 1, sheet = "synthetic" }]

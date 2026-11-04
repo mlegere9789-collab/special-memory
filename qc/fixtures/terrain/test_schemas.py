@@ -43,9 +43,19 @@ class SurveySchemas(unittest.TestCase):
             errs = list(validator(kind).iter_errors(load("synthetic", name)))
             self.assertEqual(errs, [], name)
 
-    def test_negative_linear_fixtures_are_schema_valid(self):
-        for d in sorted(os.listdir(os.path.join(HERE, "negative"))):
-            self.assertEqual(list(validator("survey-linear").iter_errors(load("negative", d, "linear.toml"))), [], d)
+    def test_negative_and_positive_fixtures_are_schema_valid(self):
+        # Every fixture file validates against the schema of its name; each fixture holds at least
+        # one file, and the line fixtures and the polygon fixtures are both present.
+        seen = set()
+        for kind in ("negative", "positive"):
+            for d in sorted(os.listdir(os.path.join(HERE, kind))):
+                files = sorted(os.listdir(os.path.join(HERE, kind, d)))
+                self.assertTrue(files, d)
+                for name in files:
+                    self.assertIn(name, FILES, d)
+                    seen.add(name)
+                    self.assertEqual(list(validator(FILES[name]).iter_errors(load(kind, d, name))), [], d)
+        self.assertEqual(seen, {"linear.toml", "landcover.toml"})
 
     def refused(self, name, mutate):
         doc = copy.deepcopy(load("synthetic", name))

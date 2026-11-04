@@ -8,6 +8,7 @@ pub mod check;
 pub mod compile;
 pub mod geom;
 pub mod raster;
+pub mod ring;
 pub mod survey;
 
 use std::io::Write;

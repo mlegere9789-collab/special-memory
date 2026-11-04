@@ -1,0 +1,9 @@
+# Negative fixture for the geometry check: an outer ring listed clockwise (ring_winding)
+schema = "survey-landcover/1"
+
+[[polygon]]
+id = 1
+class = "crop"
+outer = [[80000, 80000], [80000, 96000], [96000, 96000], [96000, 80000]]
+confidence = "unverified"
+sources = [{ source = 1, sheet = "synthetic" }]

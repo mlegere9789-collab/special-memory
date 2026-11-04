@@ -1,0 +1,46 @@
+# Good fixture for the geometry check: polygons that touch along an edge or at a corner, one nested
+# in another's hole, and one of another group lying over ground. Every ring rule passes.
+schema = "survey-landcover/1"
+
+[[polygon]]
+id = 1
+class = "crop"
+outer = [[80000, 80000], [100000, 80000], [100000, 100000], [80000, 100000]]
+confidence = "unverified"
+sources = [{ source = 1, sheet = "synthetic" }]
+
+[[polygon]]
+id = 2
+class = "woods"
+outer = [[100000, 80000], [120000, 80000], [120000, 100000], [100000, 100000]]
+confidence = "unverified"
+sources = [{ source = 1, sheet = "synthetic" }]
+
+[[polygon]]
+id = 3
+class = "woods"
+outer = [[120000, 100000], [140000, 100000], [140000, 120000], [120000, 120000]]
+confidence = "unverified"
+sources = [{ source = 1, sheet = "synthetic" }]
+
+[[polygon]]
+id = 4
+class = "yard"
+outer = [[160000, 160000], [200000, 160000], [200000, 200000], [160000, 200000]]
+holes = [[[170000, 170000], [170000, 190000], [190000, 190000], [190000, 170000]]]
+confidence = "unverified"
+sources = [{ source = 1, sheet = "synthetic" }]
+
+[[polygon]]
+id = 5
+class = "thicket"
+outer = [[175000, 175000], [185000, 175000], [185000, 185000], [175000, 185000]]
+confidence = "unverified"
+sources = [{ source = 1, sheet = "synthetic" }]
+
+[[polygon]]
+id = 6
+class = "deep_water"
+outer = [[85000, 85000], [95000, 85000], [95000, 95000], [85000, 95000]]
+confidence = "unverified"
+sources = [{ source = 1, sheet = "synthetic" }]
