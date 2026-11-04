@@ -1,0 +1,43 @@
+{
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "$id": "recordings.schema.json",
+ "title": "Audio recording manifest (SPEC-016 sections 2 and 7)",
+ "description": "One row per delivered take; the id is the file name without extension.",
+ "type": "object",
+ "additionalProperties": false,
+ "required": ["schema"],
+ "properties": {
+  "schema": {"const": "recordings/1"},
+  "recording": {"type": "array", "items": {"$ref": "#/$defs/row"}}
+ },
+ "$defs": {
+  "row": {
+   "type": "object",
+   "additionalProperties": false,
+   "required": ["id", "category", "source", "weapon", "distance_m", "wind_dm_s", "temp_dc", "humidity_pc", "sample_rate", "bits", "channels", "consent", "loudness_lufs_x10", "peak_dbtp_x10", "status"],
+   "properties": {
+    "id": {"type": "string", "pattern": "^snd(_[a-z0-9]+){4}_[0-9]{2}$"},
+    "category": {"type": "string", "pattern": "^[a-z]+$"},
+    "source": {"type": "string", "minLength": 1},
+    "weapon": {"type": "string"},
+    "distance_m": {"type": "integer", "minimum": 0},
+    "wind_dm_s": {"type": "integer"},
+    "temp_dc": {"type": "integer"},
+    "humidity_pc": {"type": "integer", "minimum": 0, "maximum": 100},
+    "sample_rate": {"const": 48000},
+    "bits": {"const": 24},
+    "channels": {"type": "integer", "minimum": 1, "maximum": 4},
+    "consent": {"type": "string"},
+    "loudness_lufs_x10": {"type": "integer"},
+    "peak_dbtp_x10": {"type": "integer"},
+    "status": {"enum": ["planned", "delivered", "accepted", "rejected", "withdrawn"]},
+    "confidence": {"$ref": "common.schema.json#/$defs/confidence"},
+    "placeholder": {"type": "boolean"},
+    "calibration_target": {"type": "string", "pattern": "^CT-[0-9]{3}-[0-9]+$"},
+    "sources": {"$ref": "common.schema.json#/$defs/sources"},
+    "second_source": {"type": "string"},
+    "note": {"type": "string"}
+   }
+  }
+ }
+}

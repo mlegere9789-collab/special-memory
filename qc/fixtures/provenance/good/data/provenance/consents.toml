@@ -1,0 +1,28 @@
+# Known-good consent rows for the checker tests. Pseudonyms only.
+schema = "consents/1"
+
+[[consent]]
+id = "cns-001"
+person_ref = "performer-01"
+role = "infantry"
+use_game = true
+use_marketing = true
+replica_allowed = false
+ml_training_allowed = false
+rate_basis = "guild_minimum"
+signed = 20260315
+expires = 0
+counsel_ref = ""
+
+[[consent]]
+id = "cns-002"
+person_ref = "performer-02"
+role = "voice"
+use_game = true
+use_marketing = false
+replica_allowed = true
+ml_training_allowed = false
+rate_basis = "counsel_day_rate"
+signed = 20260316
+expires = 20281231
+counsel_ref = "counsel-memo-07"
