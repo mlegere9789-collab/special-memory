@@ -18,3 +18,13 @@ pub use conventions::{
 pub use error::DataError;
 pub use provenance::{Confidence, Provenance, SourceRef};
 pub use reader::{parse_table, Table};
+
+// T-020
+pub mod ammo;
+pub mod damage;
+pub mod weapons;
+pub use ammo::{drag_k, sphere_mass_g, AmmoKind, AmmoRow, AmmoTable, Burst, BurstShape, Constants};
+pub use damage::{
+    energy_joules, DamageTable, HitOutcome, OutcomeCell, Posture, PostureRow, Region,
+};
+pub use weapons::{AmmoLoad, LoadStep, WeaponClass, WeaponRow, WeaponTable};

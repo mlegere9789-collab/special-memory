@@ -1,0 +1,144 @@
+# Ammunition rows (SPEC-005 section 1). Integer units: g, mm, mm/s, permille (_pm), ppm.
+# A row that is a placeholder names its calibration target; sourced numbers cite the research page and its own tag.
+schema = "ammo/1"
+
+[constants]
+air_density_g_m3 = 1225
+iron_density_kg_m3 = 7200
+gravity_um_s2 = 9806650
+confidence = "unverified"
+placeholder = true
+calibration_target = "CT-2"
+note = "air 1.225 kg/m3 at sea level, iron 7.2 g/cm3, standard gravity 9.80665 m/s2"
+
+[[ammo]]
+id = "ball_69"
+kind = "ball"
+mass_g = 27
+diameter_mm = 17
+cd_pm = 470
+muzzle_mm_s = 300000
+confidence = "unverified"
+placeholder = true
+calibration_target = "CT-1"
+sources = [{ document = "CWV", page = 459, tag = "V S21", note = "calibre .69" }]
+
+[[ammo]]
+id = "minie_58"
+kind = "conical"
+mass_g = 32
+diameter_mm = 15
+cd_pm = 300
+muzzle_mm_s = 290000
+confidence = "unverified"
+placeholder = true
+calibration_target = "CT-1"
+sources = [{ document = "CWV", page = 459, tag = "V S21", note = "calibre .58" }]
+
+[[ammo]]
+id = "carbine_52"
+kind = "conical"
+mass_g = 29
+diameter_mm = 13
+cd_pm = 300
+muzzle_mm_s = 250000
+confidence = "unverified"
+placeholder = true
+calibration_target = "CT-1"
+
+[[ammo]]
+id = "revolver_44"
+kind = "ball"
+mass_g = 9
+diameter_mm = 11
+cd_pm = 400
+muzzle_mm_s = 230000
+confidence = "unverified"
+placeholder = true
+calibration_target = "CT-1"
+
+[[ammo]]
+id = "shot_12"
+kind = "shot"
+mass_g = 5443
+diameter_mm = 117
+cd_pm = 470
+muzzle_mm_s = 452628
+restitution_pm = 400
+confidence = "partial"
+placeholder = true
+calibration_target = "CT-2"
+sources = [
+  { document = "CWV", page = 459, tag = "V S19", note = "1485 ft/s muzzle velocity, 12 lb shot" },
+  { document = "CWV", page = 30, note = "12-pounder" },
+]
+note = "diameter and drag coefficient are placeholders"
+
+[[ammo]]
+id = "shell_12"
+kind = "shell"
+mass_g = 5579
+diameter_mm = 117
+cd_pm = 470
+muzzle_mm_s = 400000
+confidence = "partial"
+placeholder = true
+calibration_target = "CT-2"
+sources = [{ document = "CWV", page = 459, tag = "V S19", note = "12.3 lb shell" }]
+note = "velocity is a placeholder; fragments are 60 g each"
+
+[ammo.burst]
+count = 40
+pellet_mass_g = 60
+pellet_diameter_mm = 25
+pellet_cd_pm = 600
+shape = "sphere"
+spread_sigma_urad = 0
+pellet_speed_pm = 375
+fuse_sigma_substeps = 15
+dud_ppm = 30000
+
+[[ammo]]
+id = "case_12"
+kind = "case"
+mass_g = 5400
+diameter_mm = 117
+cd_pm = 470
+muzzle_mm_s = 400000
+confidence = "unverified"
+placeholder = true
+calibration_target = "CT-2"
+note = "76 iron balls of 17 mm, mass derived from the iron density"
+
+[ammo.burst]
+count = 76
+pellet_diameter_mm = 17
+pellet_cd_pm = 470
+shape = "cone"
+spread_sigma_urad = 25000
+pellet_speed_pm = 850
+fuse_sigma_substeps = 15
+dud_ppm = 30000
+
+[[ammo]]
+id = "canister_12"
+kind = "canister"
+mass_g = 5400
+diameter_mm = 117
+cd_pm = 470
+muzzle_mm_s = 400000
+confidence = "partial"
+placeholder = true
+calibration_target = "CT-2"
+sources = [{ document = "CWV", page = 459, tag = "V S20", note = "27 iron balls of 1.5 in" }]
+note = "pellet mass derived from the iron density; spread and speed are placeholders"
+
+[ammo.burst]
+count = 27
+pellet_diameter_mm = 38
+pellet_cd_pm = 470
+shape = "cone"
+spread_sigma_urad = 60000
+pellet_speed_pm = 850
+fuse_sigma_substeps = 0
+dud_ppm = 0

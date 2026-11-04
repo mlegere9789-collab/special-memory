@@ -1,0 +1,176 @@
+# Weapon rows (SPEC-005 section 1). Ticks are for trained troops at 20 ticks per second.
+# `ammo` lists the ammunition ids a weapon fires, each with its starting round count.
+# `misfire_restart_step` names the load step a misfire restarts at.
+schema = "weapons/1"
+
+[[weapon]]
+id = "smoothbore_69"
+class = "smoothbore"
+ammo = [
+  { id = "ball_69", rounds = 60 },
+]
+magazine = 1
+cycle_ticks = 0
+load_steps = [
+  { id = "handle", ticks = 120 },
+  { id = "seat", ticks = 60 },
+  { id = "ram", ticks = 140 },
+  { id = "prime", ticks = 100 },
+  { id = "ready", ticks = 60 },
+]
+misfire_restart_step = "prime"
+sigma0_urad = 6000
+sigma_slope_urad_per_100m = 4000
+aim_scale_pm = 1000
+powder_mg = 3900
+misfire_ppm = 20000
+misfire_fouling_ppm = 30000
+fouling_per_shot = 12
+ram_penalty_pm = 500
+fire_drain_ppm = 2000
+effective_mm = 45720
+extended_mm = 182880
+reach_mm = 365760
+confidence = "partial"
+placeholder = true
+calibration_target = "CT-3"
+sources = [{ document = "CWV", page = 459, tag = "V S21", note = "effective 50 yd, extended 200 yd" }]
+note = "dispersion, loading and misfire figures are placeholders"
+
+[[weapon]]
+id = "rifle_58"
+class = "rifled"
+ammo = [
+  { id = "minie_58", rounds = 60 },
+]
+magazine = 1
+cycle_ticks = 0
+load_steps = [
+  { id = "handle", ticks = 120 },
+  { id = "seat", ticks = 60 },
+  { id = "ram", ticks = 160 },
+  { id = "prime", ticks = 100 },
+  { id = "ready", ticks = 60 },
+]
+misfire_restart_step = "prime"
+sigma0_urad = 700
+sigma_slope_urad_per_100m = 250
+aim_scale_pm = 1000
+powder_mg = 3900
+misfire_ppm = 20000
+misfire_fouling_ppm = 30000
+fouling_per_shot = 12
+ram_penalty_pm = 500
+fire_drain_ppm = 2000
+effective_mm = 274320
+extended_mm = 804672
+reach_mm = 1609344
+confidence = "partial"
+placeholder = true
+calibration_target = "CT-3"
+sources = [{ document = "CWV", page = 459, tag = "V S21", note = "effective 300 yd, extended half a mile" }]
+note = "load step splits are placeholders (CT-4)"
+
+[[weapon]]
+id = "carbine_52"
+class = "carbine"
+ammo = [
+  { id = "carbine_52", rounds = 40 },
+]
+magazine = 1
+cycle_ticks = 0
+load_steps = [
+  { id = "open", ticks = 40 },
+  { id = "insert", ticks = 60 },
+  { id = "close", ticks = 30 },
+  { id = "prime", ticks = 20 },
+]
+misfire_restart_step = "prime"
+sigma0_urad = 1000
+sigma_slope_urad_per_100m = 300
+aim_scale_pm = 1000
+powder_mg = 3900
+misfire_ppm = 20000
+misfire_fouling_ppm = 30000
+fouling_per_shot = 12
+ram_penalty_pm = 500
+fire_drain_ppm = 2000
+effective_mm = 183000
+extended_mm = 500000
+reach_mm = 1000000
+confidence = "unverified"
+placeholder = true
+calibration_target = "CT-3"
+sources = [{ document = "CWV", page = 510, note = "4.2: breechloaders were rare" }]
+note = "load step splits are placeholders (CT-4)"
+
+[[weapon]]
+id = "revolver_44"
+class = "revolver"
+ammo = [
+  { id = "revolver_44", rounds = 18 },
+]
+magazine = 6
+cycle_ticks = 20
+load_steps = [
+  { id = "clear", ticks = 300 },
+  { id = "charge", ticks = 600 },
+  { id = "cap", ticks = 300 },
+]
+misfire_restart_step = "cap"
+sigma0_urad = 5000
+sigma_slope_urad_per_100m = 3000
+aim_scale_pm = 1500
+powder_mg = 1000
+misfire_ppm = 20000
+misfire_fouling_ppm = 30000
+fouling_per_shot = 12
+ram_penalty_pm = 500
+fire_drain_ppm = 2000
+effective_mm = 25000
+extended_mm = 80000
+reach_mm = 160000
+confidence = "unverified"
+placeholder = true
+calibration_target = "CT-3"
+note = "load step splits are placeholders (CT-4)"
+
+[[weapon]]
+id = "napoleon_12"
+class = "field_gun"
+ammo = [
+  { id = "shot_12", rounds = 20 },
+  { id = "shell_12", rounds = 20 },
+  { id = "case_12", rounds = 10 },
+  { id = "canister_12", rounds = 6 },
+]
+magazine = 1
+cycle_ticks = 0
+load_steps = [
+  { id = "sponge", ticks = 200 },
+  { id = "load", ticks = 300 },
+  { id = "ram", ticks = 200 },
+  { id = "prime", ticks = 200 },
+  { id = "lay", ticks = 300 },
+]
+misfire_restart_step = "prime"
+sigma0_urad = 1500
+sigma_slope_urad_per_100m = 400
+aim_scale_pm = 150
+powder_mg = 907000
+misfire_ppm = 10000
+misfire_fouling_ppm = 30000
+fouling_per_shot = 12
+ram_penalty_pm = 500
+fire_drain_ppm = 2000
+effective_mm = 320040
+extended_mm = 1536192
+reach_mm = 3072384
+confidence = "partial"
+placeholder = true
+calibration_target = "CT-3"
+sources = [
+  { document = "CWV", page = 453, note = "about one round a minute" },
+  { document = "CWV", page = 459, tag = "V S19", note = "canister effective 350 yd, shot maximum 1680 yd, 2.0 lb charge" },
+]
+note = "load step splits are placeholders (CT-4)"
