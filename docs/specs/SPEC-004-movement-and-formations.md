@@ -152,3 +152,19 @@ Section 11 describes the hash and the input tags as they stand with every option
 - **Optional hash blocks.** `battle_hash` is the section 11 stream followed by the three SPEC-005 blocks (fire, smoke, casualty log). A layer that adds state to `BattleState` through an `Option` field appends one block after those, in the fixed order of REGISTRY section 5 (morale, command, environment). A block is written only when its option is `Some`, and it begins with its own `u32` magic: `0x4D4F_5231` morale, `0x434D_4431` command ("CMD1"), `0x454E_5631` environment. With every option `None` nothing is written, so the stream, and every golden recorded before the layer existed, is unchanged.
 - **Direct-order refusal.** When `cmd` is `Some`, a replay input with tag `0x01` to `0x05` from a seat actor (`0x00`, `0x01`, `0x80`, `0x81`) is refused with `InputError::DirectOrder` and changes nothing, unless that seat's `instant_orders` option is set. Script actors (`0xFD`, `0xFE`, `0xFF`) and orders the engine issues itself are never refused. The refusal sits at the input boundary (`apply_command_input`); `issue_order` itself is unchanged. With `cmd` `None` every input is applied as before.
 - **Tick order.** `step_command` is step TK-03 of REGISTRY section 6, after the boundary and weather steps and before movement. No SPEC-005 text changes.
+
+## Amendment A3 (from T-141, SPEC-014)
+Section 5 gains four terrain classes for the battlefield pipeline (SPEC-014 section 4.3). Classes 0 to 7 are unchanged.
+- **Rows.** `terrain.toml` appends, ids ascending, all placeholders with calibration target CT-014-3 (CT-004-4 still bounds the woods rate):
+
+| id | name | speed_pm | effort_pm | line_disorder_pm | cover_pm | blocks |
+|---:|---|---:|---:|---:|---:|---|
+| 8 | crop | 900 | 1100 | 120 | 50 | no |
+| 9 | rocky | 500 | 1600 | 450 | 400 | no |
+| 10 | yard | 800 | 1100 | 200 | 100 | no |
+| 11 | building | 0 | 1000 | 0 | 0 | yes |
+
+- **Blocking.** `blocks_movement` is true for classes 7 and 11 only; the loader rule that a passable class needs a positive `speed_pm` is unchanged.
+- **Provenance prefix.** A row added by a later spec carries that spec's calibration prefix (ADR 0011), so rows 8 to 11 carry `CT-014-3` while rows 0 to 7 keep `CT-004-4`.
+- **Slope.** Ground slope (`slope_pm`, SPEC-014 section 5) is data only; no movement, fatigue or fire rule reads it yet.
+- **Grids and sidecars.** A scenario `legend` may name classes 8 to 11. No class has a hash of its own, so no recorded golden changes. Matching `environment.toml` `[[retain]]` rows belong to the SPEC-009 data ticket; `acoustics.toml` `[[ground]]` has no row for a class that adds no foliage loss, so none is added.

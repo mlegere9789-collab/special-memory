@@ -1,4 +1,4 @@
-# Terrain classes (SPEC-004 section 5). Speed, effort, line disorder and cover are permille; every number is a placeholder (CT-004-4).
+# Terrain classes (SPEC-004 section 5 and amendment A3). Speed, effort, line disorder and cover are permille; every number is a placeholder (CT-004-4 for classes 0 to 7, CT-014-3 for classes 8 to 11).
 schema = "terrain/1"
 
 [[class]]
@@ -99,3 +99,55 @@ blocks_movement = true
 confidence = "unverified"
 placeholder = true
 calibration_target = "CT-004-4"
+
+[[class]]
+id = 8
+name = "crop"
+speed_pm = 900
+effort_pm = 1100
+line_disorder_pm = 120
+cover_pm = 50
+blocks_movement = false
+confidence = "unverified"
+placeholder = true
+calibration_target = "CT-014-3"
+note = "SPEC-004 amendment A3, SPEC-014 section 4.3"
+
+[[class]]
+id = 9
+name = "rocky"
+speed_pm = 500
+effort_pm = 1600
+line_disorder_pm = 450
+cover_pm = 400
+blocks_movement = false
+confidence = "unverified"
+placeholder = true
+calibration_target = "CT-014-3"
+note = "SPEC-004 amendment A3, SPEC-014 section 4.3"
+
+[[class]]
+id = 10
+name = "yard"
+speed_pm = 800
+effort_pm = 1100
+line_disorder_pm = 200
+cover_pm = 100
+blocks_movement = false
+confidence = "unverified"
+placeholder = true
+calibration_target = "CT-014-3"
+note = "SPEC-004 amendment A3, SPEC-014 section 4.3"
+
+[[class]]
+id = 11
+name = "building"
+speed_pm = 0
+effort_pm = 1000
+line_disorder_pm = 0
+cover_pm = 0
+blocks_movement = true
+confidence = "unverified"
+placeholder = true
+calibration_target = "CT-014-3"
+note = "SPEC-004 amendment A3, SPEC-014 section 4.3"

@@ -1,0 +1,27 @@
+# Elevation sources for the Gettysburg survey (SPEC-014 section 3).
+# Every entry below is a candidate that nobody has consulted: no provider index has been queried, no licence or
+# policy text has been read, no coverage check has been run, nothing has been downloaded. Fields without a
+# recorded value are omitted. `tools/validators/survey.py --pending` lists what is outstanding.
+schema = "survey-sources/1"
+survey = "gettysburg"
+note = "If the coverage check or the licence check fails for source 1, SPEC-014 sections 3, 9 and 14 and CT-014-1 must be amended with the failure and the fallback source before ticket T-142 starts; a coarser fallback such as source 2 forces a new cell-size decision."
+
+[[source]]
+id = 1
+kind = "dem"
+provider = "United States Geological Survey, 3D Elevation Program"
+product = "bare-earth elevation model at 1 m posts or better (candidate; project and tile names to be read from the provider's index)"
+consulted = false
+coverage_status = "unchecked"
+licence_status = "unverified"
+note = "SPEC-014 section 3 assumes a US federal lidar-derived product in the public domain; that assumption is not verified. The human steps are the index query with its result hash, the saved licence or policy text with its hash, the coverage check over the slab and the full extent, and cleared_by."
+
+[[source]]
+id = 2
+kind = "dem"
+provider = "United States Geological Survey, 3D Elevation Program"
+product = "seamless elevation model at about 10 m posts (candidate fallback; product name to be read from the provider's index)"
+consulted = false
+coverage_status = "unchecked"
+licence_status = "unverified"
+note = "Fallback only if source 1 fails coverage or licence. At about 10 m posts a 4 m cell grid is mostly interpolation, so choosing it needs a SPEC-014 amendment and a revised CT-014-1 first."

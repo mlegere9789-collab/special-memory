@@ -1,0 +1,69 @@
+# Obstacle kinds (SPEC-014 section 4.3). Heights are above local ground; every number is a placeholder (CT-014-4).
+schema = "obstacles/1"
+
+[[kind]]
+id = 1
+name = "stone_wall"
+height_mm = 1000
+fire_blocking = true
+sight_blocking = false
+crossing_ticks = 60
+confidence = "unverified"
+placeholder = true
+calibration_target = "CT-014-4"
+sources = [{ document = "CWV", page = 511, note = "qualitative only: walls give cover at Gettysburg; the height is not sourced" }]
+
+[[kind]]
+id = 2
+name = "rail_fence"
+height_mm = 1300
+fire_blocking = false
+sight_blocking = false
+crossing_ticks = 40
+confidence = "unverified"
+placeholder = true
+calibration_target = "CT-014-4"
+
+[[kind]]
+id = 3
+name = "board_fence"
+height_mm = 1500
+fire_blocking = false
+sight_blocking = false
+crossing_ticks = 50
+confidence = "unverified"
+placeholder = true
+calibration_target = "CT-014-4"
+
+[[kind]]
+id = 4
+name = "hedge"
+height_mm = 1500
+fire_blocking = false
+sight_blocking = true
+crossing_ticks = 80
+confidence = "unverified"
+placeholder = true
+calibration_target = "CT-014-4"
+
+[[kind]]
+id = 5
+name = "earthwork"
+height_mm = 1100
+fire_blocking = true
+sight_blocking = false
+crossing_ticks = 100
+confidence = "unverified"
+placeholder = true
+calibration_target = "CT-014-4"
+
+[[kind]]
+id = 6
+name = "building_wall"
+height_per_feature = true
+fire_blocking = true
+sight_blocking = true
+crossing_ticks = 0
+confidence = "unverified"
+placeholder = true
+calibration_target = "CT-014-4"
