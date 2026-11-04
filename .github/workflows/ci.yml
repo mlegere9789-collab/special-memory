@@ -38,6 +38,7 @@ jobs:
       - name: wave-2 tool self-tests
         run: |
           python3 tools/test_gb_corpus.py
+          python3 tools/test_gb_ladder.py
           python3 tools/test_check_assets.py
           python3 tools/test_extract_traits.py
           python3 tools/test_command_validator.py
