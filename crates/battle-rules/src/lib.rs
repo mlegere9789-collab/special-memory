@@ -124,9 +124,9 @@ pub use aggregate::{condense, hand_over, materialise, materialised_stream, Aggre
 // T-091
 mod environment;
 pub use environment::{
-    apparent_f10, exp_table, EnvTable, Environment, HeatNow, HeatParams, HeatPoint, RainParams,
-    RetainRow, SightParams, SmokeParams, WeatherKey, WeatherNow, WeatherTable, EXP_TABLE,
-    WIND_MAX_MM_S,
+    apparent_f10, exp_table, EnvInputs, EnvTable, Environment, HeatNow, HeatParams, HeatPoint,
+    RainParams, RetainRow, SightParams, SmokeParams, WeatherKey, WeatherNow, WeatherTable,
+    EXP_TABLE, WIND_MAX_MM_S,
 };
 
 // T-094

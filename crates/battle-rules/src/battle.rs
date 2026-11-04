@@ -38,6 +38,13 @@ pub struct LocoExt {
     pub slot: SlotLocal,
     /// The soldier is using the catch-up gait.
     pub catchup: bool,
+    /// Forward offset of the steering target in mm, set by the sight period (SPEC-004
+    /// amendment A6); 0 with `env` `None`.
+    pub peek_mm: u16,
+    /// The soldier found no visible target since the last sight period.
+    pub blind: bool,
+    /// The soldier took a shot since the last sight period.
+    pub fired: bool,
 }
 
 /// The whole battle: world, regiments and the tables they obey.
@@ -155,7 +162,18 @@ fn apply_order(
             reg.order = Order::Hold;
             reg.pending = None;
         }
-        (other, RegimentState::Steady(_)) => reg.order = other,
+        (other, RegimentState::Steady(_)) => {
+            if matches!(other, Order::Move { .. }) {
+                // A new march starts from the plain slots (SPEC-004 amendment A6).
+                for id in &reg.roster {
+                    if let Some(l) = loco.get_mut(id.index as usize) {
+                        l.peek_mm = 0;
+                    }
+                }
+                reg.peek_mm = 0;
+            }
+            reg.order = other;
+        }
         (other, RegimentState::Forming { .. }) => reg.pending = Some(other),
     }
 }
@@ -247,6 +265,8 @@ impl BattleState {
             since: 0,
             aggregate: Aggregate::default(),
             acct: RoundsAccount::default(),
+            peek_mm: 0,
+            view_blocked: false,
         });
         self.regfire.push(RegFire::NONE);
         id
@@ -343,7 +363,7 @@ impl BattleState {
 
     /// One whole tick in the order of REGISTRY section 6.2 for the steps that exist: TK-04
     /// movement, TK-05 grid rebuild and release of expired disables, TK-06 fire, TK-07 flight and
-    /// hit, TK-10 casualties, TK-11 morale (only with `morale` `Some`), TK-12 smoke (decay, or with `env` `Some` the SPEC-009 update), TK-14 roster updates, TK-15 `advance_tick`
+    /// hit, TK-10 casualties, TK-11 morale (only with `morale` `Some`), TK-12 smoke (decay, or with `env` `Some` the SPEC-009 update), TK-13 the peek update (only with `env` `Some`), TK-14 roster updates, TK-15 `advance_tick`
     /// (SPEC-005 amendment A5); with `env` `Some`, TK-02 first (SPEC-009). A later layer adds its step here at its place.
     pub fn step(&mut self) {
         self.step_with(false);
@@ -362,6 +382,7 @@ impl BattleState {
         self.step_casualties();
         self.step_morale();
         self.step_smoke();
+        self.step_sight();
         self.step_rosters();
         self.world.advance_tick();
     }
@@ -414,6 +435,85 @@ impl BattleState {
             now.rain_pm,
             &|pos| table.retain_pm(terrain.class_at(pos)),
         );
+    }
+
+    /// Step TK-13 (SPEC-009 section 6), on the last tick of each `[sight]` period: soldiers of
+    /// regiments that are firing at will in line or skirmish order step their peek offset
+    /// forward when blind and back when idle; every soldier's `blind` and `fired` are cleared;
+    /// each regiment's `view_blocked`, `peek_mm` and [`EnvInputs`] are refreshed. Does nothing
+    /// with `env` `None`.
+    pub(crate) fn step_sight(&mut self) {
+        let BattleState {
+            world,
+            regiments,
+            loco,
+            smoke,
+            env,
+            regfire,
+            ..
+        } = self;
+        let Some(env) = env.as_mut() else {
+            return;
+        };
+        let sp = &env.table().sight;
+        let period = u64::from(sp.period_ticks.max(1));
+        if world.tick % period != period - 1 {
+            return;
+        }
+        let max = sp.peek_max_mm.min(u32::from(u16::MAX)) as u16;
+        let step = sp.peek_step_mm.min(u32::from(u16::MAX)) as u16;
+        let back = sp.peek_back_mm.min(u32::from(u16::MAX)) as u16;
+        let report = u64::from(sp.blind_report_pm);
+        let ref_units = env.table().smoke.ref_units;
+        let drain = u16::try_from(env.heat().drain_pm).unwrap_or(u16::MAX);
+        let mut inputs = Vec::with_capacity(regiments.len());
+        for (ri, reg) in regiments.iter_mut().enumerate() {
+            let at_will = matches!(regfire[ri].mode, crate::FireMode::AtWill { .. });
+            let active = at_will && crate::can_fire(reg);
+            let (mut blind, mut stuck, mut top) = (0u64, 0u64, 0u16);
+            for id in &reg.roster {
+                let Some(l) = loco.get_mut(id.index as usize) else {
+                    continue;
+                };
+                if active {
+                    if l.blind && l.peek_mm < max {
+                        l.peek_mm = l.peek_mm.saturating_add(step).min(max);
+                    } else if !l.blind && !l.fired {
+                        l.peek_mm -= l.peek_mm.min(back);
+                    }
+                }
+                blind += u64::from(l.blind);
+                stuck += u64::from(l.blind && l.peek_mm >= max);
+                top = top.max(l.peek_mm);
+                l.blind = false;
+                l.fired = false;
+            }
+            let len = reg.roster.len() as u64;
+            reg.peek_mm = top;
+            reg.view_blocked = len > 0 && stuck * 1000 >= report * len;
+            inputs.push(crate::EnvInputs {
+                smoke_pm: smoke.smoke_pm(reg.anchor, ref_units) as u16,
+                blind_pm: (blind * 1000).checked_div(len).unwrap_or(0) as u16,
+                view_blocked: reg.view_blocked,
+                heat_drain_pm: drain,
+            });
+        }
+        env.set_inputs(inputs);
+    }
+
+    /// What the morale layer reads of regiment `id` as of the last sight period; `None` with
+    /// `env` `None`, for an unknown regiment, or before the first period has ended.
+    pub fn env_inputs(&self, id: RegimentId) -> Option<crate::EnvInputs> {
+        self.env.as_ref()?.inputs().get(usize::from(id.0)).copied()
+    }
+
+    /// Whether the regiment's view is blocked (SPEC-009 section 6): at least `blind_report_pm`
+    /// permille of its soldiers stand at the peek limit and still cannot see. `false` for an
+    /// unknown regiment.
+    pub fn view_blocked(&self, id: RegimentId) -> bool {
+        self.regiments
+            .get(usize::from(id.0))
+            .is_some_and(|r| r.view_blocked)
     }
 
     /// `(drain_pm, rest_pm)`, the heat multipliers of fatigue; both 1000 with `env` `None`.

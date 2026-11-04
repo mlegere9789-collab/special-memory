@@ -243,7 +243,10 @@ const ENV_MAGIC: u32 = 0x45_4E_56_31;
 /// The environment block (SPEC-009 section 9), written only when `env` is `Some`: `u32
 /// 0x45_4E_56_31`, then `WeatherNow` (`temp i32, humidity i32, wind x i64, wind y i64, rain i32,
 /// clear_vis i32, light i32`), powder damp `u32`, ground wetness `u32`, and the smoke losses
-/// `lost_edge u64, lost_decay u64, lost_cap u64`. Later tickets append the sight fields.
+/// `lost_edge u64, lost_decay u64, lost_cap u64`; per regiment ascending `EnvInputs` (`smoke_pm u16,
+/// blind_pm u16, view_blocked u8, heat_drain_pm u16`, zeros before the first period); per
+/// locomotion slot ascending `peek_mm u16, blind u8, fired u8`. The observer list and the sight
+/// logs follow in a later ticket.
 fn write_environment(h: &mut StateHasher, state: &BattleState) {
     let Some(env) = &state.env else {
         return;
@@ -262,4 +265,16 @@ fn write_environment(h: &mut StateHasher, state: &BattleState) {
     h.write_u64(state.smoke.lost_edge);
     h.write_u64(state.smoke.lost_decay);
     h.write_u64(state.smoke.lost_cap);
+    for i in 0..state.regiments.len() {
+        let v = env.inputs().get(i).copied().unwrap_or_default();
+        h.write_u16(v.smoke_pm);
+        h.write_u16(v.blind_pm);
+        h.write_u8(u8::from(v.view_blocked));
+        h.write_u16(v.heat_drain_pm);
+    }
+    for l in &state.loco {
+        h.write_u16(l.peek_mm);
+        h.write_u8(u8::from(l.blind));
+        h.write_u8(u8::from(l.fired));
+    }
 }

@@ -6,7 +6,10 @@
 //! retention per terrain class; [`WeatherTable`] holds the timeline and answers
 //! [`WeatherNow`] at a battle tick; [`exp_table`] turns an optical depth into a transmission.
 
-use crate::{fx_ratio, parse_table, DataError, Provenance, Table, TerrainTable, Weather, TICK_HZ};
+use crate::{
+    fx_ratio, parse_table, DataError, ElevationGrid, Provenance, Table, TerrainTable, Weather,
+    TICK_HZ,
+};
 use core_math::Vec2Fx;
 
 const ENV_SCHEMA: &str = "environment/1";
@@ -607,6 +610,20 @@ pub struct HeatNow {
     pub rest_pm: u32,
 }
 
+/// What the morale layer reads of a regiment's surroundings, refreshed each sight period
+/// (SPEC-009 section 8).
+#[derive(Clone, Copy, Debug, Default, PartialEq, Eq)]
+pub struct EnvInputs {
+    /// Smoke concentration at the regiment's anchor, permille.
+    pub smoke_pm: u16,
+    /// Share of the regiment's soldiers that found no visible target this period, permille.
+    pub blind_pm: u16,
+    /// Enough soldiers stand at the peek limit and still cannot see.
+    pub view_blocked: bool,
+    /// Heat multiplier of fatigue drain, permille.
+    pub heat_drain_pm: u16,
+}
+
 /// The environment layer of a battle (`BattleState.env`): the rules table, the weather timeline
 /// and the state they drive each period: the weather now, powder damp, ground wetness and heat
 /// (SPEC-009 sections 3.2 and 7). Damp and ground are ppm in `0..=1_000_000`.
@@ -618,6 +635,8 @@ pub struct Environment {
     damp: u32,
     ground: u32,
     heat: HeatNow,
+    relief: ElevationGrid,
+    inputs: Vec<EnvInputs>,
 }
 
 /// One rain step: `v + rain_pm * rise / 1000` while it rains, else `v - fall`, in `0..=10^6`.
@@ -648,6 +667,8 @@ impl Environment {
                 drain_pm: 1000,
                 rest_pm: 1000,
             },
+            relief: ElevationGrid::flat(),
+            inputs: Vec::new(),
         };
         env.heat = env.heat_of(&now);
         env
@@ -732,5 +753,32 @@ impl Environment {
     /// The heat state as of the last refresh.
     pub fn heat(&self) -> HeatNow {
         self.heat
+    }
+
+    /// The ground heights sight reads; flat until [`Environment::set_relief`].
+    pub fn relief(&self) -> &ElevationGrid {
+        &self.relief
+    }
+
+    /// Sets the ground heights (decision D-02: relief changes sight only).
+    pub fn set_relief(&mut self, relief: ElevationGrid) {
+        self.relief = relief;
+    }
+
+    /// The inputs of each regiment as of the last sight period, indexed by regiment id (shorter
+    /// than the regiment list until the first period ends).
+    pub fn inputs(&self) -> &[EnvInputs] {
+        &self.inputs
+    }
+
+    /// Replaces the inputs (written by the period step).
+    pub(crate) fn set_inputs(&mut self, inputs: Vec<EnvInputs>) {
+        self.inputs = inputs;
+    }
+
+    /// Mutable inputs, for tests of the hash.
+    #[doc(hidden)]
+    pub fn inputs_mut(&mut self) -> &mut Vec<EnvInputs> {
+        &mut self.inputs
     }
 }
