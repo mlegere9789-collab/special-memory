@@ -1,0 +1,112 @@
+# SPEC-011 section 7: conflict fixtures CF-01 to CF-10. Each row names a disagreement in the record
+# and the rule the committed tables must obey; `history_cal::check_conflicts` runs them.
+# Rules: `envelope` (band `ref` covers every value; `rate_ref` with `rate_base` also checks that the
+# rate of `value_b` lies in that band), `time_window` (trigger `ref`, window early_s or at_s to late_s or
+# at_s, covers every value), `no_subtract` (band `ref` edges are not a difference of two values),
+# `bad_value` (each value is in qc/fixtures/audit-known-errors.toml and any band edge or stated
+# figure equal to one lies in an unverified row), `record_range` (the named history range holds both
+# values as its low and high), `window_only` (value_a is strictly before value_b: a window, not a point).
+# Values are counts or clock seconds; `value_c` and `value_d` extend a row to four values.
+schema = "history-conflicts/1"
+
+[[conflict]]
+id = "CF-01"
+subject = "Confederate battle total: 28,063 against about 23,000"
+rule = "envelope"
+ref = "HB-08"
+value_a = 28063
+value_b = 23000
+confidence = "unverified"
+sources = [{ document = "CWV", page = 79, tag = "untagged" }, { document = "CWV", page = 84, tag = "untagged" }]
+
+[[conflict]]
+id = "CF-02"
+subject = "Confederate loss in the charge: headline 6,555 against 1,123 + 4,019 + 3,750 = 8,892"
+rule = "envelope"
+ref = "HB-06"
+value_a = 6555
+value_b = 8892
+confidence = "unverified"
+sources = [{ document = "CWV", page = 84, tag = "untagged" }]
+
+[[conflict]]
+id = "CF-03"
+subject = "Charge steps off at 14:00 or 15:00; the cannonade and the 2:45 to 3 p.m. message on page 83 also conflict"
+rule = "time_window"
+ref = "tl_10"
+value_a = 223200
+value_b = 226800
+confidence = "partial"
+sources = [{ document = "CWV", page = 69, tag = "P" }, { document = "CWV", page = 83, tag = "untagged" }]
+
+[[conflict]]
+id = "CF-04"
+subject = "Hood steps off at 16:00 or 16:30"
+rule = "time_window"
+ref = "tl_06"
+value_a = 144000
+value_b = 145800
+confidence = "partial"
+sources = [{ document = "CWV", page = 69, tag = "V" }, { document = "CWV", page = 81, tag = "untagged" }]
+
+[[conflict]]
+id = "CF-05"
+subject = "Ewell's evening attacks at 18:30 or 19:00"
+rule = "time_window"
+ref = "tl_07"
+value_a = 153000
+value_b = 154800
+confidence = "partial"
+sources = [{ document = "CWV", page = 69, tag = "V" }, { document = "CWV", page = 82, tag = "untagged" }]
+
+[[conflict]]
+id = "CF-06"
+subject = "Day-1 Union loss nearly 9,000 against about 4,000 prisoners; the composition is not stated, so no band is the difference"
+rule = "no_subtract"
+ref = "HB-01"
+value_a = 9000
+value_b = 4000
+confidence = "unverified"
+sources = [{ document = "CWV", page = 80, tag = "untagged" }]
+
+[[conflict]]
+id = "CF-07"
+subject = "Wheatfield loss 4,000 to 6,000 against 6,133, which is 30 percent of 20,444"
+rule = "envelope"
+ref = "HB-15"
+rate_ref = "HB-14"
+rate_base = 20444
+value_a = 4000
+value_b = 6133
+confidence = "unverified"
+sources = [{ document = "CWV", page = 82, tag = "untagged" }]
+
+[[conflict]]
+id = "CF-08"
+subject = "Stuart's strength 3,430 engaged to 5,000 present; both are run as scenario inputs"
+rule = "record_range"
+ref = "gb_east_cavalry_field.confederate_engaged"
+value_a = 3430
+value_b = 5000
+confidence = "unverified"
+sources = [{ document = "CWV", page = 83, tag = "untagged" }]
+
+[[conflict]]
+id = "CF-09"
+subject = "Reynolds killed between 10:20 and 11:30, a window and never a point"
+rule = "window_only"
+value_a = 37200
+value_b = 41400
+confidence = "unverified"
+sources = [{ document = "CWV", page = 80, tag = "untagged" }]
+
+[[conflict]]
+id = "CF-10"
+subject = "ABT headline values appear only in unverified rows"
+rule = "bad_value"
+value_a = 93921
+value_b = 71699
+value_c = 23049
+value_d = 28063
+confidence = "unverified"
+sources = [{ document = "CWV", page = 79, tag = "untagged" }]

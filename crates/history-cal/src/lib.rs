@@ -13,6 +13,7 @@ mod codec;
 mod compile;
 mod driver;
 mod error;
+mod fixtures;
 mod metrics;
 mod observe;
 mod policy;
@@ -25,6 +26,9 @@ pub use codec::{decode_trigger, encode_trigger};
 pub use compile::{compile_script, ScriptInput};
 pub use driver::{apply_variant, DriverError, MarkerHook, ReplayDriver, TriggerHook, Variant};
 pub use error::ScriptError;
+pub use fixtures::{
+    check_bands, check_conflicts, widen, Conflict, ConflictSet, FixtureContext, FixtureRule,
+};
 pub use metrics::{evaluate, measure, try_measure, BandResult, Capabilities, Verdict};
 pub use observe::{evaluate_observed, variants_to_run, Observation, ObservedResult};
 pub use policy::Policy;
