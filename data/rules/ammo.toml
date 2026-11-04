@@ -62,7 +62,7 @@ id = "shot_12"
 kind = "shot"
 mass_g = 5443
 diameter_mm = 117
-cd_pm = 470
+cd_pm = 530
 muzzle_mm_s = 452628
 restitution_pm = 400
 confidence = "partial"
@@ -72,7 +72,7 @@ sources = [
   { document = "CWV", page = 459, tag = "V S19", note = "1485 ft/s muzzle velocity, 12 lb shot" },
   { document = "CWV", page = 30, note = "12-pounder" },
 ]
-note = "diameter and drag coefficient are placeholders"
+note = "diameter is a placeholder; cd_pm fitted to band B7"
 
 [[ammo]]
 id = "shell_12"
@@ -104,11 +104,11 @@ kind = "case"
 mass_g = 5400
 diameter_mm = 117
 cd_pm = 470
-muzzle_mm_s = 400000
+muzzle_mm_s = 350000
 confidence = "unverified"
 placeholder = true
 calibration_target = "CT-005-2"
-note = "76 iron balls of 17 mm, mass derived from the iron density"
+note = "76 iron balls of 17 mm, mass derived from the iron density; muzzle speed fitted to band B7"
 
 [ammo.burst]
 count = 76
@@ -131,14 +131,14 @@ confidence = "partial"
 placeholder = true
 calibration_target = "CT-005-2"
 sources = [{ document = "CWV", page = 459, tag = "V S20", note = "27 iron balls of 1.5 in" }]
-note = "pellet mass derived from the iron density; spread and speed are placeholders"
+note = "pellet mass derived from the iron density; pellet drag and cone spread fitted to band B8, speed is a placeholder"
 
 [ammo.burst]
 count = 27
 pellet_diameter_mm = 38
-pellet_cd_pm = 470
+pellet_cd_pm = 900
 shape = "cone"
-spread_sigma_urad = 60000
+spread_sigma_urad = 10000
 pellet_speed_pm = 850
 fuse_sigma_substeps = 0
 dud_ppm = 0

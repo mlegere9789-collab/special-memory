@@ -70,10 +70,10 @@ fn the_hit_path_gives_the_table_outcomes_and_disabled_ticks() {
             }
         }
     }
-    // Band 2, legs: 50 / 800 / 100 permille.
-    assert!((killed - 10_000).abs() <= 1000, "killed {killed}");
-    assert!((wounded - 160_000).abs() <= 1000, "wounded {wounded}");
-    assert!((disabled - 20_000).abs() <= 1000, "disabled {disabled}");
+    // Band 2, legs: 12 / 160 / 120 permille.
+    assert!((killed - 2_400).abs() <= 1000, "killed {killed}");
+    assert!((wounded - 32_000).abs() <= 1000, "wounded {wounded}");
+    assert!((disabled - 24_000).abs() <= 1000, "disabled {disabled}");
     assert!(lo >= 600 && hi <= 2400, "{lo}..{hi}");
     let mean = sum / disabled as u64;
     assert!((1470..=1530).contains(&mean), "mean {mean}");

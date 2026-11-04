@@ -19,9 +19,9 @@ load_steps = [
   { id = "ready", ticks = 60 },
 ]
 misfire_restart_step = "prime"
-sigma0_urad = 6000
-sigma_slope_urad_per_100m = 4000
-aim_scale_pm = 1000
+sigma0_urad = 22000
+sigma_slope_urad_per_100m = 45000
+aim_scale_pm = 5500
 powder_mg = 3900
 misfire_ppm = 20000
 misfire_fouling_ppm = 30000
@@ -35,7 +35,7 @@ confidence = "partial"
 placeholder = true
 calibration_target = "CT-005-3"
 sources = [{ document = "CWV", page = 459, tag = "V S21", note = "effective 50 yd, extended 200 yd" }]
-note = "dispersion, loading and misfire figures are placeholders"
+note = "dispersion, loading and misfire figures are placeholders; sigma0_urad, sigma_slope_urad_per_100m and aim_scale_pm fitted to bands B2 and B3"
 
 [[weapon]]
 id = "rifle_58"
@@ -54,8 +54,8 @@ load_steps = [
 ]
 misfire_restart_step = "prime"
 sigma0_urad = 700
-sigma_slope_urad_per_100m = 250
-aim_scale_pm = 1000
+sigma_slope_urad_per_100m = 5000
+aim_scale_pm = 5000
 powder_mg = 3900
 misfire_ppm = 20000
 misfire_fouling_ppm = 30000
@@ -69,7 +69,7 @@ confidence = "partial"
 placeholder = true
 calibration_target = "CT-005-3"
 sources = [{ document = "CWV", page = 459, tag = "V S21", note = "effective 300 yd, extended half a mile" }]
-note = "load step splits are placeholders (CT-005-4)"
+note = "load step splits are placeholders (CT-005-4); aim_scale_pm and sigma_slope_urad_per_100m fitted to bands B1 and B9"
 
 [[weapon]]
 id = "carbine_52"

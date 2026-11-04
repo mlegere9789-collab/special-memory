@@ -1,0 +1,52 @@
+{
+  "format": 1,
+  "scale": 1000,
+  "sample_every_ticks": 300,
+  "lines": [
+    {"weapon": "rifle_58", "range_mm": 45720, "wall": false, "casualties_per_100_by_tick": [0, 12656, 14218, 23656, 32812, 33937, 42656, 43656], "final_min": 37750, "final_max": 48500},
+    {"weapon": "rifle_58", "range_mm": 91440, "wall": false, "casualties_per_100_by_tick": [0, 7968, 8937, 14531, 19968, 20781, 26562, 26968], "final_min": 24000, "final_max": 29000},
+    {"weapon": "rifle_58", "range_mm": 137160, "wall": false, "casualties_per_100_by_tick": [0, 5125, 5500, 9437, 13125, 13875, 17875, 18093], "final_min": 14250, "final_max": 20250},
+    {"weapon": "rifle_58", "range_mm": 182880, "wall": false, "casualties_per_100_by_tick": [0, 3718, 3937, 7281, 10375, 11062, 13906, 14093], "final_min": 11750, "final_max": 15500},
+    {"weapon": "rifle_58", "range_mm": 274320, "wall": false, "casualties_per_100_by_tick": [0, 656, 656, 1125, 1812, 1937, 2750, 2750], "final_min": 1750, "final_max": 4750},
+    {"weapon": "rifle_58", "range_mm": 365760, "wall": false, "casualties_per_100_by_tick": [0, 406, 406, 656, 1000, 1093, 1406, 1406], "final_min": 250, "final_max": 3000},
+    {"weapon": "smoothbore_69", "range_mm": 45720, "wall": false, "casualties_per_100_by_tick": [0, 9187, 12812, 17250, 24156, 24625, 31312, 36437], "final_min": 32750, "final_max": 38750},
+    {"weapon": "smoothbore_69", "range_mm": 91440, "wall": false, "casualties_per_100_by_tick": [0, 2906, 4437, 5875, 8593, 8875, 11750, 14250], "final_min": 12000, "final_max": 16250},
+    {"weapon": "smoothbore_69", "range_mm": 137160, "wall": false, "casualties_per_100_by_tick": [0, 781, 1187, 1468, 2406, 2593, 3625, 4406], "final_min": 2500, "final_max": 5750},
+    {"weapon": "smoothbore_69", "range_mm": 182880, "wall": false, "casualties_per_100_by_tick": [0, 0, 0, 31, 93, 125, 250, 437], "final_min": 0, "final_max": 1000},
+    {"weapon": "rifle_58", "range_mm": 91440, "wall": true, "casualties_per_100_by_tick": [0, 6187, 6906, 11031, 15343, 15968, 20406, 20687], "final_min": 17750, "final_max": 23750}
+  ],
+  "canister": [
+    {"range_mm": 182880, "rounds": 200, "casualties": 787},
+    {"range_mm": 320040, "rounds": 200, "casualties": 171},
+    {"range_mm": 365760, "rounds": 200, "casualties": 41},
+    {"range_mm": 457200, "rounds": 200, "casualties": 0}
+  ],
+  "bands": [
+    {"id": "B1", "point": "45 m", "scale": 1000, "mean": 43656, "min": 37750, "max": 48500},
+    {"id": "B1", "point": "91 m", "scale": 1000, "mean": 26968, "min": 24000, "max": 29000},
+    {"id": "B1", "point": "137 m", "scale": 1000, "mean": 18093, "min": 14250, "max": 20250},
+    {"id": "B1", "point": "182 m", "scale": 1000, "mean": 14093, "min": 11750, "max": 15500},
+    {"id": "B1", "point": "274 m", "scale": 1000, "mean": 2750, "min": 1750, "max": 4750},
+    {"id": "B1", "point": "365 m", "scale": 1000, "mean": 1406, "min": 250, "max": 3000},
+    {"id": "B2", "point": "45 m", "scale": 1000, "mean": 36437, "min": 32750, "max": 38750},
+    {"id": "B2", "point": "91 m", "scale": 1000, "mean": 14250, "min": 12000, "max": 16250},
+    {"id": "B2", "point": "137 m", "scale": 1000, "mean": 4406, "min": 2500, "max": 5750},
+    {"id": "B2", "point": "182 m", "scale": 1000, "mean": 437, "min": 0, "max": 1000},
+    {"id": "B3", "point": "182 m", "scale": 1000, "mean": 32214, "min": 11750, "max": 1000000},
+    {"id": "B5", "point": "trained", "scale": 1000, "mean": 2410, "min": 2403, "max": 2416},
+    {"id": "B5", "point": "raw", "scale": 1000, "mean": 2037, "min": 2033, "max": 2043},
+    {"id": "B5", "point": "veteran", "scale": 1000, "mean": 2890, "min": 2878, "max": 2901},
+    {"id": "B6", "point": "trained", "scale": 1000, "mean": 968, "min": 950, "max": 983},
+    {"id": "B7", "point": "shot_12", "scale": 1, "mean": 1610, "min": 1610, "max": 1610},
+    {"id": "B7", "point": "shell_12", "scale": 1, "mean": 1270, "min": 1270, "max": 1270},
+    {"id": "B7", "point": "case_12", "scale": 1, "mean": 1057, "min": 1057, "max": 1057},
+    {"id": "B8", "point": "182 m", "scale": 1000, "mean": 3935, "min": 3800, "max": 4280},
+    {"id": "B8", "point": "320 m", "scale": 1000, "mean": 855, "min": 360, "max": 1560},
+    {"id": "B8", "point": "365 m", "scale": 1000, "mean": 205, "min": 120, "max": 320},
+    {"id": "B8", "point": "457 m", "scale": 1000, "mean": 0, "min": 0, "max": 0},
+    {"id": "B9", "point": "91 m", "scale": 1000, "mean": 2079, "min": 1642, "max": 2736},
+    {"id": "B4", "point": "rises", "scale": 1, "mean": 0, "min": 0, "max": 0},
+    {"id": "B10", "point": "all runs", "scale": 1000, "mean": 242, "min": 0, "max": 394},
+    {"id": "B11", "point": "all runs", "scale": 1000, "mean": 0, "min": 0, "max": 0}
+  ]
+}

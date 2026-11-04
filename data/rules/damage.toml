@@ -52,11 +52,12 @@ calibration_target = "CT-005-5"
 
 [energy_bands]
 b1_min_j = 150
-b2_min_j = 500
+b2_min_j = 800
 b3_min_j = 1500
 confidence = "unverified"
 placeholder = true
 calibration_target = "CT-005-6"
+note = "b2_min_j fitted to bands B2 and B1: a smoothbore ball beyond 100 m falls in band 1"
 
 [disabled]
 base_ticks = 600
@@ -66,130 +67,143 @@ placeholder = true
 calibration_target = "CT-005-6"
 
 [absorb]
-ball_j = 600
-conical_j = 600
+ball_j = 1100
+conical_j = 1100
 pellet_j = 600
 shot_j = 40000
 confidence = "unverified"
 placeholder = true
 calibration_target = "CT-005-6"
+note = "ball and conical absorption fitted so a musket ball stops in the first body it strikes (bands B1, B2)"
 
 [[outcome]]
 band = 0
 region = "legs"
 killed_pm = 0
-wounded_pm = 50
-disabled_pm = 200
-confidence = "unverified"
-placeholder = true
-calibration_target = "CT-005-6"
-
-[[outcome]]
-band = 0
-region = "torso"
-killed_pm = 20
-wounded_pm = 150
-disabled_pm = 300
-confidence = "unverified"
-placeholder = true
-calibration_target = "CT-005-6"
-
-[[outcome]]
-band = 0
-region = "head"
-killed_pm = 150
-wounded_pm = 350
-disabled_pm = 300
-confidence = "unverified"
-placeholder = true
-calibration_target = "CT-005-6"
-
-[[outcome]]
-band = 1
-region = "legs"
-killed_pm = 10
-wounded_pm = 500
-disabled_pm = 300
-confidence = "unverified"
-placeholder = true
-calibration_target = "CT-005-6"
-
-[[outcome]]
-band = 1
-region = "torso"
-killed_pm = 150
-wounded_pm = 600
-disabled_pm = 200
-confidence = "unverified"
-placeholder = true
-calibration_target = "CT-005-6"
-
-[[outcome]]
-band = 1
-region = "head"
-killed_pm = 500
-wounded_pm = 350
-disabled_pm = 100
-confidence = "unverified"
-placeholder = true
-calibration_target = "CT-005-6"
-
-[[outcome]]
-band = 2
-region = "legs"
-killed_pm = 50
-wounded_pm = 800
-disabled_pm = 100
-confidence = "unverified"
-placeholder = true
-calibration_target = "CT-005-6"
-
-[[outcome]]
-band = 2
-region = "torso"
-killed_pm = 300
-wounded_pm = 650
+wounded_pm = 10
 disabled_pm = 40
 confidence = "unverified"
 placeholder = true
 calibration_target = "CT-005-6"
+note = "fitted to bands B1, B2, B9 and B10"
+
+[[outcome]]
+band = 0
+region = "torso"
+killed_pm = 5
+wounded_pm = 40
+disabled_pm = 100
+confidence = "unverified"
+placeholder = true
+calibration_target = "CT-005-6"
+note = "fitted to bands B1, B2, B9 and B10"
+
+[[outcome]]
+band = 0
+region = "head"
+killed_pm = 30
+wounded_pm = 110
+disabled_pm = 100
+confidence = "unverified"
+placeholder = true
+calibration_target = "CT-005-6"
+note = "fitted to bands B1, B2, B9 and B10"
+
+[[outcome]]
+band = 1
+region = "legs"
+killed_pm = 0
+wounded_pm = 24
+disabled_pm = 36
+confidence = "unverified"
+placeholder = true
+calibration_target = "CT-005-6"
+note = "fitted to bands B1, B2, B9 and B10"
+
+[[outcome]]
+band = 1
+region = "torso"
+killed_pm = 6
+wounded_pm = 48
+disabled_pm = 60
+confidence = "unverified"
+placeholder = true
+calibration_target = "CT-005-6"
+note = "fitted to bands B1, B2, B9 and B10"
+
+[[outcome]]
+band = 1
+region = "head"
+killed_pm = 36
+wounded_pm = 72
+disabled_pm = 48
+confidence = "unverified"
+placeholder = true
+calibration_target = "CT-005-6"
+note = "fitted to bands B1, B2, B9 and B10"
+
+[[outcome]]
+band = 2
+region = "legs"
+killed_pm = 12
+wounded_pm = 160
+disabled_pm = 120
+confidence = "unverified"
+placeholder = true
+calibration_target = "CT-005-6"
+note = "fitted to bands B1, B2, B9 and B10"
+
+[[outcome]]
+band = 2
+region = "torso"
+killed_pm = 72
+wounded_pm = 240
+disabled_pm = 120
+confidence = "unverified"
+placeholder = true
+calibration_target = "CT-005-6"
+note = "fitted to bands B1, B2, B9 and B10"
 
 [[outcome]]
 band = 2
 region = "head"
-killed_pm = 800
-wounded_pm = 180
-disabled_pm = 10
-confidence = "unverified"
-placeholder = true
-calibration_target = "CT-005-6"
-
-[[outcome]]
-band = 3
-region = "legs"
-killed_pm = 300
-wounded_pm = 650
+killed_pm = 200
+wounded_pm = 200
 disabled_pm = 40
 confidence = "unverified"
 placeholder = true
 calibration_target = "CT-005-6"
+note = "fitted to bands B1, B2, B9 and B10"
+
+[[outcome]]
+band = 3
+region = "legs"
+killed_pm = 60
+wounded_pm = 260
+disabled_pm = 100
+confidence = "unverified"
+placeholder = true
+calibration_target = "CT-005-6"
+note = "fitted to bands B1, B2, B9 and B10"
 
 [[outcome]]
 band = 3
 region = "torso"
-killed_pm = 650
-wounded_pm = 330
-disabled_pm = 10
+killed_pm = 150
+wounded_pm = 450
+disabled_pm = 100
 confidence = "unverified"
 placeholder = true
 calibration_target = "CT-005-6"
+note = "fitted to bands B1, B2, B9 and B10"
 
 [[outcome]]
 band = 3
 region = "head"
-killed_pm = 950
-wounded_pm = 50
-disabled_pm = 0
+killed_pm = 350
+wounded_pm = 300
+disabled_pm = 30
 confidence = "unverified"
 placeholder = true
 calibration_target = "CT-005-6"
+note = "fitted to bands B1, B2, B9 and B10"

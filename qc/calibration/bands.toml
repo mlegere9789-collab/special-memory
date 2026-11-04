@@ -1,0 +1,154 @@
+# SPEC-005 section 9: the fire bands B1 to B11 (family "fire"). Integer-only: every `low`/`high`
+# is the real number times the band's `scale`. A band changes only through a SPEC-005 amendment
+# that cites calibration evidence; simulation output never sets a limit.
+schema = "bands/1"
+
+[[band]]
+id = "B1"
+family = "fire"
+metric = "casualties_per_100"
+weapon = "rifle_58"
+scale = 1000
+points = [
+  { at_mm = 45720, low = 20000, high = 60000 },
+  { at_mm = 91440, low = 15000, high = 50000 },
+  { at_mm = 137160, low = 10000, high = 40000 },
+  { at_mm = 182880, low = 6000, high = 30000 },
+  { at_mm = 274320, low = 2000, high = 15000 },
+  { at_mm = 365760, low = 500, high = 8000 },
+]
+confidence = "unverified"
+placeholder = true
+calibration_target = "CT-005-9"
+note = "Rifle casualties per 100 men at 50, 100, 150, 200, 300 and 400 yd; most firefights were under 150 yd (CWV p030, partial)."
+
+[[band]]
+id = "B2"
+family = "fire"
+metric = "casualties_per_100"
+weapon = "smoothbore_69"
+scale = 1000
+points = [
+  { at_mm = 45720, low = 8000, high = 40000 },
+  { at_mm = 91440, low = 2000, high = 15000 },
+  { at_mm = 137160, low = 0, high = 5000 },
+  { at_mm = 182880, low = 0, high = 2000 },
+]
+confidence = "unverified"
+placeholder = true
+calibration_target = "CT-005-9"
+note = "Smoothbore casualties per 100 men at 50, 100, 150 and 200 yd."
+
+[[band]]
+id = "B3"
+family = "fire"
+metric = "ratio"
+weapon = "rifle_58"
+other = "smoothbore_69"
+scale = 1000
+points = [{ at_mm = 182880, low = 3000 }]
+confidence = "partial"
+sources = [{ document = "CWV", page = 510, tag = "4.2", note = "much higher lethality of the rifle" }]
+note = "Rifle casualties over smoothbore casualties at 200 yd, at least 3."
+
+[[band]]
+id = "B4"
+family = "fire"
+metric = "monotone"
+weapon = "B1"
+other = "B2"
+scale = 1
+points = [{ low = 0, high = 0 }]
+confidence = "partial"
+sources = [{ document = "CWV", page = 510, tag = "4.2", note = "lethality falls with range" }]
+note = "Casualties never rise with range along the B1 and B2 ranges; the value counts the rises."
+
+[[band]]
+id = "B5"
+family = "fire"
+metric = "rof"
+weapon = "smoothbore_69"
+scale = 1000
+points = [
+  { training = "trained", low = 2300, high = 2700 },
+  { training = "raw", low = 1900, high = 2200 },
+  { training = "veteran", low = 2800, high = 3200 },
+]
+confidence = "partial"
+sources = [{ document = "CWV", page = 453, tag = "Memory/Estimate", note = "2 to 3 rounds a minute" }]
+note = "Smoothbore rounds per soldier per minute by training."
+
+[[band]]
+id = "B6"
+family = "fire"
+metric = "rof"
+weapon = "napoleon_12"
+scale = 1000
+points = [{ training = "trained", low = 900, high = 1100 }]
+confidence = "partial"
+sources = [{ document = "CWV", page = 459, tag = "V S19", note = "nominal one round a minute" }]
+note = "Gun rounds per minute, trained."
+
+[[band]]
+id = "B7"
+family = "fire"
+metric = "range_to_ground"
+scale = 1
+points = [
+  { ammo = "shot_12", elevation_cdeg = 500, low = 1382, high = 1690 },
+  { ammo = "shell_12", elevation_cdeg = 375, low = 1070, high = 1308 },
+  { ammo = "case_12", elevation_cdeg = 375, low = 934, high = 1142 },
+]
+confidence = "partial"
+sources = [{ document = "CWV", page = 459, tag = "V S19", note = "1680 (alternatively 1619), 1300 and 1135 yd, plus or minus 10 percent" }]
+note = "Range in metres to first ground contact at 5 degrees (shot) and 3.75 degrees (shell, case)."
+
+[[band]]
+id = "B8"
+family = "fire"
+metric = "canister_hits"
+weapon = "napoleon_12"
+scale = 1000
+points = [
+  { at_mm = 182880, low = 3000, high = 12000 },
+  { at_mm = 320040, low = 0, high_of_first_pm = 500 },
+  { at_mm = 365760, low = 0, high_of_first_pm = 300 },
+  { at_mm = 457200, low = 0, high_of_first_pm = 100 },
+]
+confidence = "unverified"
+placeholder = true
+calibration_target = "CT-005-9"
+note = "Canister casualties per round at 200, 350, 400 and 500 yd; the order is partial (effective 350 yd, peak 200, maximum 400 yd, CWV p459, V S19, S20), the values are not."
+
+[[band]]
+id = "B9"
+family = "fire"
+metric = "wall_ratio"
+weapon = "rifle_58"
+scale = 1000
+points = [{ at_mm = 91440, low = 2000 }]
+confidence = "partial"
+sources = [{ document = "CWV", page = 65, tag = "9.3", note = "2-to-1 or more for the defender behind a wall" }]
+note = "Attacker casualties over defender casualties with a 1000 mm wall in front of the defender, at 100 yd."
+
+[[band]]
+id = "B10"
+family = "fire"
+metric = "killed_share"
+scale = 1000
+points = [{ low = 150, high = 300 }]
+confidence = "unverified"
+placeholder = true
+calibration_target = "CT-005-6"
+note = "Killed share of killed plus wounded over every cal_line run."
+
+[[band]]
+id = "B11"
+family = "fire"
+metric = "friendly_share"
+scale = 1000
+points = [{ low = 0, high = 20 }]
+confidence = "unverified"
+placeholder = true
+calibration_target = "CT-005-5"
+note = "Friendly hits over all hits over every cal_line run, in permille."

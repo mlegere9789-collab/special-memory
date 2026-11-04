@@ -2,6 +2,8 @@
 //! with its orders already issued; none draws random numbers, so the seed only enters the hash
 //! through the world header.
 
+pub mod fire;
+
 use crate::{BattleState, Formation, Gait, Order, RegimentSpec, Tables, TerrainGrid, Training};
 use core_math::{Angle, Fx, RngStreams, Vec2Fx};
 use sim_state::{SpatialGrid, WorldState};

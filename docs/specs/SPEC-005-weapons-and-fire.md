@@ -150,3 +150,26 @@ fmt, clippy `-D warnings`, `cargo test --workspace` (also `--release`) and T5-01
 4. Section 2, bursts: the first draw of `SplitMix64::new(parent.seed)` is the dud roll (`% 10^6 < dud_ppm`). Each child then takes two draws: the seed of a private `Rng` that supplies the direction draws, and the child's own `seed`. Cone speed is `pellet_speed_pm` of the parent's speed, sphere speed is that share of the muzzle speed. Children take their `seq` after the flight phase, ascending by parent `seq` then child index, so the result does not depend on the order in which projectiles are resolved.
 5. Section 5: hit draw `h` (`h = hits`) uses the words `3h`, `3h + 1`, `3h + 2` of `SplitMix64::new(seed)` for cover, outcome and `disabled_ticks`. Energy uses the speed at the start of the tick, scaled by the pierce factors of earlier hits on the same chord. A hit absorbed by cover ends the projectile. The own-unit clearance is tested at the distance flown at the point of the hit, interpolated along the chord.
 6. Section 7: `projectiles_spawned` counts burst children as well, so `projectiles_spawned == shots_fired - misfires + children`.
+
+## Amendment A18 (from T-024 calibration, 2026-11-04)
+The first run of the fire bands (CYCLE-03-f0) missed B1, B2, B4, B7 (shot and case), B8, B9 and B10, because the placeholder rows let nearly every shot kill several men. The rows below were fitted, one band group at a time and on data only (no band, formula or test threshold changed), until B1 to B11 hold. They stay placeholders with the targets named; the values of section 1 are superseded as listed. Units are those of section 1; outcome cells are permille killed/wounded/disabled.
+
+| Row | Old | New | Band | Target |
+|---|---|---|---|---|
+| `shot_12` `cd_pm` | 470 | 530 | B7 | CT-005-2 |
+| `case_12` `muzzle_mm_s` | 400000 | 350000 | B7 | CT-005-2 |
+| `canister_12` burst `spread_sigma_urad` | 60000 | 10000 | B8 | CT-005-2 |
+| `canister_12` burst `pellet_cd_pm` | 470 | 900 | B8 | CT-005-2 |
+| `rifle_58` `aim_scale_pm` | 1000 | 5000 | B1, B9 | CT-005-3 |
+| `rifle_58` `sigma_slope_urad_per_100m` | 250 | 5000 | B1 | CT-005-3 |
+| `smoothbore_69` `aim_scale_pm` | 1000 | 5500 | B2 | CT-005-3 |
+| `smoothbore_69` `sigma0_urad` | 6000 | 22000 | B2 | CT-005-3 |
+| `smoothbore_69` `sigma_slope_urad_per_100m` | 4000 | 45000 | B2, B3 | CT-005-3 |
+| `[absorb]` `ball_j`, `conical_j` | 600 | 1100 | B1, B2 | CT-005-6 |
+| `[energy_bands]` `b2_min_j` | 500 | 800 | B1, B2 | CT-005-6 |
+| band 0 legs / torso / head | 0/50/200, 20/150/300, 150/350/300 | 0/10/40, 5/40/100, 30/110/100 | B1, B10 | CT-005-6 |
+| band 1 legs / torso / head | 10/500/300, 150/600/200, 500/350/100 | 0/24/36, 6/48/60, 36/72/48 | B2, B10 | CT-005-6 |
+| band 2 legs / torso / head | 50/800/100, 300/650/40, 800/180/10 | 12/160/120, 72/240/120, 200/200/40 | B1, B2, B10 | CT-005-6 |
+| band 3 legs / torso / head | 300/650/40, 650/330/10, 950/50/0 | 60/260/100, 150/450/100, 350/300/30 | B10 | CT-005-6 |
+
+The energy bands of section 1 now read B0 below 150 J, B1 150 to 799, B2 800 to 1499, B3 1500 and up. `ref_flight.csv` (T5-05) is regenerated from the changed ammunition rows. The dispersion of section 3 is limited to 46,340 micro-radians by the `i32` sum of squares; the smoothbore rows reach that limit beyond about 90 m.
