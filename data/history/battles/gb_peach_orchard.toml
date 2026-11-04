@@ -1,0 +1,49 @@
+id = "gb_peach_orchard"
+name = "Sickles's salient and the Peach Orchard"
+theater = "eastern"
+notes = ["Sickles moved III Corps forward about 3 p.m. from the low ground to the Emmitsburg Road ridge; the line ran from Devil's Den through the Wheatfield to the Peach Orchard, with Humphreys along the road.", "The line was too long for the two divisions, leaving gaps and open flanks; Meade learned of it too late."]
+
+[start_date]
+value = "1863-07-02"
+confidence = "partial"
+sources = [{document = "CWV", page = 81, tag = "untagged"}, {document = "CWV", page = 82, tag = "untagged"}]
+
+[end_date]
+value = "1863-07-02"
+confidence = "partial"
+sources = [{document = "CWV", page = 81, tag = "untagged"}, {document = "CWV", page = 82, tag = "untagged"}]
+
+[location]
+state = "Pennsylvania"
+near = "Gettysburg, Peach Orchard on the Emmitsburg Road ridge"
+
+[sides]
+
+[sides.union]
+
+[sides.union.commander]
+value = "Sickles (III Corps), severely wounded in the fight; Graham's brigade held the orchard"
+confidence = "partial"
+sources = [{document = "CWV", page = 81, tag = "untagged"}, {document = "CWV", page = 82, tag = "untagged"}]
+
+[sides.union.engaged]
+value = 10000
+confidence = "partial"
+sources = [{document = "CWV", page = 81, tag = "untagged"}]
+flag = "This is the page's figure for the two III Corps divisions strung along the salient, not for the Peach Orchard garrison alone."
+
+[sides.union.casualties]
+
+[sides.confederate]
+
+[sides.confederate.commander]
+value = "McLaws's division (Kershaw, then Barksdale), with Alexander's artillery battalion"
+confidence = "partial"
+sources = [{document = "CWV", page = 82, tag = "untagged"}]
+
+[sides.confederate.casualties]
+
+[outcome]
+value = "Barksdale's Mississippi brigade, helped by enfilade fire from more than 50 guns, smashed Graham's brigade and took the salient."
+confidence = "partial"
+sources = [{document = "CWV", page = 82, tag = "untagged"}]

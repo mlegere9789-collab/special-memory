@@ -1,0 +1,56 @@
+id = "john_buford"
+name = "John Buford"
+side = "union"
+
+[born]
+value = "1826-03-04"
+confidence = "partial"
+sources = [{document = "CWV", page = 278, tag = "[V]"}]
+
+[died]
+value = "1863-12-16"
+confidence = "partial"
+sources = [{document = "CWV", page = 278, tag = "[V]"}]
+
+[academy_class]
+value = "1848, 16th of 38"
+confidence = "partial"
+sources = [{document = "CWV", page = 278, tag = "[V]"}]
+
+[[career]]
+role = "Cavalry division commander"
+from = "1863-06-30"
+to = "1863-07-01"
+
+[career.fact]
+value = "Held the high ground south of Gettysburg and on 1863-07-01 delayed Heth's division with about 2,700 dismounted troopers for roughly 90 minutes at Herr and McPherson Ridges until I Corps arrived."
+confidence = "partial"
+sources = [{document = "CWV", page = 80, tag = "untagged"}, {document = "CWV", page = 278, tag = "[V]"}]
+
+[[career]]
+role = "Promotion and death"
+from = "1863-12-16"
+
+[career.fact]
+value = "Promoted major general of volunteers on the day he died, on Stoneman's recommendation; the cause of death is given as possibly typhoid."
+confidence = "partial"
+sources = [{document = "CWV", page = 278, tag = "[V]"}]
+
+[[traits]]
+trait = "defensive_skill"
+evidence = "Delayed Heth's larger force with dismounted cavalry for roughly 90 minutes on 1863-07-01, giving I Corps time to arrive."
+confidence = "partial"
+sources = [{document = "CWV", page = 80, tag = "untagged"}, {document = "CWV", page = 278, tag = "[V]"}]
+
+[[traits]]
+trait = "high_discretion"
+evidence = "Decided on 1863-06-30 to hold the high ground south of the town in expectation of a general engagement and sent word to Reynolds."
+confidence = "partial"
+sources = [{document = "CWV", page = 80, tag = "untagged"}]
+
+[[relationships]]
+with = "George Stoneman"
+kind = "patronage"
+evidence = "Stoneman recommended Buford's promotion to major general of volunteers on 1863-12-16."
+confidence = "partial"
+sources = [{document = "CWV", page = 278, tag = "[V]"}]

@@ -1,0 +1,28 @@
+id = "george_s_greene"
+name = "George S. Greene"
+side = "union"
+
+[born]
+value = "1801"
+confidence = "unverified"
+sources = [{document = "CWV", page = 273, tag = "[U unless named in the rosters]"}]
+
+[died]
+value = "1899"
+confidence = "unverified"
+sources = [{document = "CWV", page = 273, tag = "[U unless named in the rosters]"}]
+
+[[career]]
+role = "Brigade commander, XII Corps"
+from = "1863-07-02"
+
+[career.fact]
+value = "Aged 62, held Culp's Hill on the night of 1863-07-02 with a thin New York brigade behind rapidly built log breastworks, the only brigade left there after Meade stripped the sector."
+confidence = "partial"
+sources = [{document = "CWV", page = 273, tag = "[U unless named in the rosters]"}, {document = "CWV", page = 82, tag = "untagged"}, {document = "CWV", page = 81, tag = "untagged"}]
+
+[[traits]]
+trait = "defensive_skill"
+evidence = "Held the crest of Culp's Hill on the night of 1863-07-02 with one brigade behind hastily built breastworks while the rest of XII Corps had been moved."
+confidence = "partial"
+sources = [{document = "CWV", page = 82, tag = "untagged"}, {document = "CWV", page = 273, tag = "[U unless named in the rosters]"}]

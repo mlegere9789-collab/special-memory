@@ -1,0 +1,21 @@
+id = "alpheus_s_williams"
+name = "Alpheus S. Williams"
+side = "union"
+
+[[career]]
+role = "Division commander, XII Corps"
+from = "1863-07-02"
+
+[career.fact]
+value = "Listed as Brig. Gen. Alpheus S. Williams in the XII Corps at Gettysburg under Slocum."
+confidence = "partial"
+sources = [{document = "CWV", page = 276, tag = "untagged"}]
+
+[[career]]
+role = "Culp's Hill counterattack"
+from = "1863-07-03"
+
+[career.fact]
+value = "With Slocum and Geary, directed XII Corps in the dawn attack on 1863-07-03 to retake the trenches lost on the lower hill."
+confidence = "partial"
+sources = [{document = "CWV", page = 83, tag = "untagged"}]

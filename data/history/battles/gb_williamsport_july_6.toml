@@ -1,0 +1,43 @@
+id = "gb_williamsport_july_6"
+name = "Williamsport wagon-train fight"
+theater = "eastern"
+notes = ["The flooded Potomac kept Lee on the north bank until the pontoon bridges were repaired."]
+
+[start_date]
+value = "1863-07-06"
+confidence = "partial"
+sources = [{document = "CWV", page = 84, tag = "untagged"}]
+
+[end_date]
+value = "1863-07-06"
+confidence = "partial"
+sources = [{document = "CWV", page = 84, tag = "untagged"}]
+
+[location]
+state = "Maryland"
+near = "Williamsport, Maryland, on the Potomac"
+
+[sides]
+
+[sides.union]
+
+[sides.union.commander]
+value = "Buford (cavalry)"
+confidence = "partial"
+sources = [{document = "CWV", page = 84, tag = "untagged"}]
+
+[sides.union.casualties]
+
+[sides.confederate]
+
+[sides.confederate.commander]
+value = "Imboden's artillery and teamsters"
+confidence = "partial"
+sources = [{document = "CWV", page = 84, tag = "untagged"}]
+
+[sides.confederate.casualties]
+
+[outcome]
+value = "Buford's attack on the trains was repelled by teamsters and Imboden's artillery."
+confidence = "partial"
+sources = [{document = "CWV", page = 84, tag = "untagged"}]

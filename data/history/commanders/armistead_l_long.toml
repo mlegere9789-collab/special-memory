@@ -1,0 +1,12 @@
+id = "armistead_l_long"
+name = "Armistead L. Long"
+side = "confederate"
+
+[[career]]
+role = "Artillery or staff officer"
+
+[career.fact]
+value = "Appears both among Lee's personal staff and as one of the corps artillery chiefs (Long or Brown for Ewell) in the 1863 reorganisation."
+confidence = "unverified"
+sources = [{document = "CWV", page = 301, tag = "untagged"}, {document = "CWV", page = 316, tag = "[U]"}]
+flag = "He is listed on Lee's personal staff and also as an artillery chief for Ewell's corps; the pages give no dates, so which role applied at Gettysburg is not chosen."

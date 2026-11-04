@@ -1,0 +1,12 @@
+id = "beverly_robertson"
+name = "Beverly Robertson"
+side = "confederate"
+
+[[career]]
+role = "Cavalry brigade commander"
+
+[career.fact]
+value = "Listed among Stuart's cavalry commanders for the campaign; the page puts him with Jones among the cavalry forces that were far behind during Stuart's absence."
+confidence = "unverified"
+sources = [{document = "CWV", page = 77, tag = "untagged"}, {document = "CWV", page = 79, tag = "untagged"}, {document = "CWV", page = 315, tag = "[U]"}]
+flag = "One page runs the commands of Jones and Robertson together ('Jones/Robertson') and the order of battle heads a roster 'Robertson's/Jenkins's brigade'; the brigade rosters are conflated and are not resolved. He is a different man from Jerome B. Robertson of the Texas Brigade."

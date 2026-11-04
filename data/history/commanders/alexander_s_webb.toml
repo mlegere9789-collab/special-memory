@@ -1,0 +1,29 @@
+id = "alexander_s_webb"
+name = "Alexander S. Webb"
+side = "union"
+
+[[career]]
+role = "Brigade commander, II Corps"
+from = "1863-07-03"
+
+[career.fact]
+value = "Brig. Gen. Alexander S. Webb is listed in II Corps at Gettysburg and led a brigade at the Angle."
+confidence = "partial"
+sources = [{document = "CWV", page = 275, tag = "[V from the opened order of battle]"}, {document = "CWV", page = 281, tag = "[V]"}]
+
+[[career]]
+role = "Wilderness"
+from = "1864-05-06"
+
+[career.fact]
+value = "His brigade of Gibbon's division was isolated on 1864-05-06 and retreated with about 300 casualties."
+confidence = "partial"
+sources = [{document = "CWV", page = 277, tag = "[V]"}, {document = "CWV", page = 281, tag = "[V]"}]
+
+[[career]]
+role = "Chief of staff"
+
+[career.fact]
+value = "The research volume names him among strong chiefs of staff; his Medal of Honor and later role as Meade's chief of staff are marked as memory."
+confidence = "unverified"
+sources = [{document = "CWV", page = 258, tag = "untagged"}, {document = "CWV", page = 281, tag = "[U]"}]

@@ -1,0 +1,43 @@
+id = "gb_emmitsburg_road"
+name = "Humphreys's division on the Emmitsburg Road"
+theater = "eastern"
+notes = ["Anderson's division was ordered to attack in echelon after Longstreet's divisions."]
+
+[start_date]
+value = "1863-07-02"
+confidence = "partial"
+sources = [{document = "CWV", page = 80, tag = "untagged"}]
+
+[end_date]
+value = "1863-07-02"
+confidence = "partial"
+sources = [{document = "CWV", page = 80, tag = "untagged"}]
+
+[location]
+state = "Pennsylvania"
+near = "Gettysburg, Emmitsburg Road"
+
+[sides]
+
+[sides.union]
+
+[sides.union.commander]
+value = "Humphreys (division of III Corps)"
+confidence = "partial"
+sources = [{document = "CWV", page = 81, tag = "untagged"}, {document = "CWV", page = 82, tag = "untagged"}]
+
+[sides.union.casualties]
+
+[sides.confederate]
+
+[sides.confederate.commander]
+value = "Anderson's division of Hill's corps (brigades of Wilcox, Perry, Wright and Posey)"
+confidence = "partial"
+sources = [{document = "CWV", page = 82, tag = "untagged"}]
+
+[sides.confederate.casualties]
+
+[outcome]
+value = "Humphreys's division was battered but resisted until pushed back; Anderson's attack then faded when supporting brigades failed to advance in step and Union reinforcements, partly from VI Corps, arrived."
+confidence = "partial"
+sources = [{document = "CWV", page = 82, tag = "untagged"}]

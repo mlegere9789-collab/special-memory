@@ -1,0 +1,51 @@
+id = "gb_buford_delay"
+name = "Cavalry delay on Herr Ridge and McPherson Ridge"
+theater = "eastern"
+notes = ["First contact about 7:30-8 a.m. (page 80) and about 7:30 a.m. (page 69 ledger row).", "Buford had chosen on June 30 to hold the high ground south of town and had sent word to Reynolds.", "Weapons named: breech-loading carbines and horse artillery."]
+
+[start_date]
+value = "1863-07-01"
+confidence = "partial"
+sources = [{document = "CWV", page = 69, tag = "V"}, {document = "CWV", page = 80, tag = "untagged"}]
+
+[end_date]
+value = "1863-07-01"
+confidence = "partial"
+sources = [{document = "CWV", page = 69, tag = "V"}, {document = "CWV", page = 80, tag = "untagged"}]
+
+[location]
+state = "Pennsylvania"
+near = "Gettysburg, west of town along the Chambersburg Pike"
+terrain_notes = "Herr Ridge and McPherson Ridge west of town."
+
+[sides]
+
+[sides.union]
+
+[sides.union.commander]
+value = "John Buford"
+confidence = "partial"
+sources = [{document = "CWV", page = 80, tag = "untagged"}]
+
+[sides.union.engaged]
+value = 2700
+confidence = "partial"
+sources = [{document = "CWV", page = 80, tag = "untagged"}]
+flag = "Described as about 2,700 troopers fighting dismounted."
+
+[sides.union.casualties]
+
+[sides.confederate]
+
+[sides.confederate.commander]
+value = "Henry Heth"
+confidence = "partial"
+sources = [{document = "CWV", page = 80, tag = "untagged"}]
+
+[sides.confederate.casualties]
+
+[outcome]
+value = "Dismounted cavalry held Heth's division back for roughly 90 minutes, which gave the leading I Corps units time to arrive."
+confidence = "partial"
+sources = [{document = "CWV", page = 80, tag = "untagged"}]
+flag = "Heth later said his march was a search for shoes; the page treats it as a reconnaissance in force that brought on a general engagement and doubts the shoe account (also page 116, disputed point 1)."

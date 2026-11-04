@@ -1,0 +1,48 @@
+id = "joshua_l_chamberlain"
+name = "Joshua L. Chamberlain"
+side = "union"
+
+[born]
+value = "1828"
+confidence = "partial"
+sources = [{document = "CWV", page = 285, tag = "[V]"}]
+
+[died]
+value = "1914"
+confidence = "partial"
+sources = [{document = "CWV", page = 285, tag = "[V]"}]
+
+[[career]]
+role = "Regimental commander, 20th Maine"
+from = "1862-08-08"
+
+[career.fact]
+value = "Bowdoin professor who entered as lieutenant colonel of the 20th Maine on 1862-08-08 and became colonel when Adelbert Ames rose to brigade command."
+confidence = "unverified"
+sources = [{document = "CWV", page = 285, tag = "[V]"}]
+flag = "Colonel date disagrees within the page: the infobox gives 1863-05-20, the text says June 1863."
+
+[[career]]
+role = "Little Round Top"
+from = "1863-07-02"
+
+[career.fact]
+value = "His regiment held the extreme left of the Union line on Little Round Top against the 15th and 47th Alabama; he is credited with the downhill bayonet charge when ammunition ran low, though the detail rests largely on his own later accounts."
+confidence = "partial"
+sources = [{document = "CWV", page = 285, tag = "[V]"}, {document = "CWV", page = 81, tag = "untagged"}]
+
+[[career]]
+role = "Brigadier general and Appomattox"
+from = "1864-06-18"
+to = "1865-04-12"
+
+[career.fact]
+value = "Severely wounded at Petersburg on 1864-06-18 and promoted brigadier general on the field by Grant that day; commanded the Union troops receiving the Confederate infantry surrender on 1865-04-12; governor of Maine 1867-71 and Bowdoin president 1871-83."
+confidence = "partial"
+sources = [{document = "CWV", page = 285, tag = "[V]"}]
+
+[[traits]]
+trait = "aggressive"
+evidence = "Ordered a downhill bayonet charge by swinging his left wing when the 20th Maine was low on ammunition on 1863-07-02; the page notes the account rests largely on his own later writing."
+confidence = "unverified"
+sources = [{document = "CWV", page = 285, tag = "[V]"}]

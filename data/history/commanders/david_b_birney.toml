@@ -1,0 +1,30 @@
+id = "david_b_birney"
+name = "David B. Birney"
+side = "union"
+
+[[career]]
+role = "Division commander, III Corps"
+from = "1863-07-02"
+
+[career.fact]
+value = "His division held the line from Devil's Den through the Wheatfield to the Peach Orchard, with Graham's brigade at the orchard."
+confidence = "partial"
+sources = [{document = "CWV", page = 81, tag = "untagged"}, {document = "CWV", page = 82, tag = "untagged"}]
+
+[[career]]
+role = "Corps commander, III Corps"
+from = "1863-07-02"
+
+[career.fact]
+value = "Succeeded Sickles in command of III Corps when Sickles was wounded."
+confidence = "partial"
+sources = [{document = "CWV", page = 275, tag = "[V from the opened order of battle]"}]
+
+[[career]]
+role = "Division commander, II Corps"
+from = "1864-05-05"
+
+[career.fact]
+value = "Led the 3rd Division of II Corps in the Wilderness roster, with brigades under Alexander Hays and John S. Crocker."
+confidence = "partial"
+sources = [{document = "CWV", page = 277, tag = "[V]"}]

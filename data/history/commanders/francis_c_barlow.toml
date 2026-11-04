@@ -1,0 +1,46 @@
+id = "francis_c_barlow"
+name = "Francis C. Barlow"
+side = "union"
+
+[born]
+value = "1834"
+confidence = "partial"
+sources = [{document = "CWV", page = 273, tag = "[V]"}]
+
+[died]
+value = "1896-01-11"
+confidence = "partial"
+sources = [{document = "CWV", page = 273, tag = "[V]"}]
+
+[[career]]
+role = "Regimental and brigade service"
+from = "1861-04"
+
+[career.fact]
+value = "First in his Harvard class; enlisted as a private in the 12th New York militia in April 1861 and was colonel of the 61st New York by spring 1862; wounded at Antietam and returned April 1863."
+confidence = "partial"
+sources = [{document = "CWV", page = 273, tag = "[V]"}]
+
+[[career]]
+role = "Division commander, XI Corps"
+from = "1863-07-01"
+
+[career.fact]
+value = "On 1863-07-01 moved his division forward to Blocher's Knoll, now Barlow's Knoll, exposing the corps flanks; the division was overrun and he was wounded and left for dead."
+confidence = "partial"
+sources = [{document = "CWV", page = 273, tag = "[V]"}, {document = "CWV", page = 80, tag = "untagged"}]
+
+[[career]]
+role = "Mule Shoe"
+from = "1864-05-12"
+
+[career.fact]
+value = "His division used Upton's assault methods at the Mule Shoe on 1864-05-12 and broke in after about 21 hours of hand-to-hand fighting."
+confidence = "partial"
+sources = [{document = "CWV", page = 273, tag = "[V]"}]
+
+[[traits]]
+trait = "aggressive"
+evidence = "Advanced his division on 1863-07-01 to Blocher's Knoll ahead of the XI Corps line, which gained ground early but exposed both flanks."
+confidence = "partial"
+sources = [{document = "CWV", page = 273, tag = "[V]"}]

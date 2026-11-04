@@ -1,0 +1,44 @@
+id = "gb_oak_hill_barlows_knoll"
+name = "Collapse north of town at Oak Hill and Barlow's Knoll"
+theater = "eastern"
+notes = ["Rodes and Early attacked about 2-2:30 p.m.; the XI Corps collapse is placed by about 4 p.m. in the page 69 ledger row.", "XI Corps brigades on the north side: Schimmelfennig, Barlow and von Amsberg.", "Lee lifted his restriction on a general engagement on arriving about 2:30 p.m."]
+
+[start_date]
+value = "1863-07-01"
+confidence = "partial"
+sources = [{document = "CWV", page = 69, tag = "V"}, {document = "CWV", page = 80, tag = "untagged"}]
+
+[end_date]
+value = "1863-07-01"
+confidence = "partial"
+sources = [{document = "CWV", page = 69, tag = "V"}, {document = "CWV", page = 80, tag = "untagged"}]
+
+[location]
+state = "Pennsylvania"
+near = "Gettysburg, north of town"
+terrain_notes = "Oak Hill and the knoll on the Union right north of town."
+
+[sides]
+
+[sides.union]
+
+[sides.union.commander]
+value = "Howard (XI Corps); Robinson's division and Baxter's brigade of I Corps on Oak Ridge"
+confidence = "partial"
+sources = [{document = "CWV", page = 80, tag = "untagged"}]
+
+[sides.union.casualties]
+
+[sides.confederate]
+
+[sides.confederate.commander]
+value = "Rodes, with Early's division arriving by the Harrisburg Road; Lee arrived about 2:30 p.m."
+confidence = "partial"
+sources = [{document = "CWV", page = 80, tag = "untagged"}]
+
+[sides.confederate.casualties]
+
+[outcome]
+value = "Early crushed the XI Corps right at Barlow's Knoll while Rodes pressed its front, and I Corps was outflanked from Oak Hill."
+confidence = "partial"
+sources = [{document = "CWV", page = 80, tag = "untagged"}]

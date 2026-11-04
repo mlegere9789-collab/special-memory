@@ -1,0 +1,32 @@
+id = "richard_h_anderson"
+name = "Richard H. Anderson"
+side = "confederate"
+
+[academy_class]
+value = "1842"
+confidence = "unverified"
+sources = [{document = "CWV", page = 307, tag = "[V/U]"}]
+
+[[career]]
+role = "Division commander, Third Corps"
+
+[career.fact]
+value = "In June 1863 he led one of the three divisions of A.P. Hill's Third Corps; on 1863-07-02 his brigades (Wilcox, Perry, Wright, Posey) attacked in echelon, and the page says the assault faded because supporting brigades did not advance in step."
+confidence = "partial"
+sources = [{document = "CWV", page = 77, tag = "untagged"}, {document = "CWV", page = 82, tag = "untagged"}]
+
+[[career]]
+role = "Temporary lieutenant general, First Corps"
+from = "1864-05-06"
+
+[career.fact]
+value = "Led the First Corps after Longstreet was wounded on 1864-05-06; listed as a temporary lieutenant general dated 1864-05-31, later with a Fourth Corps command at Petersburg."
+confidence = "partial"
+sources = [{document = "CWV", page = 72, tag = "untagged"}, {document = "CWV", page = 299, tag = "[V]"}, {document = "CWV", page = 307, tag = "[V/U]"}]
+
+[[relationships]]
+with = "ap_hill"
+kind = "subordinate_of"
+evidence = "Named as one of the three divisions (Anderson, Heth, Pender) of Hill's Third Corps in the campaign order of battle."
+confidence = "partial"
+sources = [{document = "CWV", page = 77, tag = "untagged"}]

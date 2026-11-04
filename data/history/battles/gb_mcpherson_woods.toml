@@ -1,0 +1,43 @@
+id = "gb_mcpherson_woods"
+name = "McPherson Woods, Iron Brigade against Archer"
+theater = "eastern"
+notes = ["Units named on the Union side: Wadsworth's division with Cutler's brigade and Meredith's Iron Brigade.", "The minute of Reynolds's death is not fixed; it lies after I Corps arrived about 10:20 a.m. and before Howard heard of it about 11:30 a.m."]
+
+[start_date]
+value = "1863-07-01"
+confidence = "partial"
+sources = [{document = "CWV", page = 80, tag = "untagged"}]
+
+[end_date]
+value = "1863-07-01"
+confidence = "partial"
+sources = [{document = "CWV", page = 80, tag = "untagged"}]
+
+[location]
+state = "Pennsylvania"
+near = "Gettysburg, McPherson Woods west of town"
+
+[sides]
+
+[sides.union]
+
+[sides.union.commander]
+value = "Reynolds, killed in the action; Abner Doubleday took over I Corps"
+confidence = "partial"
+sources = [{document = "CWV", page = 80, tag = "untagged"}]
+
+[sides.union.casualties]
+
+[sides.confederate]
+
+[sides.confederate.commander]
+value = "Archer's brigade of Heth's division, under Heth"
+confidence = "partial"
+sources = [{document = "CWV", page = 80, tag = "untagged"}]
+
+[sides.confederate.casualties]
+
+[outcome]
+value = "The Iron Brigade drove Archer's brigade back in the woods and captured Archer; Reynolds fell and Doubleday succeeded him."
+confidence = "partial"
+sources = [{document = "CWV", page = 80, tag = "untagged"}]

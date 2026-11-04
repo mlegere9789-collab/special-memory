@@ -1,0 +1,12 @@
+id = "albert_jenkins"
+name = "Albert Jenkins"
+side = "confederate"
+
+[[career]]
+role = "Cavalry brigade commander"
+
+[career.fact]
+value = "His brigade was with Ewell's corps on 1863-07-01; he was wounded at Gettysburg. Killed at Cloyd's Mountain in May 1864 (marked from memory)."
+confidence = "unverified"
+sources = [{document = "CWV", page = 77, tag = "untagged"}, {document = "CWV", page = 79, tag = "untagged"}, {document = "CWV", page = 83, tag = "untagged"}, {document = "CWV", page = 315, tag = "[U]"}, {document = "CWV", page = 326, tag = "untagged"}]
+flag = "After Jenkins fell, the East Cavalry Field account says the brigade was under Ferguson, while the order of battle names Lt. Col. Vincent Witcher; the roster is also headed Robertson's/Jenkins's. Neither is chosen."

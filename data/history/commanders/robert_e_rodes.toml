@@ -1,0 +1,51 @@
+id = "robert_e_rodes"
+name = "Robert Emmett Rodes"
+side = "confederate"
+
+[died]
+value = "1864-09-19"
+confidence = "partial"
+sources = [{document = "CWV", page = 309, tag = "[V]"}]
+
+[academy_class]
+value = "Virginia Military Institute, 1848"
+confidence = "partial"
+sources = [{document = "CWV", page = 309, tag = "[V]"}]
+
+[[career]]
+role = "Colonel, 5th Alabama"
+
+[career.fact]
+value = "Colonel of the 5th Alabama, then brigadier general in October 1861; was assistant professor at the Virginia Military Institute until 1851."
+confidence = "partial"
+sources = [{document = "CWV", page = 309, tag = "[V]"}]
+
+[[career]]
+role = "Division commander, Second Corps"
+from = "1863-05-02"
+to = "1864-09-19"
+
+[career.fact]
+value = "Major general, dated back to 1863-05-02 on Jackson's recommendation. Led a division in the flank march and attack at Chancellorsville and briefly held the corps after Hill fell that night. In June 1863 he was sent to Berryville (action of 1863-06-13). On 1863-07-01 his division attacked from Oak Hill about 2 to 2:30 p.m.; the first attacks were poorly coordinated and costly, but he routed Robinson's division. Killed at Third Winchester on 1864-09-19 by a shell fragment."
+confidence = "partial"
+sources = [{document = "CWV", page = 75, tag = "untagged"}, {document = "CWV", page = 78, tag = "untagged"}, {document = "CWV", page = 80, tag = "untagged"}, {document = "CWV", page = 309, tag = "[V]"}]
+
+[[traits]]
+trait = "aggressive"
+evidence = "Launched the attacks from Oak Hill on 1863-07-01 before they were fully coordinated, taking heavy losses while driving off Robinson's division."
+confidence = "partial"
+sources = [{document = "CWV", page = 80, tag = "untagged"}, {document = "CWV", page = 309, tag = "[V]"}]
+
+[[relationships]]
+with = "thomas_j_jackson"
+kind = "patronage"
+evidence = "His major-general rank was backdated to 1863-05-02 on Jackson's recommendation."
+confidence = "partial"
+sources = [{document = "CWV", page = 309, tag = "[V]"}]
+
+[[relationships]]
+with = "richard_s_ewell"
+kind = "subordinate_of"
+evidence = "Division of Ewell's Second Corps in June and July 1863."
+confidence = "partial"
+sources = [{document = "CWV", page = 77, tag = "untagged"}, {document = "CWV", page = 78, tag = "untagged"}]

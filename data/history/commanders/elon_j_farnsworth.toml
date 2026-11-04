@@ -1,0 +1,38 @@
+id = "elon_j_farnsworth"
+name = "Elon J. Farnsworth"
+side = "union"
+
+[born]
+value = "1837"
+confidence = "unverified"
+sources = [{document = "CWV", page = 279, tag = "[U on age]"}]
+
+[died]
+value = "1863-07-03"
+confidence = "partial"
+sources = [{document = "CWV", page = 279, tag = "[U on age]"}, {document = "CWV", page = 83, tag = "untagged"}]
+
+[[career]]
+role = "Brigadier general"
+from = "1863-06-29"
+to = "1863-07-03"
+
+[career.fact]
+value = "Brigadier general, said to be 25, commanding a brigade in Kilpatrick's division; killed on 1863-07-03 in the charge ordered by Kilpatrick."
+confidence = "unverified"
+sources = [{document = "CWV", page = 279, tag = "[U on age]"}, {document = "CWV", page = 83, tag = "untagged"}, {document = "CWV", page = 278, tag = "[V]"}]
+flag = "Promotion account differs: p277 says Pleasonton tried to promote his staff captain Farnsworth while p279 lists Farnsworth among those promoted on 1863-06-29; not resolved here."
+
+[[relationships]]
+with = "H. Judson Kilpatrick"
+kind = "subordinate_of"
+evidence = "Led a brigade in Kilpatrick's division and was killed leading the charge Kilpatrick ordered over his objection."
+confidence = "partial"
+sources = [{document = "CWV", page = 83, tag = "untagged"}, {document = "CWV", page = 278, tag = "[V]"}]
+
+[[relationships]]
+with = "Alfred Pleasonton"
+kind = "patronage"
+evidence = "Pleasonton, whose staff captain he had been, tried to promote him to brigadier general before Gettysburg."
+confidence = "unverified"
+sources = [{document = "CWV", page = 277, tag = "[V partly]"}]

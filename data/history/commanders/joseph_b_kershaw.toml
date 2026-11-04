@@ -1,0 +1,48 @@
+id = "joseph_b_kershaw"
+name = "Joseph Brevard Kershaw"
+side = "confederate"
+
+[born]
+value = "1822-01-05"
+confidence = "partial"
+sources = [{document = "CWV", page = 310, tag = "[V]"}]
+
+[died]
+value = "1894-04-13"
+confidence = "partial"
+sources = [{document = "CWV", page = 310, tag = "[V]"}]
+
+[[career]]
+role = "Brigadier general"
+from = "1862-02-13"
+
+[career.fact]
+value = "Lawyer and state senator 1852-56; brigadier general from 1862-02-13."
+confidence = "partial"
+sources = [{document = "CWV", page = 310, tag = "[V]"}]
+
+[[career]]
+role = "Brigade commander, McLaws's division"
+from = "1863-07-02"
+
+[career.fact]
+value = "Led his South Carolina brigade at Gettysburg, where it fought in the Wheatfield and then at the Peach Orchard salient on 1863-07-02."
+confidence = "partial"
+sources = [{document = "CWV", page = 82, tag = "untagged"}, {document = "CWV", page = 310, tag = "[V]"}, {document = "CWV", page = 326, tag = "untagged"}]
+
+[[career]]
+role = "Division commander"
+from = "1864-06-02"
+to = "1865-04-06"
+
+[career.fact]
+value = "Took the division after McLaws was relieved following Knoxville; major general from 1864-06-02; captured at Sayler's Creek on 1865-04-06."
+confidence = "partial"
+sources = [{document = "CWV", page = 309, tag = "[V/U]"}, {document = "CWV", page = 310, tag = "[V]"}]
+
+[[relationships]]
+with = "lafayette_mclaws"
+kind = "subordinate_of"
+evidence = "Brigade commander in McLaws's division on 1863-07-02."
+confidence = "partial"
+sources = [{document = "CWV", page = 82, tag = "untagged"}, {document = "CWV", page = 310, tag = "[V]"}]

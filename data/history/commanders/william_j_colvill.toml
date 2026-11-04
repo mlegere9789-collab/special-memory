@@ -1,0 +1,31 @@
+id = "william_j_colvill"
+name = "William J. Colvill"
+side = "union"
+
+[born]
+value = "1830"
+confidence = "partial"
+sources = [{document = "CWV", page = 286, tag = "[V]"}]
+
+[died]
+value = "1905-06"
+confidence = "partial"
+sources = [{document = "CWV", page = 286, tag = "[V]"}]
+
+[[career]]
+role = "1st Minnesota charge"
+from = "1863-07-02"
+
+[career.fact]
+value = "Led the 1st Minnesota's charge on 1863-07-02: 262 men charged and 215 were killed or wounded (about 82 percent), delaying Wilcox's Alabama brigade until reinforcements arrived; he was hit three times and refused amputation of his foot."
+confidence = "partial"
+sources = [{document = "CWV", page = 286, tag = "[V]"}, {document = "CWV", page = 295, tag = "untagged"}, {document = "CWV", page = 82, tag = "untagged"}]
+
+[[career]]
+role = "Later career"
+from = "1865-05"
+
+[career.fact]
+value = "Colonel of the 1st Minnesota Heavy Artillery with a brevet brigadier general commission in May 1865; Minnesota Attorney General 1866-68."
+confidence = "partial"
+sources = [{document = "CWV", page = 286, tag = "[V]"}]

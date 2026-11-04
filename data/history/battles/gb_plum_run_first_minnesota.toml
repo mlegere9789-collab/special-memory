@@ -1,0 +1,49 @@
+id = "gb_plum_run_first_minnesota"
+name = "1st Minnesota's charge at Plum Run"
+theater = "eastern"
+notes = ["Page 84 lists the 1st Minnesota with a question mark among regiments in the day-3 counterattack, which is not recorded as a fact."]
+
+[start_date]
+value = "1863-07-02"
+confidence = "partial"
+sources = [{document = "CWV", page = 80, tag = "untagged"}]
+
+[end_date]
+value = "1863-07-02"
+confidence = "partial"
+sources = [{document = "CWV", page = 80, tag = "untagged"}]
+
+[location]
+state = "Pennsylvania"
+near = "Gettysburg, Plum Run at the foot of Cemetery Ridge"
+
+[sides]
+
+[sides.union]
+
+[sides.union.commander]
+value = "Hancock (II Corps), who ordered the regiment forward"
+confidence = "partial"
+sources = [{document = "CWV", page = 82, tag = "untagged"}]
+
+[sides.union.engaged]
+value = 262
+confidence = "partial"
+sources = [{document = "CWV", page = 82, tag = "untagged"}]
+flag = "Stated as about 262 men."
+
+[sides.union.casualties]
+
+[sides.confederate]
+
+[sides.confederate.commander]
+value = "Wilcox (Alabama brigade)"
+confidence = "partial"
+sources = [{document = "CWV", page = 82, tag = "untagged"}]
+
+[sides.confederate.casualties]
+
+[outcome]
+value = "The charge bought time at about 6 p.m. for reinforcements to arrive and saved the centre at Plum Run."
+confidence = "partial"
+sources = [{document = "CWV", page = 82, tag = "untagged"}]

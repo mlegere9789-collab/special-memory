@@ -1,0 +1,46 @@
+id = "john_gibbon"
+name = "John Gibbon"
+side = "union"
+
+[born]
+value = "1827"
+confidence = "partial"
+sources = [{document = "CWV", page = 272, tag = "[V]"}]
+
+[died]
+value = "1896-02-06"
+confidence = "partial"
+sources = [{document = "CWV", page = 273, tag = "[V]"}]
+
+[academy_class]
+value = "1847"
+confidence = "partial"
+sources = [{document = "CWV", page = 272, tag = "[V]"}]
+
+[[career]]
+role = "Iron Brigade commander"
+from = "1862-05"
+to = "1862-11"
+
+[career.fact]
+value = "Brigadier general of volunteers in 1862 leading the Wisconsin brigade later called the Iron Brigade; one page puts his tenure at May to November 1862, the other says exact dates are not on its page."
+confidence = "partial"
+sources = [{document = "CWV", page = 285, tag = "[V]"}, {document = "CWV", page = 272, tag = "[V]"}]
+
+[[career]]
+role = "Division commander, II Corps"
+from = "1863-07-02"
+to = "1863-07-03"
+
+[career.fact]
+value = "Led 2nd Division, II Corps at Gettysburg, commanded the corps temporarily on 1863-07-02 and early 1863-07-03, and was wounded on 1863-07-03."
+confidence = "partial"
+sources = [{document = "CWV", page = 272, tag = "[V]"}, {document = "CWV", page = 275, tag = "[V from the opened order of battle]"}]
+
+[[career]]
+role = "Appomattox and Little Bighorn"
+
+[career.fact]
+value = "One of three commissioners for the Appomattox surrender; later reached the Little Bighorn field on 1876-06-26 and buried the dead."
+confidence = "partial"
+sources = [{document = "CWV", page = 272, tag = "[V]"}, {document = "CWV", page = 273, tag = "[V]"}]

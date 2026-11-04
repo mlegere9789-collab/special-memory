@@ -62,3 +62,33 @@ bad_value = "1840, 13th of 43"
 file = "data/history/commanders/nathan_bedford_forrest.toml"
 path = "career.1.fact"
 bad_value = "Became brigadier general about the end of 1862."
+
+[[bad_value]]
+file = "data/history/battles/gb_pickett_charge.toml"
+path = "sides.confederate.casualties.total"
+bad_value = 8892
+
+[[bad_value]]
+file = "data/history/battles/gb_east_cavalry_field.toml"
+path = "sides.confederate.engaged"
+bad_value = 5000
+
+[[bad_value]]
+file = "data/history/commanders/johnston_pettigrew.toml"
+path = "died"
+bad_value = "1863-07-14"
+
+[[bad_value]]
+file = "data/history/commanders/daniel_e_sickles.toml"
+path = "career.3.fact"
+bad_value = "shortly after 2 p.m."
+
+[[bad_value]]
+file = "data/history/commanders/james_s_wadsworth.toml"
+path = "career.1.fact"
+bad_value = "1863-06-15"
+
+[[bad_value]]
+file = "data/history/commanders/george_a_custer.toml"
+path = "career.0.fact"
+bad_value = "brevet"

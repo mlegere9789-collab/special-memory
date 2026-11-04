@@ -1,0 +1,12 @@
+id = "william_e_jones"
+name = "William E. \"Grumble\" Jones"
+side = "confederate"
+
+[[career]]
+role = "Cavalry brigade commander"
+
+[career.fact]
+value = "His brigade, with Hampton's, held the stone wall at St. James church at Brandy Station and joined the charges that cleared Fleetwood Hill (1863-06-09). In the retreat it was among the Confederate cavalry at Monterey Pass (1863-07-04/05). Killed at Piedmont in June 1864 (marked from memory)."
+confidence = "unverified"
+sources = [{document = "CWV", page = 77, tag = "untagged"}, {document = "CWV", page = 78, tag = "untagged"}, {document = "CWV", page = 79, tag = "untagged"}, {document = "CWV", page = 84, tag = "untagged"}, {document = "CWV", page = 315, tag = "[U]"}]
+flag = "One page names the late-arriving cavalry as 'Jones/Robertson', while the campaign list names Robertson and Jones separately, so the brigades of Jones and Beverly Robertson are conflated there."

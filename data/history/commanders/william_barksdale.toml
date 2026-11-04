@@ -1,0 +1,45 @@
+id = "william_barksdale"
+name = "William Barksdale"
+side = "confederate"
+
+[died]
+value = "1863-07-03"
+confidence = "partial"
+sources = [{document = "CWV", page = 318, tag = "[V]"}]
+
+[[career]]
+role = "Congressman and editor"
+from = "1853"
+to = "1861"
+
+[career.fact]
+value = "Mississippi lawyer, newspaper editor and congressman from 1853 to 1861."
+confidence = "partial"
+sources = [{document = "CWV", page = 318, tag = "[V]"}]
+
+[[career]]
+role = "Brigade commander, McLaws's division"
+
+[career.fact]
+value = "Colonel of the 13th Mississippi, brigadier from August 1862. His brigade held the Fredericksburg waterfront against bridge builders in December 1862 and formed a thin line at Marye's Heights in May 1863. On 1863-07-02 he rode at the head of the brigade at the Peach Orchard, was hit in the knee, foot and chest, and died on 1863-07-03 at the Hummelbaugh farm."
+confidence = "partial"
+sources = [{document = "CWV", page = 76, tag = "untagged"}, {document = "CWV", page = 82, tag = "untagged"}, {document = "CWV", page = 318, tag = "[V]"}]
+
+[[traits]]
+trait = "aggressive"
+evidence = "On 1863-07-02 he rode at the head of his brigade in a charge that broke Graham's brigade at the Peach Orchard."
+confidence = "partial"
+sources = [{document = "CWV", page = 82, tag = "untagged"}, {document = "CWV", page = 318, tag = "[V]"}]
+
+[[traits]]
+trait = "defensive_skill"
+evidence = "His brigade held the Fredericksburg waterfront against the Union bridge builders in December 1862."
+confidence = "partial"
+sources = [{document = "CWV", page = 318, tag = "[V]"}]
+
+[[relationships]]
+with = "lafayette_mclaws"
+kind = "subordinate_of"
+evidence = "His brigade was in McLaws's division on 1863-07-02."
+confidence = "partial"
+sources = [{document = "CWV", page = 82, tag = "untagged"}]

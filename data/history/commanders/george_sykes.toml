@@ -1,0 +1,35 @@
+id = "george_sykes"
+name = "George Sykes"
+side = "union"
+
+[born]
+value = "1822"
+confidence = "unverified"
+sources = [{document = "CWV", page = 271, tag = "[U]"}]
+
+[died]
+value = "1880"
+confidence = "unverified"
+sources = [{document = "CWV", page = 271, tag = "[U]"}]
+
+[academy_class]
+value = "1842"
+confidence = "unverified"
+sources = [{document = "CWV", page = 271, tag = "[U]"}]
+
+[[career]]
+role = "Corps commander, V Corps"
+from = "1863-06-28"
+
+[career.fact]
+value = "Maj. Gen. George Sykes commanded V Corps at Gettysburg, succeeding Meade when Meade took the army; the Regular Division served under him."
+confidence = "partial"
+sources = [{document = "CWV", page = 275, tag = "[V from the opened order of battle]"}, {document = "CWV", page = 72, tag = "untagged"}, {document = "CWV", page = 261, tag = "untagged"}]
+
+[[career]]
+role = "Earlier and later commands"
+
+[career.fact]
+value = "Said to have led the Regular Division in 1862, to have been nicknamed Tardy George, and to have been replaced by Warren in 1864."
+confidence = "unverified"
+sources = [{document = "CWV", page = 271, tag = "[U]"}]

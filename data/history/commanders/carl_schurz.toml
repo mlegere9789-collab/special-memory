@@ -1,0 +1,29 @@
+id = "carl_schurz"
+name = "Carl Schurz"
+side = "union"
+
+[[career]]
+role = "Division commander, XI Corps"
+from = "1863-05-02"
+
+[career.fact]
+value = "His division was among those routed after Devens's on 1863-05-02 at Chancellorsville."
+confidence = "partial"
+sources = [{document = "CWV", page = 75, tag = "untagged"}]
+
+[[career]]
+role = "Acting corps commander, XI Corps"
+from = "1863-07-01"
+
+[career.fact]
+value = "Commanded XI Corps on 1863-07-01 after Howard took over the field."
+confidence = "partial"
+sources = [{document = "CWV", page = 284, tag = "[V on his July 1 command]"}, {document = "CWV", page = 276, tag = "untagged"}]
+
+[[career]]
+role = "Later career"
+
+[career.fact]
+value = "The page describes him as a German revolutionary and later senator and Interior Secretary, from memory."
+confidence = "unverified"
+sources = [{document = "CWV", page = 284, tag = "[U]"}]

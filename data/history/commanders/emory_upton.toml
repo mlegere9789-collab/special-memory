@@ -1,0 +1,63 @@
+id = "emory_upton"
+name = "Emory Upton"
+side = "union"
+
+[born]
+value = "1839"
+confidence = "partial"
+sources = [{document = "CWV", page = 287, tag = "[V]"}]
+
+[died]
+value = "1881-03-15"
+confidence = "partial"
+sources = [{document = "CWV", page = 287, tag = "[V]"}]
+
+[academy_class]
+value = "1861, eighth of 45"
+confidence = "unverified"
+sources = [{document = "CWV", page = 287, tag = "[V]"}]
+flag = "Graduation 1861-05-06 with 45 in the class conflicts with the June 1861 class of 34 given for Custer (p278) and O'Rorke (p285); the pages do not reconcile them."
+
+[[career]]
+role = "Brigade commander at Gettysburg"
+from = "1863-07"
+
+[career.fact]
+value = "Col. Emory Upton appears in the Gettysburg roster inside the V Corps group, which the page itself calls probably a mislabel for VI Corps."
+confidence = "unverified"
+sources = [{document = "CWV", page = 275, tag = "[V from the opened order of battle]"}]
+flag = "Corps assignment conflict on the roster page (V Corps versus VI Corps); not resolved here."
+
+[[career]]
+role = "Regimental colonel"
+from = "1862-10-23"
+
+[career.fact]
+value = "Colonel of the 121st New York from 1862-10-23; brevet major in the Regulars for Rappahannock Station in November 1863."
+confidence = "partial"
+sources = [{document = "CWV", page = 287, tag = "[V]"}]
+
+[[career]]
+role = "Mule Shoe assault"
+from = "1864-05-10"
+to = "1864-05-12"
+
+[career.fact]
+value = "Led twelve regiments against the Mule Shoe at Spotsylvania on 1864-05-10; the assault penetrated the center but was unsupported and withdrew. Promoted brigadier general of volunteers effective 1864-05-12."
+confidence = "partial"
+sources = [{document = "CWV", page = 287, tag = "[V]"}, {document = "CWV", page = 277, tag = "[V]"}]
+
+[[career]]
+role = "Selma"
+from = "1865-03"
+
+[career.fact]
+value = "His cavalry division fought at Selma; brevet brigadier general in the Regulars dated 1865-03-13."
+confidence = "partial"
+sources = [{document = "CWV", page = 287, tag = "[V]"}, {document = "CWV", page = 279, tag = "[V]"}]
+
+[[traits]]
+trait = "aggressive"
+evidence = "Led a narrow, fast assault of twelve regiments against the Mule Shoe at Spotsylvania on 1864-05-10 that broke in but lacked support."
+confidence = "partial"
+sources = [{document = "CWV", page = 287, tag = "[V]"}]

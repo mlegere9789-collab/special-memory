@@ -1,0 +1,59 @@
+id = "daniel_e_sickles"
+name = "Daniel E. Sickles"
+side = "union"
+
+[died]
+value = "1914-05-03"
+confidence = "partial"
+sources = [{document = "CWV", page = 283, tag = "[V]"}]
+
+[[career]]
+role = "Brigade commander"
+from = "1861-09"
+
+[career.fact]
+value = "Brigadier general of volunteers from September 1861; led the Excelsior Brigade at Seven Pines and the Seven Days."
+confidence = "partial"
+sources = [{document = "CWV", page = 283, tag = "[V]"}]
+
+[[career]]
+role = "Corps commander, III Corps"
+from = "1863-02-05"
+to = "1863-07-02"
+
+[career.fact]
+value = "Commanded III Corps from 1863-02-05 to 1863-05-29 and from 1863-06-03 to 1863-07-02; major general effective 1862-11-29, confirmed 1863-03-09."
+confidence = "partial"
+sources = [{document = "CWV", page = 283, tag = "[V]"}]
+
+[[career]]
+role = "Catharine Furnace"
+from = "1863-05-02"
+
+[career.fact]
+value = "His corps attacked the rear of Jackson's marching column at Catharine Furnace on 1863-05-02 and captured the 23rd Georgia; headquarters read the movement as a retreat."
+confidence = "partial"
+sources = [{document = "CWV", page = 75, tag = "untagged"}]
+
+[[career]]
+role = "Advance to the Peach Orchard"
+from = "1863-07-02"
+
+[career.fact]
+value = "Moved III Corps forward to a salient on the Emmitsburg Road and Peach Orchard ahead of Cemetery Ridge; his right leg was struck by a cannonball and amputated the same afternoon."
+confidence = "unverified"
+sources = [{document = "CWV", page = 283, tag = "[V]"}, {document = "CWV", page = 81, tag = "untagged"}]
+flag = "Start time disagrees between pages: shortly after 2 p.m. on p283 against about 3 p.m. on p081; not resolved here."
+
+[[traits]]
+trait = "low_discretion"
+evidence = "Advanced III Corps on 1863-07-02 to the Peach Orchard line ahead of Cemetery Ridge on his own judgment of the ground; the line was too long for his two divisions and Meade learned of it too late."
+confidence = "partial"
+sources = [{document = "CWV", page = 81, tag = "untagged"}, {document = "CWV", page = 283, tag = "[V]"}]
+
+[[relationships]]
+with = "George G. Meade"
+kind = "feud"
+evidence = "The page names Sickles's insubordination and says feuds of Hooker and Sickles with Meade rest on memory."
+confidence = "unverified"
+sources = [{document = "CWV", page = 291, tag = "[U]"}, {document = "CWV", page = 85, tag = "untagged"}]

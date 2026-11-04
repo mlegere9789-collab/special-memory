@@ -1,0 +1,37 @@
+id = "edward_porter_alexander"
+name = "Edward Porter Alexander"
+side = "confederate"
+
+[died]
+value = "1910-04-28"
+confidence = "partial"
+sources = [{document = "CWV", page = 311, tag = "[V]"}]
+
+[academy_class]
+value = "1857, 3rd of 38"
+confidence = "partial"
+sources = [{document = "CWV", page = 311, tag = "[V]"}]
+
+[[career]]
+role = "Signal officer"
+from = "1861-07-21"
+
+[career.fact]
+value = "On Signal Hill at First Manassas he used flags to warn Evans's brigade of the Union flank march."
+confidence = "partial"
+sources = [{document = "CWV", page = 311, tag = "[V]"}]
+
+[[career]]
+role = "Chief of artillery, First Corps"
+
+[career.fact]
+value = "Colonel from 1862-12-05; occupied Hazel Grove with 30 or more guns on 1863-05-03; on 1863-07-02 his battalion of 50 or more guns enfiladed the Union line at the Peach Orchard; directed the roughly two-hour bombardment before Pickett's Charge on 1863-07-03 and warned Pickett about 2:45 to 3 p.m. that ammunition was running low. Brigadier general from 1864-02-26."
+confidence = "partial"
+sources = [{document = "CWV", page = 76, tag = "untagged"}, {document = "CWV", page = 82, tag = "untagged"}, {document = "CWV", page = 83, tag = "untagged"}, {document = "CWV", page = 301, tag = "untagged"}, {document = "CWV", page = 311, tag = "[V]"}]
+
+[[relationships]]
+with = "james_longstreet"
+kind = "subordinate_of"
+evidence = "Named as Longstreet's corps artillery chief in the 1863 reorganisation."
+confidence = "partial"
+sources = [{document = "CWV", page = 301, tag = "untagged"}, {document = "CWV", page = 311, tag = "[V]"}]

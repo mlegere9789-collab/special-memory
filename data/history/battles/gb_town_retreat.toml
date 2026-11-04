@@ -1,0 +1,57 @@
+id = "gb_town_retreat"
+name = "Retreat through the town to Cemetery Hill"
+theater = "eastern"
+notes = ["Page 69 gives the withdrawal to Cemetery Hill as about 4:30 p.m."]
+
+[start_date]
+value = "1863-07-01"
+confidence = "partial"
+sources = [{document = "CWV", page = 69, tag = "V"}, {document = "CWV", page = 80, tag = "untagged"}]
+
+[end_date]
+value = "1863-07-01"
+confidence = "partial"
+sources = [{document = "CWV", page = 69, tag = "V"}, {document = "CWV", page = 80, tag = "untagged"}]
+
+[location]
+state = "Pennsylvania"
+near = "Gettysburg, streets of the town"
+
+[sides]
+
+[sides.union]
+
+[sides.union.commander]
+value = "Howard (XI Corps) and Doubleday (I Corps)"
+confidence = "partial"
+sources = [{document = "CWV", page = 80, tag = "untagged"}]
+
+[sides.union.casualties]
+
+[sides.union.casualties.missing_captured]
+value = 4000
+low = 4000
+confidence = "unverified"
+sources = [{document = "CWV", page = 80, tag = "untagged"}]
+flag = "Stated as about 4,000 captured; no killed or wounded counts are given for the retreat."
+
+[sides.union.casualties.total]
+value = 4000
+low = 4000
+confidence = "unverified"
+sources = [{document = "CWV", page = 80, tag = "untagged"}]
+flag = "Only the prisoner figure (about 4,000) is stated for the retreat; the total is therefore a floor, not a full casualty count."
+
+[sides.confederate]
+
+[sides.confederate.commander]
+value = "Rodes and Early"
+confidence = "partial"
+sources = [{document = "CWV", page = 80, tag = "untagged"}]
+
+[sides.confederate.casualties]
+
+[outcome]
+value = "Both Union corps retreated through the town with heavy losses in prisoners and were back on Cemetery Hill by about 4:30 p.m."
+confidence = "partial"
+sources = [{document = "CWV", page = 69, tag = "V"}, {document = "CWV", page = 80, tag = "untagged"}]

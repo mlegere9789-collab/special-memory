@@ -1,0 +1,43 @@
+id = "gb_culps_hill_july_3"
+name = "Culp's Hill, morning of July 3"
+theater = "eastern"
+notes = ["Meade ordered a dawn attack with XII Corps and artillery to retake lost trenches; Johnson's reinforced division planned to attack again about 4:30 a.m.", "About seven hours of fighting among the trees."]
+
+[start_date]
+value = "1863-07-03"
+confidence = "partial"
+sources = [{document = "CWV", page = 80, tag = "untagged"}]
+
+[end_date]
+value = "1863-07-03"
+confidence = "partial"
+sources = [{document = "CWV", page = 80, tag = "untagged"}]
+
+[location]
+state = "Pennsylvania"
+near = "Gettysburg, Culp's Hill"
+
+[sides]
+
+[sides.union]
+
+[sides.union.commander]
+value = "Slocum (XII Corps), with Williams and Geary"
+confidence = "partial"
+sources = [{document = "CWV", page = 83, tag = "untagged"}]
+
+[sides.union.casualties]
+
+[sides.confederate]
+
+[sides.confederate.commander]
+value = "Johnson's division (brigades of Daniel, Steuart and the Stonewall Brigade)"
+confidence = "partial"
+sources = [{document = "CWV", page = 83, tag = "untagged"}]
+
+[sides.confederate.casualties]
+
+[outcome]
+value = "Confederate attacks were broken with heavy loss, Steuart's brigade was driven off at Spangler's Meadow, and the Confederates left the hill by about 11 a.m.; the Union line was restored."
+confidence = "partial"
+sources = [{document = "CWV", page = 83, tag = "untagged"}]

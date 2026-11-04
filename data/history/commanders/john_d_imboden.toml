@@ -1,0 +1,27 @@
+id = "john_d_imboden"
+name = "John D. Imboden"
+side = "confederate"
+
+[[career]]
+role = "Cavalry brigade commander"
+
+[career.fact]
+value = "Commanded a cavalry brigade; with Jenkins and Jones/Robertson it was one of the cavalry forces on which Lee relied while Stuart was away."
+confidence = "partial"
+sources = [{document = "CWV", page = 77, tag = "untagged"}, {document = "CWV", page = 79, tag = "untagged"}]
+
+[[career]]
+role = "Commander, wagon train of the wounded"
+from = "1863-07-04"
+to = "1863-07-06"
+
+[career.fact]
+value = "On 1863-07-04 his 17-mile wagon train of wounded left first via Cashtown and Greencastle to Williamsport; on 1863-07-06 teamsters and Imboden's artillery repelled Buford's attack on the trains."
+confidence = "partial"
+sources = [{document = "CWV", page = 84, tag = "untagged"}]
+
+[[traits]]
+trait = "defensive_skill"
+evidence = "At Williamsport on 1863-07-06 his artillery and the teamsters turned back Buford's cavalry attack on the trains."
+confidence = "partial"
+sources = [{document = "CWV", page = 84, tag = "untagged"}]

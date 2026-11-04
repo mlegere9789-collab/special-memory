@@ -1,0 +1,23 @@
+id = "richard_b_garnett"
+name = "Richard B. Garnett"
+side = "confederate"
+
+[died]
+value = "1863-07-03"
+confidence = "partial"
+sources = [{document = "CWV", page = 84, tag = "untagged"}]
+
+[[career]]
+role = "Brigade commander, Pickett's division"
+
+[career.fact]
+value = "His brigade (8th, 18th, 19th, 28th and 56th Virginia) advanced in the charge of 1863-07-03; he was killed in it. A court-martial under Jackson is mentioned from memory."
+confidence = "unverified"
+sources = [{document = "CWV", page = 83, tag = "untagged"}, {document = "CWV", page = 84, tag = "untagged"}, {document = "CWV", page = 317, tag = "[V/U]"}]
+
+[[relationships]]
+with = "george_e_pickett"
+kind = "subordinate_of"
+evidence = "Brigade commander in Pickett's division."
+confidence = "partial"
+sources = [{document = "CWV", page = 83, tag = "untagged"}]

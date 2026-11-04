@@ -1,0 +1,43 @@
+id = "gb_mcpherson_ridge_afternoon"
+name = "Afternoon fight on McPherson Ridge and fall back to Seminary Ridge"
+theater = "eastern"
+notes = ["The page dates the afternoon collapse at about 2-4 p.m."]
+
+[start_date]
+value = "1863-07-01"
+confidence = "partial"
+sources = [{document = "CWV", page = 80, tag = "untagged"}]
+
+[end_date]
+value = "1863-07-01"
+confidence = "partial"
+sources = [{document = "CWV", page = 80, tag = "untagged"}]
+
+[location]
+state = "Pennsylvania"
+near = "Gettysburg, west of town"
+
+[sides]
+
+[sides.union]
+
+[sides.union.commander]
+value = "Doubleday (I Corps)"
+confidence = "partial"
+sources = [{document = "CWV", page = 80, tag = "untagged"}]
+
+[sides.union.casualties]
+
+[sides.confederate]
+
+[sides.confederate.commander]
+value = "Pender (division) of A.P. Hill's corps"
+confidence = "partial"
+sources = [{document = "CWV", page = 80, tag = "untagged"}]
+
+[sides.confederate.casualties]
+
+[outcome]
+value = "Pender renewed the assault; I Corps, outflanked from the north and hit in front, fell back to Seminary Ridge."
+confidence = "partial"
+sources = [{document = "CWV", page = 80, tag = "untagged"}]

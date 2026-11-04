@@ -1,0 +1,55 @@
+id = "henry_heth"
+name = "Henry Heth"
+side = "confederate"
+
+[academy_class]
+value = "1847, graduated last in the class"
+confidence = "partial"
+sources = [{document = "CWV", page = 309, tag = "[V]"}]
+
+[[career]]
+role = "Quartermaster, Virginia forces"
+
+[career.fact]
+value = "Served briefly as Lee's quartermaster in Virginia's forces in 1861."
+confidence = "partial"
+sources = [{document = "CWV", page = 309, tag = "[V]"}]
+
+[[career]]
+role = "Brigadier general"
+from = "1862-01-06"
+
+[career.fact]
+value = "Brigadier general from 1862-01-06."
+confidence = "partial"
+sources = [{document = "CWV", page = 309, tag = "[V]"}]
+
+[[career]]
+role = "Division commander, Third Corps"
+from = "1863-05-24"
+
+[career.fact]
+value = "Major general from 1863-05-24. His division moved down the Chambersburg Pike on the morning of 1863-07-01 and met Buford's dismounted cavalry about 7:30 to 8 a.m., opening the battle; he was wounded that day (a bullet to the head was turned by a stuffed hat). His own account gives a search for shoes as the reason; the volume treats that as doubtful and describes a reconnaissance in force."
+confidence = "partial"
+sources = [{document = "CWV", page = 80, tag = "untagged"}, {document = "CWV", page = 309, tag = "[V]"}, {document = "CWV", page = 326, tag = "untagged"}]
+flag = "Heth's own account (a search for shoes) conflicts with the reading of the move as a reconnaissance in force; the volume says the motive carries doubtful weight. No motive is chosen here."
+
+[[traits]]
+trait = "low_discretion"
+evidence = "On 1863-07-01 his full division advanced into contact and brought on a general engagement that Lee had told Hill to avoid until the army was concentrated."
+confidence = "partial"
+sources = [{document = "CWV", page = 80, tag = "untagged"}]
+
+[[relationships]]
+with = "ap_hill"
+kind = "subordinate_of"
+evidence = "His division formed part of Hill's Third Corps and Hill had Lee's instruction to avoid a general engagement."
+confidence = "partial"
+sources = [{document = "CWV", page = 77, tag = "untagged"}, {document = "CWV", page = 80, tag = "untagged"}]
+
+[[relationships]]
+with = "robert_e_lee"
+kind = "friendship"
+evidence = "Described as one of the few officers whom Lee addressed by first name."
+confidence = "partial"
+sources = [{document = "CWV", page = 309, tag = "[V]"}]

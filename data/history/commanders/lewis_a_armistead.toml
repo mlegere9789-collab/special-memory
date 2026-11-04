@@ -1,0 +1,44 @@
+id = "lewis_a_armistead"
+name = "Lewis A. Armistead"
+side = "confederate"
+
+[died]
+value = "1863-07-05"
+confidence = "partial"
+sources = [{document = "CWV", page = 317, tag = "[V]"}]
+
+[academy_class]
+value = "Entered 1833, resigned the first year, returned 1834 and left in 1836 without graduating"
+confidence = "partial"
+sources = [{document = "CWV", page = 317, tag = "[V]"}]
+flag = "The page gives a plate broken over Jubal Early's head as the cause of his leaving and notes that some historians cite poor grades instead; the cause is left open."
+
+[[career]]
+role = "Brigade commander, Pickett's division"
+from = "1863-07-03"
+to = "1863-07-05"
+
+[career.fact]
+value = "His brigade (9th, 14th, 38th, 53rd and 57th Virginia) advanced on 1863-07-03; he led on foot with his hat on his sword, crossed the stone wall at the Angle and was shot three times just beyond it. He died on 1863-07-05 at the Spangler farm hospital."
+confidence = "partial"
+sources = [{document = "CWV", page = 83, tag = "untagged"}, {document = "CWV", page = 84, tag = "untagged"}, {document = "CWV", page = 317, tag = "[V]"}]
+
+[[traits]]
+trait = "inspiring"
+evidence = "On 1863-07-03 he led his brigade on foot, waving his hat on his sword, to the stone wall at the Angle."
+confidence = "partial"
+sources = [{document = "CWV", page = 84, tag = "untagged"}, {document = "CWV", page = 317, tag = "[V]"}]
+
+[[relationships]]
+with = "winfield_scott_hancock"
+kind = "friendship"
+evidence = "Close friend of Hancock from before the war; at their farewell he told Hancock what the parting had cost him, and a Union captain carried his effects to Hancock after his fall."
+confidence = "partial"
+sources = [{document = "CWV", page = 317, tag = "[V]"}]
+
+[[relationships]]
+with = "george_e_pickett"
+kind = "subordinate_of"
+evidence = "Brigade commander in Pickett's division."
+confidence = "partial"
+sources = [{document = "CWV", page = 83, tag = "untagged"}]

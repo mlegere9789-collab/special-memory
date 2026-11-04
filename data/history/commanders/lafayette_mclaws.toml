@@ -1,0 +1,26 @@
+id = "lafayette_mclaws"
+name = "Lafayette McLaws"
+side = "confederate"
+
+[[career]]
+role = "Division commander, First Corps"
+
+[career.fact]
+value = "Held a division in Longstreet's First Corps; sent with Anderson's division on 1863-05-03 to block Sedgwick near Salem Church, and on 1863-07-02 his division (Kershaw, then Barksdale) struck the Peach Orchard salient."
+confidence = "partial"
+sources = [{document = "CWV", page = 76, tag = "untagged"}, {document = "CWV", page = 77, tag = "untagged"}, {document = "CWV", page = 82, tag = "untagged"}]
+
+[[career]]
+role = "Relieved of division command"
+
+[career.fact]
+value = "Relieved after the Knoxville campaign; Kershaw took over the division."
+confidence = "partial"
+sources = [{document = "CWV", page = 309, tag = "[V/U]"}]
+
+[[relationships]]
+with = "james_longstreet"
+kind = "subordinate_of"
+evidence = "Listed among the three divisions (McLaws, Pickett, Hood) of the First Corps under Longstreet."
+confidence = "partial"
+sources = [{document = "CWV", page = 77, tag = "untagged"}]

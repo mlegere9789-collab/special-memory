@@ -1,0 +1,62 @@
+id = "gb_pickett_charge"
+name = "Pickett's Charge"
+theater = "eastern"
+notes = ["Order of the assault: Pickett's Virginia brigades (Garnett, Kemper, Armistead), Pettigrew's four brigades, Trimble's two, with two more in reserve on the right.", "The page puts the advance at nearly a mile across open fields under artillery fire, then canister and volleys at 100-200 yards.", "Stannard's Vermonters struck Kemper's flank; Pettigrew's left collapsed under flanking fire.", "Meade did not counterattack in strength."]
+
+[start_date]
+value = "1863-07-03"
+confidence = "unverified"
+sources = [{document = "CWV", page = 69, tag = "P"}, {document = "CWV", page = 83, tag = "untagged"}]
+flag = "Step-off time conflicts: about 2 p.m. in the page 69 ledger row, about 3 p.m. in much of the older literature, and roughly 2-3 p.m. on page 83."
+
+[end_date]
+value = "1863-07-03"
+confidence = "partial"
+sources = [{document = "CWV", page = 83, tag = "untagged"}]
+
+[location]
+state = "Pennsylvania"
+near = "Gettysburg, open ground between Seminary Ridge and Cemetery Ridge"
+
+[sides]
+
+[sides.union]
+
+[sides.union.commander]
+value = "Hancock (II Corps), wounded in the thigh during the defence; Gibbon's and Hays's divisions held the Angle and the Copse of Trees"
+confidence = "partial"
+sources = [{document = "CWV", page = 83, tag = "untagged"}, {document = "CWV", page = 84, tag = "untagged"}]
+
+[sides.union.casualties]
+
+[sides.union.casualties.total]
+value = 1500
+confidence = "partial"
+sources = [{document = "CWV", page = 69, tag = "P"}, {document = "CWV", page = 84, tag = "untagged"}]
+flag = "Stated as about 1,500."
+
+[sides.confederate]
+
+[sides.confederate.commander]
+value = "Longstreet, with Pickett, Pettigrew and Trimble leading the columns"
+confidence = "partial"
+sources = [{document = "CWV", page = 83, tag = "untagged"}]
+
+[sides.confederate.engaged]
+value = 12500
+confidence = "partial"
+sources = [{document = "CWV", page = 69, tag = "P"}, {document = "CWV", page = 83, tag = "untagged"}]
+flag = "Stated as about 12,500 men in nine brigades in the line."
+
+[sides.confederate.casualties]
+
+[sides.confederate.casualties.total]
+value = 6555
+confidence = "unverified"
+sources = [{document = "CWV", page = 69, tag = "P"}, {document = "CWV", page = 84, tag = "untagged"}]
+flag = "Headline of 6,555 (over 50 percent) does not match the Union-report components of 1,123 killed, 4,019 wounded and 3,750 captured, which sum to 8,892; the page calls the count unsettled."
+
+[outcome]
+value = "The assault was beaten off with a limited breakthrough of perhaps 150 men, destroyed by counterattack in about 20-30 minutes; Garnett, Armistead and Cushing were killed or mortally wounded."
+confidence = "partial"
+sources = [{document = "CWV", page = 83, tag = "untagged"}, {document = "CWV", page = 84, tag = "untagged"}]

@@ -1,0 +1,21 @@
+id = "samuel_s_carroll"
+name = "Samuel S. Carroll"
+side = "union"
+
+[[career]]
+role = "Brigade commander, II Corps"
+from = "1863-07-02"
+
+[career.fact]
+value = "His brigade of II Corps counterattacked and drove the Confederates off East Cemetery Hill at dusk on 1863-07-02."
+confidence = "partial"
+sources = [{document = "CWV", page = 82, tag = "untagged"}]
+
+[[career]]
+role = "Wilderness"
+from = "1864-05-05"
+
+[career.fact]
+value = "Colonel Samuel S. Carroll led a brigade in Gibbon's 2nd Division of II Corps in the Wilderness and was wounded."
+confidence = "partial"
+sources = [{document = "CWV", page = 277, tag = "[V]"}]

@@ -1,0 +1,19 @@
+id = "john_r_chambliss"
+name = "John R. Chambliss Jr."
+side = "confederate"
+
+[[career]]
+role = "Cavalry brigade commander"
+
+[career.fact]
+value = "Listed as colonel commanding the brigade (9th, 10th, 11th, 13th, 18th, 62nd Virginia and McNeill's Rangers) and as one of the four brigades Stuart took to East Cavalry Field on 1863-07-03."
+confidence = "unverified"
+sources = [{document = "CWV", page = 77, tag = "untagged"}, {document = "CWV", page = 83, tag = "untagged"}, {document = "CWV", page = 326, tag = "untagged"}]
+flag = "Rank is given only as colonel in the order of battle; the campaign list places his name in Rooney Lee's slot. Another page lists Rosser's 5th Virginia and Lomax's 11th and G. Imboden's 18th as sitting in Jenkins's and Chambliss's brigades, while the order of battle shows the 5th Virginia in the Robertson/Jenkins group. Rosters are conflated and not resolved."
+
+[[relationships]]
+with = "jeb_stuart"
+kind = "subordinate_of"
+evidence = "One of the brigades Stuart led to East Cavalry Field."
+confidence = "partial"
+sources = [{document = "CWV", page = 83, tag = "untagged"}]

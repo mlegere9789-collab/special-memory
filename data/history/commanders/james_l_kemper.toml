@@ -1,0 +1,18 @@
+id = "james_l_kemper"
+name = "James L. Kemper"
+side = "confederate"
+
+[[career]]
+role = "Brigade commander, Pickett's division"
+
+[career.fact]
+value = "His brigade (1st, 3rd, 7th, 11th and 24th Virginia) advanced on 1863-07-03; its right was struck by Stannard's Vermonters. A politician who later became governor (from memory)."
+confidence = "unverified"
+sources = [{document = "CWV", page = 83, tag = "untagged"}, {document = "CWV", page = 84, tag = "untagged"}, {document = "CWV", page = 317, tag = "[V/U]"}]
+
+[[relationships]]
+with = "george_e_pickett"
+kind = "subordinate_of"
+evidence = "Brigade commander in Pickett's division."
+confidence = "partial"
+sources = [{document = "CWV", page = 83, tag = "untagged"}]

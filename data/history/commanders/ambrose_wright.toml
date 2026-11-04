@@ -1,0 +1,18 @@
+id = "ambrose_wright"
+name = "Ambrose Wright"
+side = "confederate"
+
+[[career]]
+role = "Brigade commander, Anderson's division"
+
+[career.fact]
+value = "Led a Georgia brigade (3rd, 22nd and 48th Georgia and the 2nd Georgia Battalion) which on 1863-07-02 attacked the Emmitsburg Road line against Humphreys's division."
+confidence = "partial"
+sources = [{document = "CWV", page = 82, tag = "untagged"}, {document = "CWV", page = 318, tag = "[V/U]"}, {document = "CWV", page = 326, tag = "untagged"}]
+
+[[relationships]]
+with = "richard_h_anderson"
+kind = "subordinate_of"
+evidence = "His brigade was one of those of Anderson's division."
+confidence = "partial"
+sources = [{document = "CWV", page = 82, tag = "untagged"}]

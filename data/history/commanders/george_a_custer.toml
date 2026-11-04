@@ -1,0 +1,61 @@
+id = "george_a_custer"
+name = "George A. Custer"
+side = "union"
+
+[born]
+value = "1839"
+confidence = "partial"
+sources = [{document = "CWV", page = 278, tag = "[V]"}]
+
+[died]
+value = "1876-06-25"
+confidence = "partial"
+sources = [{document = "CWV", page = 278, tag = "[V]"}]
+
+[academy_class]
+value = "1861, last of 34 graduates"
+confidence = "unverified"
+sources = [{document = "CWV", page = 278, tag = "[V]"}]
+flag = "Class standings for 1861 conflict across pages: Upton is eighth of 45 graduating 1861-05-06 (p287) while this entry gives 34 graduates on 1861-06-24; not reconciled."
+
+[[career]]
+role = "Brigadier general of volunteers"
+from = "1863-06-29"
+
+[career.fact]
+value = "Promoted from captain to brigadier general of volunteers at age 23 just before Gettysburg, with Merritt and Farnsworth."
+confidence = "unverified"
+sources = [{document = "CWV", page = 278, tag = "[V]"}, {document = "CWV", page = 279, tag = "[V]"}, {document = "CWV", page = 295, tag = "untagged"}]
+flag = "Source disagreement on the rank: the Custer page says brevet while the Merritt page gives 1863-06-29 for a full promotion; the research text treats it as full but flagged."
+
+[[career]]
+role = "East Cavalry Field"
+from = "1863-07-03"
+
+[career.fact]
+value = "His Michigan Brigade fought alongside Gregg's division against Stuart about three miles east of town; the 1st Michigan charged Hampton's and Fitz Lee's brigades; his brigade lost 219 of the 254 Union casualties."
+confidence = "partial"
+sources = [{document = "CWV", page = 83, tag = "untagged"}, {document = "CWV", page = 278, tag = "[V]"}]
+
+[[career]]
+role = "Later brevets and death"
+from = "1864-05-11"
+to = "1876-06-25"
+
+[career.fact]
+value = "Brevet lieutenant colonel 1864-05-11, brevet major general of volunteers 1864-10-19 and of Regulars March 1865; lieutenant colonel of the 7th Cavalry from 1866-07-28; killed at the Little Bighorn on 1876-06-25."
+confidence = "partial"
+sources = [{document = "CWV", page = 278, tag = "[V]"}, {document = "CWV", page = 260, tag = "[V]"}]
+
+[[traits]]
+trait = "cavalry_flair"
+evidence = "Led the 1st Michigan in a mounted charge against Hampton's and Fitz Lee's brigades at East Cavalry Field on 1863-07-03."
+confidence = "partial"
+sources = [{document = "CWV", page = 83, tag = "untagged"}, {document = "CWV", page = 278, tag = "[V]"}]
+
+[[relationships]]
+with = "Alfred Pleasonton"
+kind = "patronage"
+evidence = "Pleasonton promoted Custer to brigadier general before Gettysburg."
+confidence = "partial"
+sources = [{document = "CWV", page = 277, tag = "[V partly]"}]

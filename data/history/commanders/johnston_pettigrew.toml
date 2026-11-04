@@ -1,0 +1,40 @@
+id = "johnston_pettigrew"
+name = "J. Johnston Pettigrew"
+side = "confederate"
+
+[born]
+value = "1828-07-04"
+confidence = "unverified"
+sources = [{document = "CWV", page = 318, tag = "[V/U]"}]
+
+[died]
+value = "1863-07-17"
+confidence = "unverified"
+sources = [{document = "CWV", page = 84, tag = "untagged"}, {document = "CWV", page = 318, tag = "[V/U]"}]
+flag = "Mortally wounded at Falling Waters on 1863-07-14 and said to have died three days later; the two dates must not be confused."
+
+[[career]]
+role = "Brigade commander, Heth's division"
+
+[career.fact]
+value = "Colonel of the 22nd North Carolina in 1861, brigadier in early 1862. On 1863-07-01 his brigade fought the Iron Brigade on McPherson's Ridge and lost over 40 percent; he was wounded and command passed to Col. James K. Marshall, killed, then Maj. John T. Jones, wounded."
+confidence = "unverified"
+sources = [{document = "CWV", page = 318, tag = "[V/U]"}, {document = "CWV", page = 326, tag = "untagged"}]
+
+[[career]]
+role = "Division commander"
+from = "1863-07-03"
+to = "1863-07-14"
+
+[career.fact]
+value = "After Heth fell he led the division on the left in the advance of 1863-07-03, had his horse shot and was wounded in the hand; on 1863-07-14 he was mortally wounded at Falling Waters."
+confidence = "unverified"
+sources = [{document = "CWV", page = 83, tag = "untagged"}, {document = "CWV", page = 84, tag = "untagged"}, {document = "CWV", page = 318, tag = "[V/U]"}]
+flag = "The advance roster lists Pettigrew's four brigades as Fry, Marshall, Davis and Brockenbrough, and the Falling Waters account calls the rear guard Pettigrew's brigade although he led a division; the page also gives his four regiments as the 11th, 26th, 47th and 52nd North Carolina. Command level and roster are not reconciled."
+
+[[relationships]]
+with = "henry_heth"
+kind = "subordinate_of"
+evidence = "Took over Heth's division after Heth fell."
+confidence = "unverified"
+sources = [{document = "CWV", page = 83, tag = "untagged"}, {document = "CWV", page = 318, tag = "[V/U]"}]

@@ -1,0 +1,43 @@
+id = "gb_south_cavalry_field"
+name = "South Cavalry Field"
+theater = "eastern"
+notes = ["Kilpatrick ordered the charge over Farnsworth's reported objection."]
+
+[start_date]
+value = "1863-07-03"
+confidence = "partial"
+sources = [{document = "CWV", page = 80, tag = "untagged"}]
+
+[end_date]
+value = "1863-07-03"
+confidence = "partial"
+sources = [{document = "CWV", page = 80, tag = "untagged"}]
+
+[location]
+state = "Pennsylvania"
+near = "Gettysburg, Confederate right flank"
+
+[sides]
+
+[sides.union]
+
+[sides.union.commander]
+value = "Kilpatrick (division); Farnsworth's brigade made the charges"
+confidence = "partial"
+sources = [{document = "CWV", page = 83, tag = "untagged"}]
+
+[sides.union.casualties]
+
+[sides.confederate]
+
+[sides.confederate.commander]
+value = "Infantry behind a stone wall on the Confederate right"
+confidence = "partial"
+sources = [{document = "CWV", page = 83, tag = "untagged"}]
+
+[sides.confederate.casualties]
+
+[outcome]
+value = "Mounted charges against infantry behind a wall failed; Farnsworth was killed leading the last group."
+confidence = "partial"
+sources = [{document = "CWV", page = 83, tag = "untagged"}]

@@ -1,0 +1,44 @@
+id = "gb_culps_hill_july_2"
+name = "Culp's Hill, evening of July 2"
+theater = "eastern"
+notes = ["Meade had stripped other sectors, leaving only Greene's brigade of XII Corps on the hill.", "Page 69 places Ewell's attacks after about 7 p.m."]
+
+[start_date]
+value = "1863-07-02"
+confidence = "partial"
+sources = [{document = "CWV", page = 69, tag = "V"}, {document = "CWV", page = 82, tag = "untagged"}]
+
+[end_date]
+value = "1863-07-02"
+confidence = "partial"
+sources = [{document = "CWV", page = 69, tag = "V"}, {document = "CWV", page = 82, tag = "untagged"}]
+
+[location]
+state = "Pennsylvania"
+near = "Gettysburg, Culp's Hill"
+terrain_notes = "Wooded, rocky hill with log breastworks."
+
+[sides]
+
+[sides.union]
+
+[sides.union.commander]
+value = "Greene's New York brigade"
+confidence = "partial"
+sources = [{document = "CWV", page = 82, tag = "untagged"}]
+
+[sides.union.casualties]
+
+[sides.confederate]
+
+[sides.confederate.commander]
+value = "Johnson's division (Steuart's, Jones's and Nicholls's/Walker's brigades)"
+confidence = "partial"
+sources = [{document = "CWV", page = 82, tag = "untagged"}]
+
+[sides.confederate.casualties]
+
+[outcome]
+value = "Greene's thin, entrenched brigade held the crest, while the Confederates occupied the empty XII Corps trenches on the lower hill."
+confidence = "partial"
+sources = [{document = "CWV", page = 82, tag = "untagged"}]

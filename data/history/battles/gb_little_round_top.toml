@@ -1,0 +1,50 @@
+id = "gb_little_round_top"
+name = "Little Round Top"
+theater = "eastern"
+notes = ["Warren climbed the hill about 3:30-4 p.m. and found it held only by a signal station, then saw bayonets in the woods to the south.", "Weed and Hazlett were killed. Law's brigades were tired from the march and heat, and Hood's right drifted east toward the Round Tops rather than north as Lee intended."]
+
+[start_date]
+value = "1863-07-02"
+confidence = "unverified"
+sources = [{document = "CWV", page = 69, tag = "V"}, {document = "CWV", page = 81, tag = "untagged"}]
+flag = "Time of Hood's step-off conflicts: about 4 p.m. in the page 81 narrative against about 4:30 p.m. in the page 69 ledger row and the page 81 Wikipedia note."
+
+[end_date]
+value = "1863-07-02"
+confidence = "partial"
+sources = [{document = "CWV", page = 81, tag = "untagged"}]
+
+[location]
+state = "Pennsylvania"
+near = "Gettysburg, Little Round Top at the Union left"
+
+[sides]
+
+[sides.union]
+
+[sides.union.commander]
+value = "Vincent's brigade of Barnes's division (V Corps), Vincent mortally wounded; Warren, the chief engineer, called up the troops"
+confidence = "partial"
+sources = [{document = "CWV", page = 81, tag = "untagged"}]
+
+[sides.union.casualties]
+
+[sides.confederate]
+
+[sides.confederate.commander]
+value = "Hood, wounded early; Law took command"
+confidence = "partial"
+sources = [{document = "CWV", page = 81, tag = "untagged"}]
+
+[sides.confederate.engaged]
+value = 7000
+confidence = "partial"
+sources = [{document = "CWV", page = 81, tag = "untagged"}]
+flag = "Stated as a division of about 7,000."
+
+[sides.confederate.casualties]
+
+[outcome]
+value = "Little Round Top held; the 140th New York retook the crest in hand-to-hand fighting and artillery was hauled up by hand."
+confidence = "partial"
+sources = [{document = "CWV", page = 81, tag = "untagged"}]

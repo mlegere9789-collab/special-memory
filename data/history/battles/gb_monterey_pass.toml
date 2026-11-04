@@ -1,0 +1,57 @@
+id = "gb_monterey_pass"
+name = "Monterey Pass night fight"
+theater = "eastern"
+notes = ["Fought at night in a storm."]
+
+[start_date]
+value = "1863-07-04"
+confidence = "partial"
+sources = [{document = "CWV", page = 84, tag = "untagged"}]
+
+[end_date]
+value = "1863-07-05"
+confidence = "partial"
+sources = [{document = "CWV", page = 84, tag = "untagged"}]
+
+[location]
+state = "Pennsylvania"
+near = "Monterey Pass, on the Confederate retreat route"
+
+[sides]
+
+[sides.union]
+
+[sides.union.commander]
+value = "Kilpatrick (cavalry)"
+confidence = "partial"
+sources = [{document = "CWV", page = 84, tag = "untagged"}]
+
+[sides.union.casualties]
+
+[sides.confederate]
+
+[sides.confederate.commander]
+value = "Ferguson and Jones (cavalry), with a few infantry, guarding Ewell's wagon train"
+confidence = "partial"
+sources = [{document = "CWV", page = 84, tag = "untagged"}]
+
+[sides.confederate.casualties]
+
+[sides.confederate.casualties.missing_captured]
+value = 1300
+low = 1300
+confidence = "unverified"
+sources = [{document = "CWV", page = 84, tag = "untagged"}]
+flag = "Stated as approximately 1,300 prisoners."
+
+[sides.confederate.casualties.total]
+value = 1300
+low = 1300
+confidence = "unverified"
+sources = [{document = "CWV", page = 84, tag = "untagged"}]
+flag = "Stated as approximately 1,300 prisoners only; killed and wounded are not given, so the total is a floor."
+
+[outcome]
+value = "Most of the wagon train got through, but about 1,300 prisoners and hundreds of wagons were taken."
+confidence = "partial"
+sources = [{document = "CWV", page = 84, tag = "untagged"}]

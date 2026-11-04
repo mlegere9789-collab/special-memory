@@ -1,0 +1,11 @@
+id = "walter_h_taylor"
+name = "Walter H. Taylor"
+side = "confederate"
+
+[[career]]
+role = "Adjutant, Lee's staff"
+
+[career.fact]
+value = "Member of Lee's small personal staff, listed as adjutant and later author of a memoir of the general; Lee had no formal chief of staff, which complicated coordination at Gettysburg."
+confidence = "unverified"
+sources = [{document = "CWV", page = 301, tag = "[U]"}, {document = "CWV", page = 316, tag = "[U]"}]

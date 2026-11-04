@@ -1,0 +1,39 @@
+id = "john_newton"
+name = "John Newton"
+side = "union"
+
+[born]
+value = "1822"
+confidence = "unverified"
+sources = [{document = "CWV", page = 272, tag = "[U]"}]
+
+[died]
+value = "1895"
+confidence = "unverified"
+sources = [{document = "CWV", page = 272, tag = "[U]"}]
+
+[[career]]
+role = "Division commander at Second Fredericksburg"
+from = "1863-05-03"
+
+[career.fact]
+value = "His division delivered the third attack on Marye's Heights on 1863-05-03, a bayonet assault that mostly held its fire, after two earlier charges had failed."
+confidence = "partial"
+sources = [{document = "CWV", page = 76, tag = "untagged"}]
+
+[[career]]
+role = "Corps commander, I Corps"
+from = "1863-07"
+
+[career.fact]
+value = "Listed as the third officer to lead I Corps at Gettysburg, after Reynolds (killed) and Doubleday; the page marks the wider entry as memory-based."
+confidence = "unverified"
+sources = [{document = "CWV", page = 272, tag = "[U]"}, {document = "CWV", page = 275, tag = "[V from the opened order of battle]"}]
+
+[[career]]
+role = "Engineer"
+
+[career.fact]
+value = "Described as an engineer who later cleared Hell Gate in New York harbor."
+confidence = "unverified"
+sources = [{document = "CWV", page = 272, tag = "[U]"}]

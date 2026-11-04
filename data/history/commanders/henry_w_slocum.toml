@@ -1,0 +1,51 @@
+id = "henry_w_slocum"
+name = "Henry W. Slocum"
+side = "union"
+
+[born]
+value = "1827"
+confidence = "partial"
+sources = [{document = "CWV", page = 271, tag = "[V]"}]
+
+[died]
+value = "1894-04-14"
+confidence = "partial"
+sources = [{document = "CWV", page = 272, tag = "[V]"}]
+
+[academy_class]
+value = "1852, 7th of 43"
+confidence = "partial"
+sources = [{document = "CWV", page = 271, tag = "[V]"}]
+
+[[career]]
+role = "Corps commander, XII Corps"
+from = "1862-10-20"
+
+[career.fact]
+value = "Permanent XII Corps commander from 1862-10-20, with repeated stints in 1863; wounded at First Bull Run while commanding the 27th New York."
+confidence = "partial"
+sources = [{document = "CWV", page = 271, tag = "[V]"}]
+
+[[career]]
+role = "Culp's Hill and senior officer on the field"
+from = "1863-07-01"
+
+[career.fact]
+value = "Held the Union right at Culp's Hill at Gettysburg and was the senior general on the field; one page says he effectively commanded the army for about six hours on 1863-07-01."
+confidence = "unverified"
+sources = [{document = "CWV", page = 271, tag = "[V]"}, {document = "CWV", page = 272, tag = "[V]"}, {document = "CWV", page = 81, tag = "untagged"}, {document = "CWV", page = 80, tag = "untagged"}]
+flag = "The six-hour claim on p272 sits against Meade arriving about midnight (p081) and Hancock sent by Meade to take overall tactical command at about 3:30 p.m. (p080); not resolved here."
+
+[[career]]
+role = "Wing commander"
+
+[career.fact]
+value = "Led the Army of Georgia (XIV and XX Corps) as Sherman's left wing on the March to the Sea; resigned September 1865; congressman 1869-73 and 1883-85."
+confidence = "partial"
+sources = [{document = "CWV", page = 272, tag = "[V]"}]
+
+[[traits]]
+trait = "defensive_skill"
+evidence = "Held the right of the Union line at Culp's Hill at Gettysburg, and at dawn on 1863-07-03 XII Corps under Slocum took part in the attack to retake the lost trenches."
+confidence = "partial"
+sources = [{document = "CWV", page = 271, tag = "[V]"}, {document = "CWV", page = 83, tag = "untagged"}]
