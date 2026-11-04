@@ -1,0 +1,195 @@
+# Posture, hit region, energy band and outcome rows (SPEC-005 section 1).
+# Outcome cells give permille killed, wounded and disabled; the remainder is no effect.
+schema = "damage/1"
+
+[[posture]]
+id = "standing"
+width_mm = 500
+height_mm = 1700
+muzzle_height_mm = 1450
+cover_pm = 500
+confidence = "unverified"
+placeholder = true
+calibration_target = "CT-5"
+
+[[posture]]
+id = "kneeling"
+width_mm = 500
+height_mm = 1200
+muzzle_height_mm = 1000
+cover_pm = 800
+confidence = "unverified"
+placeholder = true
+calibration_target = "CT-5"
+
+[[posture]]
+id = "prone"
+width_mm = 500
+height_mm = 450
+muzzle_height_mm = 300
+cover_pm = 1000
+confidence = "unverified"
+placeholder = true
+calibration_target = "CT-5"
+
+[[posture]]
+id = "gun"
+width_mm = 1400
+height_mm = 1300
+muzzle_height_mm = 1000
+cover_pm = 500
+confidence = "unverified"
+placeholder = true
+calibration_target = "CT-5"
+note = "muzzle height and cover of a gun are placeholders"
+
+[regions]
+legs_below_pm = 500
+torso_below_pm = 850
+confidence = "unverified"
+placeholder = true
+calibration_target = "CT-5"
+
+[energy_bands]
+b1_min_j = 150
+b2_min_j = 500
+b3_min_j = 1500
+confidence = "unverified"
+placeholder = true
+calibration_target = "CT-6"
+
+[disabled]
+base_ticks = 600
+span_ticks = 1801
+confidence = "unverified"
+placeholder = true
+calibration_target = "CT-6"
+
+[absorb]
+ball_j = 600
+conical_j = 600
+pellet_j = 600
+shot_j = 40000
+confidence = "unverified"
+placeholder = true
+calibration_target = "CT-6"
+
+[[outcome]]
+band = 0
+region = "legs"
+killed_pm = 0
+wounded_pm = 50
+disabled_pm = 200
+confidence = "unverified"
+placeholder = true
+calibration_target = "CT-6"
+
+[[outcome]]
+band = 0
+region = "torso"
+killed_pm = 20
+wounded_pm = 150
+disabled_pm = 300
+confidence = "unverified"
+placeholder = true
+calibration_target = "CT-6"
+
+[[outcome]]
+band = 0
+region = "head"
+killed_pm = 150
+wounded_pm = 350
+disabled_pm = 300
+confidence = "unverified"
+placeholder = true
+calibration_target = "CT-6"
+
+[[outcome]]
+band = 1
+region = "legs"
+killed_pm = 10
+wounded_pm = 500
+disabled_pm = 300
+confidence = "unverified"
+placeholder = true
+calibration_target = "CT-6"
+
+[[outcome]]
+band = 1
+region = "torso"
+killed_pm = 150
+wounded_pm = 600
+disabled_pm = 200
+confidence = "unverified"
+placeholder = true
+calibration_target = "CT-6"
+
+[[outcome]]
+band = 1
+region = "head"
+killed_pm = 500
+wounded_pm = 350
+disabled_pm = 100
+confidence = "unverified"
+placeholder = true
+calibration_target = "CT-6"
+
+[[outcome]]
+band = 2
+region = "legs"
+killed_pm = 50
+wounded_pm = 800
+disabled_pm = 100
+confidence = "unverified"
+placeholder = true
+calibration_target = "CT-6"
+
+[[outcome]]
+band = 2
+region = "torso"
+killed_pm = 300
+wounded_pm = 650
+disabled_pm = 40
+confidence = "unverified"
+placeholder = true
+calibration_target = "CT-6"
+
+[[outcome]]
+band = 2
+region = "head"
+killed_pm = 800
+wounded_pm = 180
+disabled_pm = 10
+confidence = "unverified"
+placeholder = true
+calibration_target = "CT-6"
+
+[[outcome]]
+band = 3
+region = "legs"
+killed_pm = 300
+wounded_pm = 650
+disabled_pm = 40
+confidence = "unverified"
+placeholder = true
+calibration_target = "CT-6"
+
+[[outcome]]
+band = 3
+region = "torso"
+killed_pm = 650
+wounded_pm = 330
+disabled_pm = 10
+confidence = "unverified"
+placeholder = true
+calibration_target = "CT-6"
+
+[[outcome]]
+band = 3
+region = "head"
+killed_pm = 950
+wounded_pm = 50
+disabled_pm = 0
+confidence = "unverified"
+placeholder = true
+calibration_target = "CT-6"

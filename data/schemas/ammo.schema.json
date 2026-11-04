@@ -1,0 +1,287 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "ammo.schema.json",
+  "title": "Ammunition table",
+  "description": "Rows of data/rules/ammo.toml (SPEC-005 section 1). Integer units only.",
+  "$defs": {
+    "provenance_fields": {
+      "description": "Provenance keys carried flat on a row; the rules in rules-common.schema.json (checked by tools/validate_data.py) decide which combinations are legal.",
+      "properties": {
+        "confidence": {
+          "$ref": "common.schema.json#/$defs/confidence"
+        },
+        "placeholder": {
+          "type": "boolean"
+        },
+        "calibration_target": {
+          "type": "string",
+          "pattern": "^CT-[0-9]+$"
+        },
+        "sources": {
+          "$ref": "common.schema.json#/$defs/sources"
+        },
+        "second_source": {
+          "type": "string"
+        },
+        "note": {
+          "type": "string"
+        }
+      }
+    },
+    "id": {
+      "type": "string",
+      "pattern": "^[a-z0-9_]+$"
+    },
+    "burst": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "count",
+        "pellet_diameter_mm",
+        "pellet_cd_pm",
+        "shape",
+        "spread_sigma_urad",
+        "pellet_speed_pm",
+        "fuse_sigma_substeps",
+        "dud_ppm"
+      ],
+      "properties": {
+        "count": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 255
+        },
+        "pellet_mass_g": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 100000
+        },
+        "pellet_diameter_mm": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 500
+        },
+        "pellet_cd_pm": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 2000
+        },
+        "shape": {
+          "enum": [
+            "cone",
+            "sphere"
+          ]
+        },
+        "spread_sigma_urad": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 1000000
+        },
+        "pellet_speed_pm": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 2000
+        },
+        "fuse_sigma_substeps": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 1000
+        },
+        "dud_ppm": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 1000000
+        }
+      }
+    }
+  },
+  "type": "object",
+  "required": [
+    "schema",
+    "constants",
+    "ammo"
+  ],
+  "properties": {
+    "schema": {
+      "const": "ammo/1"
+    },
+    "constants": {
+      "type": "object",
+      "allOf": [
+        {
+          "$ref": "#/$defs/provenance_fields"
+        }
+      ],
+      "required": [
+        "confidence",
+        "air_density_g_m3",
+        "iron_density_kg_m3",
+        "gravity_um_s2"
+      ],
+      "properties": {
+        "air_density_g_m3": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 5000
+        },
+        "iron_density_kg_m3": {
+          "type": "integer",
+          "minimum": 1000,
+          "maximum": 20000
+        },
+        "gravity_um_s2": {
+          "type": "integer",
+          "minimum": 1000000,
+          "maximum": 30000000
+        }
+      },
+      "unevaluatedProperties": false
+    },
+    "ammo": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 255,
+      "items": {
+        "type": "object",
+        "allOf": [
+          {
+            "$ref": "#/$defs/provenance_fields"
+          },
+          {
+            "if": {
+              "properties": {
+                "kind": {
+                  "const": "shot"
+                }
+              },
+              "required": [
+                "kind"
+              ]
+            },
+            "then": {
+              "required": [
+                "restitution_pm"
+              ],
+              "not": {
+                "required": [
+                  "burst"
+                ]
+              }
+            }
+          },
+          {
+            "if": {
+              "properties": {
+                "kind": {
+                  "enum": [
+                    "shell",
+                    "case",
+                    "canister"
+                  ]
+                }
+              },
+              "required": [
+                "kind"
+              ]
+            },
+            "then": {
+              "required": [
+                "burst"
+              ],
+              "not": {
+                "required": [
+                  "restitution_pm"
+                ]
+              }
+            }
+          },
+          {
+            "if": {
+              "properties": {
+                "kind": {
+                  "enum": [
+                    "ball",
+                    "conical"
+                  ]
+                }
+              },
+              "required": [
+                "kind"
+              ]
+            },
+            "then": {
+              "not": {
+                "anyOf": [
+                  {
+                    "required": [
+                      "burst"
+                    ]
+                  },
+                  {
+                    "required": [
+                      "restitution_pm"
+                    ]
+                  }
+                ]
+              }
+            }
+          }
+        ],
+        "required": [
+          "confidence",
+          "id",
+          "kind",
+          "mass_g",
+          "diameter_mm",
+          "cd_pm",
+          "muzzle_mm_s"
+        ],
+        "properties": {
+          "id": {
+            "$ref": "#/$defs/id"
+          },
+          "kind": {
+            "enum": [
+              "ball",
+              "conical",
+              "shot",
+              "shell",
+              "case",
+              "canister"
+            ]
+          },
+          "mass_g": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 100000
+          },
+          "diameter_mm": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 500
+          },
+          "cd_pm": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 2000
+          },
+          "muzzle_mm_s": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 2000000
+          },
+          "restitution_pm": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 1000
+          },
+          "burst": {
+            "$ref": "#/$defs/burst"
+          }
+        },
+        "unevaluatedProperties": false
+      }
+    }
+  },
+  "additionalProperties": false
+}

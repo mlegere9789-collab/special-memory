@@ -1,0 +1,277 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "damage.schema.json",
+  "title": "Damage table",
+  "description": "Posture, hit region, energy band and outcome rows of data/rules/damage.toml (SPEC-005 section 1).",
+  "$defs": {
+    "provenance_fields": {
+      "description": "Provenance keys carried flat on a row; the rules in rules-common.schema.json (checked by tools/validate_data.py) decide which combinations are legal.",
+      "properties": {
+        "confidence": {
+          "$ref": "common.schema.json#/$defs/confidence"
+        },
+        "placeholder": {
+          "type": "boolean"
+        },
+        "calibration_target": {
+          "type": "string",
+          "pattern": "^CT-[0-9]+$"
+        },
+        "sources": {
+          "$ref": "common.schema.json#/$defs/sources"
+        },
+        "second_source": {
+          "type": "string"
+        },
+        "note": {
+          "type": "string"
+        }
+      }
+    },
+    "id": {
+      "type": "string",
+      "pattern": "^[a-z0-9_]+$"
+    }
+  },
+  "type": "object",
+  "required": [
+    "schema",
+    "posture",
+    "regions",
+    "energy_bands",
+    "disabled",
+    "absorb",
+    "outcome"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "schema": {
+      "const": "damage/1"
+    },
+    "posture": {
+      "type": "array",
+      "minItems": 4,
+      "maxItems": 4,
+      "items": {
+        "type": "object",
+        "allOf": [
+          {
+            "$ref": "#/$defs/provenance_fields"
+          }
+        ],
+        "required": [
+          "confidence",
+          "id",
+          "width_mm",
+          "height_mm",
+          "muzzle_height_mm",
+          "cover_pm"
+        ],
+        "properties": {
+          "id": {
+            "enum": [
+              "standing",
+              "kneeling",
+              "prone",
+              "gun"
+            ]
+          },
+          "width_mm": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 5000
+          },
+          "height_mm": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 5000
+          },
+          "muzzle_height_mm": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 5000
+          },
+          "cover_pm": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 1000
+          }
+        },
+        "unevaluatedProperties": false
+      }
+    },
+    "regions": {
+      "type": "object",
+      "allOf": [
+        {
+          "$ref": "#/$defs/provenance_fields"
+        }
+      ],
+      "required": [
+        "confidence",
+        "legs_below_pm",
+        "torso_below_pm"
+      ],
+      "properties": {
+        "legs_below_pm": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 999
+        },
+        "torso_below_pm": {
+          "type": "integer",
+          "minimum": 2,
+          "maximum": 1000
+        }
+      },
+      "unevaluatedProperties": false
+    },
+    "energy_bands": {
+      "type": "object",
+      "allOf": [
+        {
+          "$ref": "#/$defs/provenance_fields"
+        }
+      ],
+      "required": [
+        "confidence",
+        "b1_min_j",
+        "b2_min_j",
+        "b3_min_j"
+      ],
+      "properties": {
+        "b1_min_j": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 10000000
+        },
+        "b2_min_j": {
+          "type": "integer",
+          "minimum": 2,
+          "maximum": 10000000
+        },
+        "b3_min_j": {
+          "type": "integer",
+          "minimum": 3,
+          "maximum": 10000000
+        }
+      },
+      "unevaluatedProperties": false
+    },
+    "disabled": {
+      "type": "object",
+      "allOf": [
+        {
+          "$ref": "#/$defs/provenance_fields"
+        }
+      ],
+      "required": [
+        "confidence",
+        "base_ticks",
+        "span_ticks"
+      ],
+      "properties": {
+        "base_ticks": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 1000000
+        },
+        "span_ticks": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 1000000
+        }
+      },
+      "unevaluatedProperties": false
+    },
+    "absorb": {
+      "type": "object",
+      "allOf": [
+        {
+          "$ref": "#/$defs/provenance_fields"
+        }
+      ],
+      "required": [
+        "confidence",
+        "ball_j",
+        "conical_j",
+        "pellet_j",
+        "shot_j"
+      ],
+      "properties": {
+        "ball_j": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 10000000
+        },
+        "conical_j": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 10000000
+        },
+        "pellet_j": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 10000000
+        },
+        "shot_j": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 10000000
+        }
+      },
+      "unevaluatedProperties": false
+    },
+    "outcome": {
+      "type": "array",
+      "minItems": 12,
+      "maxItems": 12,
+      "items": {
+        "type": "object",
+        "allOf": [
+          {
+            "$ref": "#/$defs/provenance_fields"
+          }
+        ],
+        "required": [
+          "confidence",
+          "band",
+          "region",
+          "killed_pm",
+          "wounded_pm",
+          "disabled_pm"
+        ],
+        "properties": {
+          "band": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 3
+          },
+          "region": {
+            "enum": [
+              "legs",
+              "torso",
+              "head"
+            ]
+          },
+          "killed_pm": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 1000
+          },
+          "wounded_pm": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 1000
+          },
+          "disabled_pm": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 1000
+          }
+        },
+        "unevaluatedProperties": false
+      }
+    }
+  }
+}
