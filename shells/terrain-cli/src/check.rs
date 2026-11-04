@@ -1,12 +1,15 @@
 //! `hd-terrain check`: survey-level and line geometry rules of SPEC-014 section 3.
 //!
 //! Error names: `id_duplicate`, `voids_high`, `slab_uncovered`, `source_uncleared`,
-//! `sources_unreadable`, `compile`, `line_short`, `road_dangling`, `creek_uphill`. The polygon
-//! ring rules (`ring_*`, `hole_outside`, `group_overlap`) are a separate ticket.
+//! `sources_unreadable`, `compile`, `line_short`, `road_dangling`, `creek_uphill`, and the polygon
+//! rules `ring_short`, `edge_zero`, `ring_flat`, `ring_self_touch`, `ring_winding`,
+//! `hole_outside`, `group_overlap`. A polygon that breaks a ring rule is left out of the overlap
+//! test.
 
 use crate::compile::{build_pack, Pack};
 use crate::geom::{near_polyline, Pt};
-use crate::survey::{Line, Survey};
+use crate::ring::{self, Rings};
+use crate::survey::{Line, Survey, CLASS_NAMES};
 use core_math::Vec2Fx;
 use std::fmt;
 use std::path::Path;
@@ -116,6 +119,94 @@ fn line_rules(s: &Survey, world: Option<&TerrainWorld>, out: &mut Vec<Problem>) 
     }
 }
 
+/// A polygon that passed the ring rules, ready for the overlap test.
+struct Shape<'a> {
+    id: u32,
+    group: u8,
+    rings: Rings<'a>,
+    bbox: [i64; 4],
+}
+
+/// Reports ring and hole errors of one polygon; true when it is clean.
+fn polygon_rings(file: &'static str, id: u32, rings: &Rings, out: &mut Vec<Problem>) -> bool {
+    let before = out.len();
+    let mut valid = Vec::new();
+    for (k, r) in rings.iter().enumerate() {
+        match ring::ring_error(r, k == 0) {
+            Some((name, msg)) => {
+                let what = if k == 0 {
+                    "outer ring".into()
+                } else {
+                    format!("hole {k}")
+                };
+                out.push(problem(name, file, id, format!("{what}: {msg}")));
+            }
+            None => valid.push(k),
+        }
+    }
+    if valid.first() == Some(&0) {
+        for &k in &valid[1..] {
+            if ring::hole_outside(rings[0], rings[k]) {
+                let msg = format!("hole {k} is not strictly inside the outer ring");
+                out.push(problem("hole_outside", file, id, msg));
+            }
+        }
+    }
+    out.len() == before
+}
+
+fn polygon_rules(s: &Survey, out: &mut Vec<Problem>) {
+    // Groups: 0 ground, 1 water (ford, deep_water), 2 structure (building footprints).
+    let mut rows: Vec<(&'static str, u32, u8, Rings)> = Vec::new();
+    for p in &s.polygons {
+        let water = matches!(CLASS_NAMES[usize::from(p.class)], "ford" | "deep_water");
+        let mut rings: Rings = vec![&p.outer];
+        rings.extend(p.holes.iter().map(|h| h.as_slice()));
+        rows.push(("landcover.toml", p.id, u8::from(water), rings));
+    }
+    for b in &s.buildings {
+        rows.push(("buildings.toml", b.id, 2, vec![&b.outer]));
+    }
+    let mut shapes: Vec<(&'static str, Shape)> = Vec::new();
+    for (file, id, group, rings) in rows {
+        if polygon_rings(file, id, &rings, out) {
+            let xs = rings[0].iter().map(|p| p[0]);
+            let ys = rings[0].iter().map(|p| p[1]);
+            let bbox = [
+                xs.clone().min().unwrap_or(0),
+                ys.clone().min().unwrap_or(0),
+                xs.max().unwrap_or(0),
+                ys.max().unwrap_or(0),
+            ];
+            shapes.push((
+                file,
+                Shape {
+                    id,
+                    group,
+                    rings,
+                    bbox,
+                },
+            ));
+        }
+    }
+    shapes.sort_by_key(|(_, sh)| (sh.group, sh.id));
+    for (i, (file, a)) in shapes.iter().enumerate() {
+        for (_, b) in shapes[i + 1..]
+            .iter()
+            .take_while(|(_, b)| b.group == a.group)
+        {
+            let apart = a.bbox[2] <= b.bbox[0]
+                || b.bbox[2] <= a.bbox[0]
+                || a.bbox[3] <= b.bbox[1]
+                || b.bbox[3] <= a.bbox[1];
+            if !apart && ring::overlap(&a.rings, &b.rings) {
+                let msg = format!("interior overlaps polygon {} of the same group", b.id);
+                out.push(problem("group_overlap", file, a.id, msg));
+            }
+        }
+    }
+}
+
 fn raster_rules(s: &Survey, out: &mut Vec<Problem>) {
     let total = s.dem.len() as u64;
     let voids = s.dem.iter().filter(|&&p| p == i32::MIN).count() as u64;
@@ -211,6 +302,7 @@ pub fn check_pack(s: &Survey, sources: Option<&Path>) -> (Vec<Problem>, Option<P
         Some(w)
     });
     line_rules(s, world.as_ref(), &mut out);
+    polygon_rules(s, &mut out);
     if let Some(p) = sources {
         source_rules(p, &mut out);
     }

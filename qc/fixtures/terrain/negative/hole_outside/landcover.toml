@@ -1,0 +1,10 @@
+# Negative fixture for the geometry check: a hole with a vertex on the outer ring (hole_outside)
+schema = "survey-landcover/1"
+
+[[polygon]]
+id = 1
+class = "yard"
+outer = [[80000, 80000], [120000, 80000], [120000, 120000], [80000, 120000]]
+holes = [[[80000, 100000], [90000, 110000], [100000, 100000]]]
+confidence = "unverified"
+sources = [{ source = 1, sheet = "synthetic" }]

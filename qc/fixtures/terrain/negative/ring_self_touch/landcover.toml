@@ -1,0 +1,9 @@
+# Negative fixture for the geometry check: a bow-tie whose edges cross (ring_self_touch)
+schema = "survey-landcover/1"
+
+[[polygon]]
+id = 1
+class = "crop"
+outer = [[80000, 80000], [100000, 100000], [100000, 80000], [80000, 90000]]
+confidence = "unverified"
+sources = [{ source = 1, sheet = "synthetic" }]

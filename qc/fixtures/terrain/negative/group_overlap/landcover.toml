@@ -1,0 +1,16 @@
+# Negative fixture for the geometry check: two ground polygons whose interiors overlap (group_overlap)
+schema = "survey-landcover/1"
+
+[[polygon]]
+id = 1
+class = "crop"
+outer = [[80000, 80000], [100000, 80000], [100000, 100000], [80000, 100000]]
+confidence = "unverified"
+sources = [{ source = 1, sheet = "synthetic" }]
+
+[[polygon]]
+id = 2
+class = "woods"
+outer = [[90000, 90000], [110000, 90000], [110000, 110000], [90000, 110000]]
+confidence = "unverified"
+sources = [{ source = 1, sheet = "synthetic" }]
