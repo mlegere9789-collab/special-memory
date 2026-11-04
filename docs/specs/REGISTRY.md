@@ -310,7 +310,7 @@ Labels are sequential per base spec in landing order (wave, then ticket id). A l
 | Label | Content | Source | Ticket | Wave | Status |
 |---|---|---|---|---|---|
 | A1 | `Gait` reuse, `from_rows` takes the table, `fatigue_step` takes `Fx`, blocking per axis | T-016 | T-016 | landed | landed |
-| A2 | section 11: tag space, optional hash blocks with magics, direct-order refusal when `cmd` is `Some` (REGISTRY sections 2, 5) | SPEC-007 | T-071 | 2 | pending |
+| A2 | section 11: tag space, optional hash blocks with magics, direct-order refusal when `cmd` is `Some` (REGISTRY sections 2, 5) | SPEC-007 | T-071 | 2 | landed |
 | A3 | section 5: terrain classes 8 to 11, slope as data (was SPEC-014 "A2") | SPEC-014 | T-141 | 2 | pending |
 | A4 | section 7 and 11: `Regiment` gains `status`, `class`, `since`; aggregate regiments | SPEC-008 | T-083 | 4 | pending |
 | A5 | section 4: heat and rest multipliers in the fatigue step | SPEC-009 | T-092 | 4 | pending |

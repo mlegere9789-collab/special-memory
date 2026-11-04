@@ -74,3 +74,6 @@ pub mod scenarios;
 
 // T-026
 pub mod registry;
+
+// T-071
+pub mod command;

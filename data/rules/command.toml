@@ -1,0 +1,180 @@
+# Command friction table (SPEC-007 section 3). Units: ticks (_ticks), millimetres (_mm, _mm_s), permille (_pm),
+# parts per million (_ppm). Qualitative basis: couriers can be killed, delayed or confused, flags and telegraph work
+# where lines exist (CWV p511 section 4.7); orders were late or lost (CWV p116). Every number below is a placeholder
+# awaiting the calibration target named on its row; no CWV page gives a speed or a loss rate.
+
+schema = "command/1"
+
+[[medium]]
+id = "courier"
+write_ticks = 600
+base_ticks = 400
+per_word_ticks = 0
+speed_mm_s = 3500
+loss_base_ppm = 3000
+garble_ppm = 30000
+confidence = "unverified"
+placeholder = true
+calibration_target = "CT-007-1"
+note = "Latency set by CT-007-1; loss and garble set by CT-007-2."
+
+[[medium]]
+id = "flags"
+write_ticks = 200
+base_ticks = 400
+per_word_ticks = 60
+speed_mm_s = 0
+loss_base_ppm = 0
+garble_ppm = 40000
+confidence = "unverified"
+placeholder = true
+calibration_target = "CT-007-1"
+note = "Latency set by CT-007-1; loss and garble set by CT-007-2."
+
+[[medium]]
+id = "telegraph"
+write_ticks = 400
+base_ticks = 200
+per_word_ticks = 40
+speed_mm_s = 0
+loss_base_ppm = 0
+garble_ppm = 5000
+confidence = "unverified"
+placeholder = true
+calibration_target = "CT-007-1"
+note = "Latency set by CT-007-1; loss and garble set by CT-007-2."
+
+[[level]]
+level = 0
+staff_ticks = 1200
+confidence = "unverified"
+placeholder = true
+calibration_target = "CT-007-3"
+note = "Staff time to pass an order on; higher levels are slower."
+
+[[level]]
+level = 1
+staff_ticks = 800
+confidence = "unverified"
+placeholder = true
+calibration_target = "CT-007-3"
+note = "Staff time to pass an order on; higher levels are slower."
+
+[[level]]
+level = 2
+staff_ticks = 600
+confidence = "unverified"
+placeholder = true
+calibration_target = "CT-007-3"
+note = "Staff time to pass an order on; higher levels are slower."
+
+[[level]]
+level = 3
+staff_ticks = 400
+confidence = "unverified"
+placeholder = true
+calibration_target = "CT-007-3"
+note = "Staff time to pass an order on; higher levels are slower."
+
+[[level]]
+level = 4
+staff_ticks = 200
+confidence = "unverified"
+placeholder = true
+calibration_target = "CT-007-3"
+note = "Staff time to pass an order on; higher levels are slower."
+
+[[trait]]
+trait = "aggressive"
+process_pm = 800
+go_bias_pm = 250
+reach_mm = 200000
+gait_shift = 1
+confidence = "unverified"
+placeholder = true
+calibration_target = "CT-007-4"
+note = "Effect of the trait on staff time and on interpretation of a discretionary order."
+
+[[trait]]
+trait = "cautious"
+process_pm = 1300
+go_bias_pm = -250
+reach_mm = -200000
+gait_shift = 0
+confidence = "unverified"
+placeholder = true
+calibration_target = "CT-007-4"
+note = "Effect of the trait on staff time and on interpretation of a discretionary order."
+
+[[trait]]
+trait = "high_discretion"
+process_pm = 1000
+go_bias_pm = 100
+reach_mm = 0
+gait_shift = 0
+confidence = "unverified"
+placeholder = true
+calibration_target = "CT-007-4"
+note = "Effect of the trait on staff time and on interpretation of a discretionary order."
+
+[[trait]]
+trait = "low_discretion"
+process_pm = 1000
+go_bias_pm = -200
+reach_mm = 0
+gait_shift = 0
+confidence = "unverified"
+placeholder = true
+calibration_target = "CT-007-4"
+note = "Effect of the trait on staff time and on interpretation of a discretionary order."
+
+[globals]
+path_factor_pm = 1300
+jitter_ticks = 200
+find_radius_mm = 300000
+max_legs = 3
+min_terrain_pm = 200
+loss_ppm_per_km = 4000
+exposure_ppm_per_enemy = 500
+exposure_cap = 40
+exposure_halfwidth_mm = 150000
+loss_cap_ppm = 500000
+capture_share_pm = 600
+capture_quality_pm = 300
+flag_range_mm = 8000000
+smoke_limit = 200
+smoke_wait_ticks = 200
+smoke_max_waits = 6
+garble_sigma_mm = 150000
+garble_move_displace_pm = 600
+garble_move_gait_pm = 850
+garble_form_swap_pm = 500
+garble_face_turn_pm = 600
+garble_angle_deg = 25
+staff_jitter_ticks = 200
+base_go_pm = 600
+odds_weight_pm = 800
+fatigue_weight_pm = 600
+judge_sigma_pm = 120
+go_threshold_pm = 500
+practicable_radius_mm = 800000
+lost_grace_ticks = 2400
+redirect_ticks = 1200
+pos_interval_ticks = 20
+sight_range_mm = 1800000
+min_quality_pm = 150
+smoke_occ_per_unit_pm = 5
+pos_floor_mm = 20000
+pos_sigma_max_mm = 300000
+strength_sigma_pm = 600
+assoc_base_mm = 300000
+observe_interval_ticks = 100
+stale_ticks = 24000
+drop_pm = 50
+drift_mm_per_tick = 53
+report_interval_ticks = 2400
+report_max = 16
+confidence = "unverified"
+placeholder = true
+calibration_target = "CT-007-2"
+note = "Courier path and loss, garble (CT-007-2); flag range and smoke (CT-007-5); staff and judgement (CT-007-3); succession and position refresh (CT-007-6); observation and contacts (CT-007-7). Drift is the walk placeholder of 1067 mm/s over 20."

@@ -1,0 +1,477 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "command.schema.json",
+  "title": "Command friction table (SPEC-007 section 3)",
+  "type": "object",
+  "required": [
+    "schema",
+    "medium",
+    "level",
+    "trait",
+    "globals"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "schema": {
+      "const": "command/1"
+    },
+    "medium": {
+      "type": "array",
+      "minItems": 3,
+      "maxItems": 3,
+      "items": {
+        "type": "object",
+        "required": [
+          "id",
+          "write_ticks",
+          "base_ticks",
+          "per_word_ticks",
+          "speed_mm_s",
+          "loss_base_ppm",
+          "garble_ppm"
+        ],
+        "allOf": [
+          {
+            "$ref": "#/$defs/provenance_fields"
+          }
+        ],
+        "unevaluatedProperties": false,
+        "properties": {
+          "id": {
+            "enum": [
+              "courier",
+              "flags",
+              "telegraph"
+            ]
+          },
+          "write_ticks": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 1000000
+          },
+          "base_ticks": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 1000000
+          },
+          "per_word_ticks": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 10000
+          },
+          "speed_mm_s": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 100000
+          },
+          "loss_base_ppm": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 1000000
+          },
+          "garble_ppm": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 1000000
+          }
+        }
+      },
+      "description": "One row per medium; the loader refuses a repeated or missing medium and a courier with no speed."
+    },
+    "level": {
+      "type": "array",
+      "minItems": 5,
+      "maxItems": 5,
+      "items": {
+        "type": "object",
+        "required": [
+          "level",
+          "staff_ticks"
+        ],
+        "allOf": [
+          {
+            "$ref": "#/$defs/provenance_fields"
+          }
+        ],
+        "unevaluatedProperties": false,
+        "properties": {
+          "level": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 4
+          },
+          "staff_ticks": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 1000000
+          }
+        }
+      },
+      "description": "One row per level 0 (army) to 4 (regiment)."
+    },
+    "trait": {
+      "type": "array",
+      "minItems": 4,
+      "maxItems": 4,
+      "items": {
+        "type": "object",
+        "required": [
+          "trait",
+          "process_pm",
+          "go_bias_pm",
+          "reach_mm",
+          "gait_shift"
+        ],
+        "allOf": [
+          {
+            "$ref": "#/$defs/provenance_fields"
+          }
+        ],
+        "unevaluatedProperties": false,
+        "properties": {
+          "trait": {
+            "enum": [
+              "aggressive",
+              "cautious",
+              "high_discretion",
+              "low_discretion"
+            ]
+          },
+          "process_pm": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 10000
+          },
+          "go_bias_pm": {
+            "type": "integer",
+            "minimum": -1000,
+            "maximum": 1000
+          },
+          "reach_mm": {
+            "type": "integer",
+            "minimum": -10000000,
+            "maximum": 10000000
+          },
+          "gait_shift": {
+            "type": "integer",
+            "minimum": -3,
+            "maximum": 3
+          }
+        }
+      },
+      "description": "One row per trait."
+    },
+    "globals": {
+      "type": "object",
+      "required": [
+        "path_factor_pm",
+        "jitter_ticks",
+        "find_radius_mm",
+        "max_legs",
+        "min_terrain_pm",
+        "loss_ppm_per_km",
+        "exposure_ppm_per_enemy",
+        "exposure_cap",
+        "exposure_halfwidth_mm",
+        "loss_cap_ppm",
+        "capture_share_pm",
+        "capture_quality_pm",
+        "flag_range_mm",
+        "smoke_limit",
+        "smoke_wait_ticks",
+        "smoke_max_waits",
+        "garble_sigma_mm",
+        "garble_move_displace_pm",
+        "garble_move_gait_pm",
+        "garble_form_swap_pm",
+        "garble_face_turn_pm",
+        "garble_angle_deg",
+        "staff_jitter_ticks",
+        "base_go_pm",
+        "odds_weight_pm",
+        "fatigue_weight_pm",
+        "judge_sigma_pm",
+        "go_threshold_pm",
+        "practicable_radius_mm",
+        "lost_grace_ticks",
+        "redirect_ticks",
+        "pos_interval_ticks",
+        "sight_range_mm",
+        "min_quality_pm",
+        "smoke_occ_per_unit_pm",
+        "pos_floor_mm",
+        "pos_sigma_max_mm",
+        "strength_sigma_pm",
+        "assoc_base_mm",
+        "observe_interval_ticks",
+        "stale_ticks",
+        "drop_pm",
+        "drift_mm_per_tick",
+        "report_interval_ticks",
+        "report_max"
+      ],
+      "allOf": [
+        {
+          "$ref": "#/$defs/provenance_fields"
+        }
+      ],
+      "unevaluatedProperties": false,
+      "properties": {
+        "path_factor_pm": {
+          "type": "integer",
+          "minimum": 1000,
+          "maximum": 10000
+        },
+        "jitter_ticks": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 100000
+        },
+        "find_radius_mm": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 100000000
+        },
+        "max_legs": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 16
+        },
+        "min_terrain_pm": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 1000
+        },
+        "loss_ppm_per_km": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 1000000
+        },
+        "exposure_ppm_per_enemy": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 1000000
+        },
+        "exposure_cap": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 1000
+        },
+        "exposure_halfwidth_mm": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 10000000
+        },
+        "loss_cap_ppm": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 1000000
+        },
+        "capture_share_pm": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 1000
+        },
+        "capture_quality_pm": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 1000
+        },
+        "flag_range_mm": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 100000000
+        },
+        "smoke_limit": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 1000000
+        },
+        "smoke_wait_ticks": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 100000
+        },
+        "smoke_max_waits": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 100
+        },
+        "garble_sigma_mm": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 10000000
+        },
+        "garble_move_displace_pm": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 1000
+        },
+        "garble_move_gait_pm": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 1000
+        },
+        "garble_form_swap_pm": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 1000
+        },
+        "garble_face_turn_pm": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 1000
+        },
+        "garble_angle_deg": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 180
+        },
+        "staff_jitter_ticks": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 100000
+        },
+        "base_go_pm": {
+          "type": "integer",
+          "minimum": -2000,
+          "maximum": 2000
+        },
+        "odds_weight_pm": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 10000
+        },
+        "fatigue_weight_pm": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 10000
+        },
+        "judge_sigma_pm": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 10000
+        },
+        "go_threshold_pm": {
+          "type": "integer",
+          "minimum": -2000,
+          "maximum": 2000
+        },
+        "practicable_radius_mm": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 100000000
+        },
+        "lost_grace_ticks": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 1000000
+        },
+        "redirect_ticks": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 1000000
+        },
+        "pos_interval_ticks": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 10000
+        },
+        "sight_range_mm": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 100000000
+        },
+        "min_quality_pm": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 1000
+        },
+        "smoke_occ_per_unit_pm": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 1000
+        },
+        "pos_floor_mm": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 10000000
+        },
+        "pos_sigma_max_mm": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 10000000
+        },
+        "strength_sigma_pm": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 10000
+        },
+        "assoc_base_mm": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 100000000
+        },
+        "observe_interval_ticks": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 100000
+        },
+        "stale_ticks": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 10000000
+        },
+        "drop_pm": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 1000
+        },
+        "drift_mm_per_tick": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 10000
+        },
+        "report_interval_ticks": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 1000000
+        },
+        "report_max": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 1000
+        }
+      }
+    }
+  },
+  "$defs": {
+    "provenance_fields": {
+      "type": "object",
+      "required": [
+        "confidence"
+      ],
+      "properties": {
+        "confidence": {
+          "$ref": "common.schema.json#/$defs/confidence"
+        },
+        "placeholder": {
+          "type": "boolean"
+        },
+        "calibration_target": {
+          "type": "string",
+          "pattern": "^CT-[0-9]{3}-[0-9]+$"
+        },
+        "sources": {
+          "$ref": "common.schema.json#/$defs/sources"
+        },
+        "second_source": {
+          "type": "string"
+        },
+        "note": {
+          "type": "string"
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,169 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "officers.schema.json",
+  "title": "Officers and links of a scenario (SPEC-007 section 3)",
+  "type": "object",
+  "required": [
+    "schema",
+    "officer"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "schema": {
+      "const": "officers/1"
+    },
+    "officer": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": [
+          "id",
+          "side",
+          "level"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 65535
+          },
+          "side": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 1
+          },
+          "level": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 4
+          },
+          "parent": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 65535
+          },
+          "regiment": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 65535
+          },
+          "commander": {
+            "type": "string",
+            "pattern": "^[a-z0-9_]{1,64}$"
+          },
+          "deputy": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 65535
+          },
+          "hq_x_mm": {
+            "type": "integer",
+            "minimum": -100000000,
+            "maximum": 100000000
+          },
+          "hq_y_mm": {
+            "type": "integer",
+            "minimum": -100000000,
+            "maximum": 100000000
+          },
+          "post_range_pm": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 10000
+          }
+        },
+        "dependentRequired": {
+          "hq_x_mm": [
+            "hq_y_mm"
+          ],
+          "hq_y_mm": [
+            "hq_x_mm"
+          ]
+        },
+        "allOf": [
+          {
+            "if": {
+              "properties": {
+                "level": {
+                  "const": 0
+                }
+              },
+              "required": [
+                "level"
+              ]
+            },
+            "then": {
+              "not": {
+                "required": [
+                  "parent"
+                ]
+              }
+            },
+            "else": {
+              "required": [
+                "parent"
+              ]
+            }
+          },
+          {
+            "if": {
+              "properties": {
+                "level": {
+                  "const": 4
+                }
+              },
+              "required": [
+                "level"
+              ]
+            },
+            "then": {
+              "required": [
+                "regiment"
+              ]
+            },
+            "else": {
+              "not": {
+                "required": [
+                  "regiment"
+                ]
+              }
+            }
+          }
+        ]
+      },
+      "description": "Ids unique and ascending; the loader checks parents, levels, cycles, armies and regiment owners."
+    },
+    "link": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "medium",
+          "a",
+          "b"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "medium": {
+            "enum": [
+              "flags",
+              "telegraph"
+            ]
+          },
+          "a": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 65535
+          },
+          "b": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 65535
+          }
+        }
+      }
+    }
+  }
+}
