@@ -30,3 +30,4 @@ date,ticket,class,estimated_usage,actual_usage,review_defects,rework_count,notes
 2026-11-04,SPEC-016 prototype and vendor briefs + tickets,M,,190233 tokens,0,0,fresh spec writer
 2026-11-04,specs consolidation: REGISTRY CONFLICTS ROADMAP (38 collisions resolved; 10 decisions in ADR 0010),L,,496484 tokens,0,0,fresh spec editor
 2026-11-04,T-019 steering avoidance anchor movement scenarios,L,,236171 tokens,0,0,fresh implementer; hd-sim battle and goldens dropped to a later ticket; T4-13 above H4
+2026-11-04,T-130 Gettysburg source registry + time functions + ADR 0007 (SPEC-013),M,,,0,0,fresh implementer; tests first; only CWV consulted; usage not measured
