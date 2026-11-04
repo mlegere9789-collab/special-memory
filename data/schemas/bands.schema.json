@@ -1,0 +1,50 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "bands.schema.json",
+  "title": "Historical band file (SPEC-011 section 3)",
+  "description": "Evidenced ranges for measured quantities, one file per battle (qc/calibration/<battle>-bands.toml). low and high are counts for the metric count and permille for the rate metrics; a missing high is open above. Whether a band gates is derived from confidence (partial and verified gate, unverified reports only) and is never stored.",
+  "type": "object",
+  "required": ["schema", "band"],
+  "additionalProperties": false,
+  "properties": {
+    "schema": {"const": "history-bands/1"},
+    "band": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "scenario", "unit", "metric", "basis", "from_s", "to_s", "low", "phrase"],
+        "allOf": [{"$ref": "#/$defs/provenance_fields"}],
+        "unevaluatedProperties": false,
+        "properties": {
+          "id": {"type": "string", "pattern": "^[A-Za-z0-9_-]+$"},
+          "scenario": {"$ref": "#/$defs/ident"},
+          "unit": {"$ref": "#/$defs/ident"},
+          "metric": {"enum": ["count", "rate_pm", "rate_pm_median"]},
+          "basis": {"enum": ["kw", "total"]},
+          "from_s": {"type": "integer", "minimum": 0},
+          "to_s": {"type": "integer", "minimum": 1},
+          "low": {"type": "integer", "minimum": 0},
+          "high": {"type": "integer", "minimum": 0},
+          "phrase": {"type": "string", "minLength": 1},
+          "source_value": {"type": "integer", "minimum": 0},
+          "needs": {"enum": ["capture", "morale", "melee"]}
+        }
+      }
+    }
+  },
+  "$defs": {
+    "ident": {"type": "string", "pattern": "^[a-z0-9_]+$"},
+    "provenance_fields": {
+      "type": "object",
+      "required": ["confidence"],
+      "properties": {
+        "confidence": {"$ref": "common.schema.json#/$defs/confidence"},
+        "placeholder": {"type": "boolean"},
+        "calibration_target": {"type": "string", "pattern": "^CT-[0-9]{3}-[0-9]+$"},
+        "sources": {"$ref": "common.schema.json#/$defs/sources"},
+        "second_source": {"type": "string"},
+        "note": {"type": "string"}
+      }
+    }
+  }
+}
