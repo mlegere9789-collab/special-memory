@@ -1,0 +1,86 @@
+# Officers sidecar fixture (SPEC-007 section 3): two small chains of command and two links.
+schema = "officers/1"
+
+[[officer]]
+id = 1
+side = 0
+level = 0
+commander = "robert_e_lee"
+
+[[officer]]
+id = 2
+side = 0
+level = 1
+parent = 1
+commander = "richard_s_ewell"
+deputy = 3
+
+[[officer]]
+id = 3
+side = 0
+level = 2
+parent = 2
+
+[[officer]]
+id = 4
+side = 0
+level = 3
+parent = 3
+
+[[officer]]
+id = 5
+side = 0
+level = 4
+parent = 4
+regiment = 0
+
+[[officer]]
+id = 6
+side = 0
+level = 4
+parent = 4
+regiment = 1
+
+[[officer]]
+id = 10
+side = 1
+level = 0
+commander = "john_f_reynolds"
+
+[[officer]]
+id = 11
+side = 1
+level = 1
+parent = 10
+hq_x_mm = 1000000
+hq_y_mm = 2000000
+post_range_pm = 1500
+
+[[officer]]
+id = 12
+side = 1
+level = 2
+parent = 11
+
+[[officer]]
+id = 13
+side = 1
+level = 3
+parent = 12
+
+[[officer]]
+id = 14
+side = 1
+level = 4
+parent = 13
+regiment = 2
+
+[[link]]
+medium = "flags"
+a = 6
+b = 5
+
+[[link]]
+medium = "telegraph"
+a = 10
+b = 11

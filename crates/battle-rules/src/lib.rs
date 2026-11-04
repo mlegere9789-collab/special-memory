@@ -78,3 +78,6 @@ pub mod registry;
 // T-061
 pub mod morale;
 pub use morale::{MoraleKind, MoraleTable};
+
+// T-071
+pub mod command;
