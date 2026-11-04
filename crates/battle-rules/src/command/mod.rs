@@ -1,23 +1,29 @@
 //! Command friction and the information model (SPEC-007): couriers, flags and telegraph, the
 //! chain of officers, and what each officer knows.
 //!
-//! This part holds the data layer and the state: the friction table ([`CommandTable`]), the officers sidecar
-//! ([`load_officers`]), the identifier and enumeration types the data use, and the trait masks of
-//! historical commanders ([`trait_mask`]). The command layer is optional state of a battle
+//! The data layer ([`CommandTable`], [`load_officers`], [`trait_mask`]), the state, the media
+//! and the arrival step, observation, reports and pictures, and the chain: orders are read, take
+//! staff time, are interpreted by the officer's traits and picture ([`interpret`]),
+//! acknowledged and passed down ([`BattleState::step_chain`]), with their status derived for
+//! the issuer ([`BattleState::order_views`]). The command layer is optional state of a battle
 //! (ADR 0006): none of this changes a battle that does not enable it.
 
+mod chain;
 mod codec;
 mod data;
 mod garble;
 mod hash;
 mod input;
+mod interpret;
 mod leg;
 mod media;
 mod observe;
 mod picture;
 mod report;
 mod state;
+mod status;
 
+pub use chain::StaffJob;
 pub use codec::{
     decode_dispatch, decode_options, decode_script, encode_dispatch, encode_options, encode_script,
     Dispatch, ScriptEvent,
@@ -29,6 +35,7 @@ pub use data::{
 pub use garble::read_order;
 pub use hash::write_command_block;
 pub use input::{DispatchError, InputError};
+pub use interpret::{go_score, interpret, InterpretInput, Interpreted};
 pub use media::{words, Arrival, Estimate, Reading};
 pub use observe::{OwnVisibility, Visibility};
 pub use picture::{ContactView, FriendView, PictureView};
@@ -37,6 +44,7 @@ pub use state::{
     MessageId, MessageKind, MessagePayload, ModKind, Officer, OrderBody, OrderRecord, Picture,
     Truth,
 };
+pub use status::{OrderStatus, OrderView};
 
 use crate::registry::{
     LATITUDE_DISCRETIONARY, LATITUDE_STRICT, LEVEL_ARMY, LEVEL_BRIGADE, LEVEL_CORPS,

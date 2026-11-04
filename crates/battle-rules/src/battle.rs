@@ -2,7 +2,7 @@
 //! machine (SPEC-004 sections 7 and 11). Steering and anchor movement belong to the movement
 //! step; this module owns orders, the `Forming` countdown and the close-up of a thinned line.
 
-use crate::command::CommandState;
+use crate::command::{CommandState, CommandTable};
 use crate::fire::{RangeEntry, RegFire};
 use crate::hit::{ObstacleLayer, QueuedHit};
 use crate::{
@@ -354,6 +354,19 @@ impl BattleState {
     #[doc(hidden)]
     pub fn step_with(&mut self, reverse_flight: bool) {
         self.step_environment();
+        self.step_movement_to_end(reverse_flight);
+    }
+
+    /// [`BattleState::step`] with the command layer's step TK-03 (SPEC-007) between the
+    /// environment and movement steps. With `cmd` `None` it is exactly [`BattleState::step`].
+    pub fn step_with_command(&mut self, table: &CommandTable) {
+        self.step_environment();
+        self.step_command(table);
+        self.step_movement_to_end(false);
+    }
+
+    /// Steps TK-04 to TK-15: everything after the environment and command steps.
+    fn step_movement_to_end(&mut self, reverse_flight: bool) {
         self.move_agents();
         self.grid.rebuild(&self.world.agents);
         self.release_disables();

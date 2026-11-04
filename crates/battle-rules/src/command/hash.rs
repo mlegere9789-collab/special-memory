@@ -101,6 +101,8 @@ fn record(h: &mut StateHasher, r: &OrderRecord) {
     h.write_u64(r.sent_tick);
     h.write_u64(r.eta_lo);
     h.write_u64(r.eta_hi);
+    h.write_u64(r.ack_deadline);
+    h.write_u8(r.medium.tag());
     body(h, &r.sent);
     opt(h, r.ack, |h, a| ack(h, &a));
     h.write_u8(r.truth as u8);
@@ -162,5 +164,17 @@ pub fn write_command_block(h: &mut StateHasher, c: &CommandState) {
     for p in &c.pics {
         contacts_and_friends(h, &p.contacts, &p.friends);
         h.write_u32(p.next_contact);
+    }
+    len(h, c.staff.len());
+    for j in &c.staff {
+        h.write_u64(j.ready);
+        h.write_u32(j.id.0);
+        h.write_u16(j.from.0);
+        h.write_u16(j.to.0);
+        h.write_u32(j.seq);
+        body(h, &j.received);
+        h.write_u8(u8::from(j.stale));
+        h.write_u8(u8::from(j.instant));
+        j.rng.iter().for_each(|&w| h.write_u64(w));
     }
 }
