@@ -45,3 +45,15 @@ pub use damage::{
     energy_joules, DamageTable, HitOutcome, OutcomeCell, Posture, PostureRow, Region,
 };
 pub use weapons::{AmmoLoad, LoadStep, WeaponClass, WeaponRow, WeaponTable};
+
+// T-018
+mod battle;
+mod battle_hash;
+mod orders;
+mod regiment;
+mod tables;
+pub use battle::{soldier_stream, BattleState, LocoExt, STREAM_SOLDIER_BASE};
+pub use battle_hash::battle_hash;
+pub use orders::{decode_order, encode_order, Order, OrderDecodeError};
+pub use regiment::{can_fire, Regiment, RegimentId, RegimentSpec, RegimentState};
+pub use tables::Tables;
