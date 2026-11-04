@@ -1,0 +1,59 @@
+# Fidelity table (SPEC-008 section 2.1). Lengths are millimetres, durations ticks (20 per second).
+# F0 limits cover effective fire plus a margin, F1 limits cover extended fire plus a margin. The
+# research pages give ranges for the arms: rifled musket effective 300 yd and extended about half a
+# mile, shot maximum 1680 yd, canister effective 350 yd (CWV p459, tags V S21 and V S19). The
+# margins, intervals, sector size and grid sizes are placeholders awaiting calibration (CT-008-80
+# thresholds by arm, 84 aggregate interval, 85 sector size, margin and grid cell, 86 bundle window,
+# 87 hysteresis and dwell).
+schema = "fidelity/1"
+
+[globals]
+assign_interval_ticks = 20
+hysteresis_mm = 50000
+min_dwell_ticks = 200
+bundle_ticks = 20
+f2_interval_ticks = 100
+sector_mm = 500000
+hot_margin_sectors = 1
+grid_cell_mm = 4000
+max_grid_cells = 4194304
+confidence = "unverified"
+placeholder = true
+calibration_target = "CT-008-87"
+note = "Hysteresis and dwell are tuned by CT-008-87; the interval keys by CT-008-84 and CT-008-86; the sector and grid keys by CT-008-85."
+
+[[arm]]
+id = "infantry"
+f0_mm = 450000
+f1_mm = 1800000
+confidence = "partial"
+placeholder = true
+calibration_target = "CT-008-80"
+sources = [
+  { document = "CWV", page = 459, tag = "V S21", note = "rifled musket effective 300 yd, extended about half a mile" },
+]
+note = "F0 is effective fire plus margin; F1 is extended fire plus margin."
+
+[[arm]]
+id = "cavalry"
+f0_mm = 450000
+f1_mm = 1800000
+confidence = "partial"
+placeholder = true
+calibration_target = "CT-008-80"
+sources = [
+  { document = "CWV", page = 459, tag = "V S21", note = "carbine and pistol ranges are shorter than the rifled musket's; same limits as infantry" },
+]
+note = "Same limits as infantry."
+
+[[arm]]
+id = "battery"
+f0_mm = 1200000
+f1_mm = 2400000
+confidence = "partial"
+placeholder = true
+calibration_target = "CT-008-80"
+sources = [
+  { document = "CWV", page = 459, tag = "V S19", note = "canister effective 350 yd, shot maximum 1680 yd" },
+]
+note = "F0 covers canister plus margin; F1 covers shot out to its maximum plus margin."
