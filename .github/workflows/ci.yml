@@ -43,6 +43,7 @@ jobs:
           python3 tools/test_gb_time.py
           python3 tools/test_gb_reports.py
           python3 tools/test_survey.py
+          python3 qc/fixtures/terrain/test_schemas.py
           python3 tools/test_environment_validator.py
           python3 tools/test_ingest_dem.py
           python3 tools/test_check_assets.py

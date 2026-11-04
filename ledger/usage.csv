@@ -69,3 +69,4 @@ date,ticket,class,estimated_usage,actual_usage,review_defects,rework_count,notes
 2026-11-04,T-112 replay driver tag 0x31 and history hash (SPEC-011 D-06),M,,183991 tokens,0,0,fresh implementer; tests T11-02 to T11-04 and history_verify; arrive tag 0x30 dropped per D-06
 2026-11-04,T-084 Battle wrapper replay binding hd-sim resolve (SPEC-008 SPEC-003 A2),L,,293678 tokens,0,0,fresh implementer; tests T8-03 T8-04 T8-11 T8-17 T8-18 T8-19; verify now dispatches toy, bound and history replays
 2026-11-04,T-063 morale state machine rolls events hash (SPEC-006 D-07),M,,169888 tokens,0,0,fresh implementer; 29 tests; one existing T-062 test restated against morale cleared
+2026-11-04,T-144 survey geometry checks and hd-terrain compile (SPEC-014 first part),M,,181854 tokens,0,0,fresh implementer; 15 Rust and 3 Python tests; polygon ring checks split off to T-144b; toml 1.2.0 added
