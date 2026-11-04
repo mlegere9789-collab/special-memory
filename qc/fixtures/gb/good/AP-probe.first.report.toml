@@ -1,0 +1,56 @@
+schema = "gb-audit/1"
+date = "2026-11-04"
+packet = "AP-probe"
+pass = "first"
+scope = ["us_probe_brigade", "us_probe_regiment", "us_probe_regiment_b"]
+sources_used = ["ALT", "CWV"]
+
+[agent]
+role = "auditor"
+session = "probe-session-1"
+
+[counts]
+claims = 2
+records = 3
+
+[[findings]]
+disposition = "waived"
+message = "brigade figure is a headline, the audited sum is held in the headline table"
+path = "strength/engaged"
+record = "us_probe_brigade"
+rule = "GB10"
+severity = "W"
+waiver_reason = "the headline stays unverified beside the audited sum"
+
+[[findings]]
+disposition = "fixed"
+message = "low above the lowest claim"
+path = "strength/engaged"
+record = "us_probe_regiment"
+rule = "GB07"
+severity = "E"
+
+[[headline]]
+audited_high = 560
+audited_low = 540
+headline = 600
+note = "the sum of the regiments is held beside the headline figure"
+path = "strength/engaged"
+record = "us_probe_brigade"
+
+[[reconciliation]]
+decision = "partial_range"
+high = 255
+low = 245
+path = "strength/engaged"
+record = "us_probe_regiment"
+
+[[reconciliation.claims]]
+document = "CWV"
+figure = 245
+page = 72
+
+[[reconciliation.claims]]
+document = "CWV"
+figure = 255
+page = 73

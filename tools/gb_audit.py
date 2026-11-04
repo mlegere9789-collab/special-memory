@@ -4,11 +4,16 @@
 Holds the time functions, the source registry loader, the citation rules GB04 and GB05, the schema metaschema check,
 the audit-report writer (ticket T-130), the corpus loader and the structural rules GB01 to GB03 and GB07 to GB09
 (ticket T-131), the evidence ladder with the rules GB04 to GB06 and the known-conflict fixtures with GB17 (ticket
-T-132), and the chain sums, casualty, arms and terrain checks GB10 to GB12 and GB18 (ticket T-133). The remaining
-rules come in later tickets.
+T-132), the chain sums, casualty, arms and terrain checks GB10 to GB12 and GB18 (ticket T-133), the commander and
+time-ordering rules GB13 to GB16 with the hourly schedule (ticket T-134), and the audit-report rule GB19, reconcile,
+packet reports, training_class and the review sample size (ticket T-135).
 
 Usage: python3 tools/gb_audit.py sources [ROOT]    check the schemas and data/history/gettysburg/sources.toml
-       python3 tools/gb_audit.py check [ROOT]      load the corpus under ROOT and print every finding, fixtures included
+       python3 tools/gb_audit.py check [ROOT]      load the corpus under ROOT and print every finding, fixtures and reports included
+       python3 tools/gb_audit.py hourly [ROOT]     print the hourly arrival schedule
+       python3 tools/gb_audit.py reconcile A B     print the proposed decisions for two corpora as TOML
+       python3 tools/gb_audit.py report PACKET --date D [--root R] [--pass first|second_blind] [--session S] [--out DIR]
+                                                   write qc/audit/gettysburg/PACKET.PASS.report.toml
 Exit 1 on any E finding.
 """
 import json
@@ -1315,6 +1320,265 @@ def check_fixtures(c, fixture_dir):
     return sorted(out)
 
 
+# ---------------------------------------------------------------- reports, reconcile, training class (T-135)
+
+REPORT_REL = os.path.join("qc", "audit", "gettysburg")
+REPORT_SUFFIX = ".report.toml"
+PACKET_PATTERN = re.compile(r"AP-[a-z0-9_-]{3,60}")
+PASS_ROLES = {"first": "auditor", "second_blind": "blind_auditor"}   # passes the `report` command can open
+BLIND_OR_FIRST = ("first", "second_blind")
+CLAIM_KEYS = ("document", "page", "figure", "figure_high", "tag")
+_DATE = re.compile(r"([0-9]{4})-([0-9]{2})-([0-9]{2})")
+
+
+class Report(NamedTuple):
+    label: str   # file path relative to the root it was loaded from, with "/" separators
+    doc: object  # parsed TOML table, or None when the file could not be read
+
+
+def load_reports(root, report_dir=None):
+    """Reports `*.report.toml` of one folder (default qc/audit/gettysburg under `root`), in sorted name order.
+    A missing folder gives an empty list; an unreadable file gives a Report whose doc is None."""
+    root = os.path.abspath(root)
+    d = os.path.abspath(report_dir) if report_dir else os.path.join(root, REPORT_REL)
+    out = []
+    for name in sorted(os.listdir(d)) if os.path.isdir(d) else []:
+        path = os.path.join(d, name)
+        if name.endswith(REPORT_SUFFIX) and os.path.isfile(path):
+            try:
+                with open(path, "rb") as f:
+                    doc = tomllib.load(f)
+            except (OSError, ValueError):
+                doc = None
+            out.append(Report(_label(root, path), doc))
+    return out
+
+
+def _table(v):
+    return v if isinstance(v, dict) else {}
+
+
+def check_reports(reports):
+    """Schema and float checks (GB01, GB02), file name against packet and pass (GB03) and rule GB19 over a set of
+    reports: a blind pass that saw prior values, a reviewer whose session is one it reviews (named in `reviewer_of`
+    or the session of a first or blind pass of the packet), and a promotion in a packet with no review report."""
+    out, audited, reviewed = [], {}, set()
+    docs = [(r.label, r.doc) for r in reports if isinstance(r.doc, dict)]
+    out += [Finding(r.label, "GB01", "E", "report unreadable") for r in reports if r.doc is None]
+    for _, d in docs:
+        if d.get("pass") in BLIND_OR_FIRST:
+            audited.setdefault(d.get("packet"), set()).add(_table(d.get("agent")).get("session"))
+        elif d.get("pass") == "review":
+            reviewed.add(d.get("packet"))
+    for label, d in docs:
+        packet, kind, session = d.get("packet"), d.get("pass"), _table(d.get("agent")).get("session")
+        out += [Finding(label, "GB01", "E", m) for m in _schema_errors(REPORT_SCHEMA, d)]
+        out += [Finding(label, "GB02", "E", "float at %s (reports are integer-only)" % p) for p in find_floats(d)]
+        if isinstance(packet, str) and isinstance(kind, str):
+            want = "%s.%s%s" % (packet, kind, REPORT_SUFFIX)
+            if label.rsplit("/", 1)[-1] != want:
+                out.append(Finding(label, "GB03", "E", "file name does not match packet and pass, expected %s" % want))
+        if kind == "second_blind" and d.get("saw_prior_values") is True:
+            out.append(Finding(label, "GB19", "E", "a blind pass must not see prior values"))
+        if kind == "review":
+            mine = _table(d.get("review")).get("reviewer_of")
+            if session is not None and isinstance(mine, list) and session in mine:
+                out.append(Finding(label, "GB19", "E", "reviewer session %s is a session it reviews" % session))
+            if session is not None and session in audited.get(packet, ()):
+                out.append(Finding(label, "GB19", "E", "reviewer session %s also ran a first or blind pass of %s" % (session, packet)))
+        else:
+            rows = [x for x in d.get("reconciliation", []) if isinstance(x, dict)] if isinstance(d.get("reconciliation"), list) else []
+            counted = _table(d.get("counts")).get("promoted")
+            if (isinstance(counted, int) and counted > 0 or any(x.get("decision") == "verified" for x in rows)) \
+                    and packet not in reviewed:
+                out.append(Finding(label, "GB19", "E", "promotion in %s has no reviewer report" % packet))
+    return sorted(out)
+
+
+def _parse_date(text):
+    m = _DATE.fullmatch(text) if isinstance(text, str) else None
+    if m is not None:
+        y, mo, d = (int(g) for g in m.groups())
+        if civil_from_days(days_from_civil(y, mo, d)) == (y, mo, d) and 1 <= mo <= 12:
+            return days_from_civil(y, mo, d)
+    raise ValueError("not a calendar date YYYY-MM-DD: %r" % (text,))
+
+
+def training_class(raised, prior_battles, as_of):
+    """SPEC-004 Training from a regiment's `experience` (placeholder thresholds, CT-013-1302). Dates are YYYY-MM-DD.
+    months = floor(days between raised and as_of / 30); Veteran with 3 or more battles and 12 or more months;
+    Trained with a battle or 6 or more months; otherwise Raw."""
+    months = (_parse_date(as_of) - _parse_date(raised)) // 30
+    if prior_battles >= 3 and months >= 12:
+        return "Veteran"
+    if prior_battles >= 1 or months >= 6:
+        return "Trained"
+    return "Raw"
+
+
+def review_sample_size(count):
+    """Records the Reviewer re-derives per packet, min(count, max(10, ceil(count / 10))) (CT-013-1303)."""
+    return min(count, max(10, (count * 10 + 99) // 100))
+
+
+def _claim_rows(c):
+    """{(record id, fact path): claims} for the integer facts of a corpus, each claim a plain row."""
+    out = {}
+    for r in c.records:
+        d = r.doc
+        if not isinstance(d, dict) or not isinstance(d.get("id"), str):
+            continue
+        for path, node in _fact_nodes(d):
+            claims = node.get("claims")
+            if isinstance(node.get("value"), int) and isinstance(claims, list):
+                out.setdefault((d["id"], path), []).extend(
+                    {k: x[k] for k in CLAIM_KEYS if k in x} for x in claims
+                    if isinstance(x, dict) and isinstance(x.get("figure"), int) and isinstance(x.get("document"), str)
+                    and isinstance(x.get("page"), int))
+    return out
+
+
+def _decision(registry, claims):
+    """Proposed decision for the union of claims. Agreeing claims from two consulted, cleared lineages: verified.
+    Agreeing but not promotable: unverified with the figure. Disagreeing (or a source that gives a range): a range
+    over every claim, partial_range when a consulted source with a page is among them, else unresolved."""
+    if claims_agree(claims):
+        ok = [c for c in claims if _qualifies(registry, c)]
+        other = [c for c in ok if lineage_of(registry, c["document"]) != lineage_of(registry, ok[0]["document"])]
+        if other:
+            probe = {"value": claims[0]["figure"], "confidence": "verified", "claims": claims,
+                     "second_source": "%s:%d" % (other[0]["document"], other[0]["page"])}
+            if not evidence_problems(registry, probe):
+                return {"decision": "verified", "value": claims[0]["figure"]}
+        return {"decision": "unverified", "value": claims[0]["figure"]}
+    spans = [claim_span(c) for c in claims]
+    seen = any(_consulted(registry, c["document"]) for c in claims)
+    return {"decision": "partial_range" if seen else "unresolved", "low": min(a for a, _ in spans),
+            "high": max(b for _, b in spans)}
+
+
+def reconcile(first, second):
+    """Proposed decision for every integer fact that carries claims in either corpus, rows shaped like the
+    `reconciliation` entries of an audit report, sorted by (record, path). The claims of both passes are pooled
+    and a claim made by both counts once. Time facts are not reconciled. The registry is the first corpus's,
+    completed from the second."""
+    registry = dict(second.sources)
+    registry.update(first.sources)
+    pooled = {}
+    for corpus in (first, second):
+        for key, claims in _claim_rows(corpus).items():
+            pooled.setdefault(key, {}).update({tuple(sorted(c.items())): c for c in claims})
+    out = []
+    for (record, path) in sorted(pooled):
+        claims = sorted(pooled[(record, path)].values(), key=lambda c: (c["document"], c["page"], c["figure"],
+                                                                         c.get("figure_high", -1), c.get("tag", "")))
+        out.append(dict({"record": record, "path": path, "claims": json.loads(json.dumps(claims))},
+                        **_decision(registry, claims)))
+    return out
+
+
+def _children_of(c):
+    """({unit or battery id: record}, {parent id: [child ids]}) over the readable unit and battery records."""
+    recs, kids = {}, {}
+    for r in c.records:
+        if r.kind in ("units", "batteries") and isinstance(r.doc, dict) and isinstance(r.doc.get("id"), str):
+            recs.setdefault(r.doc["id"], r)
+    for rid in sorted(recs):
+        asg = [a for a in _table_list(recs[rid].doc.get("assignments")) if isinstance(a.get("parent"), str)]
+        pick = [a for a in asg if a.get("kind") == "organic"] or asg
+        if pick:
+            kids.setdefault(pick[0]["parent"], []).append(rid)
+    return recs, kids
+
+
+def _table_list(v):
+    return [x for x in v if isinstance(x, dict)] if isinstance(v, list) else []
+
+
+def packet_report(c, packet, pass_="first", session="cli"):
+    """An audit report for one packet. The packet id AP-<slug> names its head unit as `<slug>`, `us_<slug>` or
+    `cs_<slug>`; the scope is that unit and everything under it. Findings are the corpus findings on those records,
+    all open; the headline rows set each unit's own engaged figure beside the sum of its children. ValueError when
+    the packet names no single unit or the pass cannot be opened from the command line."""
+    if not isinstance(packet, str) or PACKET_PATTERN.fullmatch(packet) is None:
+        raise ValueError("packet must look like AP-name, got %r" % (packet,))
+    if pass_ not in PASS_ROLES:
+        raise ValueError("pass must be one of %s, got %r" % (", ".join(sorted(PASS_ROLES)), pass_))
+    recs, kids = _children_of(c)
+    heads = sorted({x for x in (packet[3:], "us_" + packet[3:], "cs_" + packet[3:]) if x in recs})
+    if len(heads) != 1:
+        raise ValueError("packet %s names %d units" % (packet, len(heads)))
+    scope, todo = [], [heads[0]]
+    while todo:
+        rid = todo.pop()
+        if rid not in scope:
+            scope.append(rid)
+            todo += kids.get(rid, [])
+    scope.sort()
+    label_of = {recs[i].label: i for i in scope}
+    findings = [{"rule": f.rule, "severity": f.severity, "record": label_of[f.path], "message": f.message,
+                 "disposition": "open"} for f in check_corpus(c) if f.path in label_of]
+    claims, cited, headline = 0, set(), []
+    for rid in scope:
+        doc = recs[rid].doc
+        claims += sum(len(n["claims"]) for _, n in _fact_nodes(doc) if isinstance(n.get("claims"), list))
+        cited |= {code for _, code in citations_of(doc)}
+        own = _table(_table(doc.get("strength")).get("engaged"))
+        parts = [_table(_table(recs[k].doc.get("strength")).get("engaged")) for k in kids.get(rid, []) if k in scope]
+        hq = _table(_table(doc.get("strength")).get("headquarters"))
+        parts += [hq] if isinstance(hq.get("value"), int) else []
+        if isinstance(own.get("value"), int) and parts and all(isinstance(p.get("value"), int) for p in parts):
+            headline.append({"record": rid, "path": "strength/engaged", "headline": own["value"],
+                             "audited_low": sum(_lohi(p)[0] for p in parts), "audited_high": sum(_lohi(p)[1] for p in parts)})
+    rep = {"schema": "gb-audit/1", "packet": packet, "scope": scope, "pass": pass_,
+           "agent": {"role": PASS_ROLES[pass_], "session": session}, "sources_used": sorted(cited),
+           "counts": {"records": len(scope), "claims": claims}, "findings": findings}
+    if pass_ == "second_blind":
+        rep["saw_prior_values"] = False
+    if headline:
+        rep["headline"] = headline
+    return rep
+
+
+def _report_options(argv):
+    """(packet, options) from `PACKET --date D [--root R] [--pass P] [--session S] [--out DIR]`; ValueError on misuse."""
+    opts = {"--root": ROOT, "--pass": "first", "--session": "cli", "--out": None, "--date": None}
+    rest, i = [], 0
+    while i < len(argv):
+        if argv[i].startswith("--"):
+            if argv[i] not in opts or i + 1 >= len(argv):
+                raise ValueError("unknown option or missing value: %s" % argv[i])
+            opts[argv[i]] = argv[i + 1]
+            i += 2
+        else:
+            rest.append(argv[i])
+            i += 1
+    if len(rest) != 1 or opts["--date"] is None:
+        raise ValueError("usage: report PACKET --date YYYY-MM-DD")
+    return rest[0], opts
+
+
+def _report_command(argv):
+    try:
+        packet, o = _report_options(argv)
+    except ValueError as e:
+        print("report: %s" % e, file=sys.stderr)
+        return 2
+    try:
+        _parse_date(o["--date"])
+        corpus = load_corpus(o["--root"])
+        rep = packet_report(corpus, packet, o["--pass"], o["--session"])
+        out = o["--out"] or os.path.join(corpus.root, REPORT_REL)
+        os.makedirs(out, exist_ok=True)
+        path = os.path.join(out, "%s.%s%s" % (packet, o["--pass"], REPORT_SUFFIX))
+        write_report(path, rep, o["--date"])
+    except ValueError as e:
+        print("report: %s" % e, file=sys.stderr)
+        return 2
+    print(path)
+    return 1 if any(f["severity"] == "E" for f in rep["findings"]) else 0
+
+
 # ---------------------------------------------------------------- command line
 
 def main(argv):
@@ -1328,7 +1592,8 @@ def main(argv):
         return 1 if any(f.severity == "E" for f in findings) else 0
     if len(argv) >= 2 and argv[1] == "check":
         corpus = load_corpus(argv[2] if len(argv) > 2 else ROOT)
-        findings = sorted(check_corpus(corpus) + check_fixtures(corpus, os.path.join(corpus.root, "qc", "fixtures")))
+        findings = sorted(check_corpus(corpus) + check_fixtures(corpus, os.path.join(corpus.root, "qc", "fixtures"))
+                          + check_reports(load_reports(corpus.root)))
         for f in findings:
             print("%s: %s %s %s" % (f.path, f.rule, f.severity, f.message))
         return 1 if any(f.severity == "E" for f in findings) else 0
@@ -1336,7 +1601,12 @@ def main(argv):
         for hour, formation, event, rid in hourly_schedule(load_corpus(argv[2] if len(argv) > 2 else ROOT)):
             print("%s\t%s\t%s\t%s" % (stamp_of(hour * 60), formation, event, rid))
         return 0
-    print("usage: gb_audit.py sources|check|hourly [ROOT]", file=sys.stderr)
+    if len(argv) >= 4 and argv[1] == "reconcile":
+        print(toml_dumps({"reconciliation": reconcile(load_corpus(argv[2]), load_corpus(argv[3]))}), end="")
+        return 0
+    if len(argv) >= 3 and argv[1] == "report":
+        return _report_command(argv[2:])
+    print("usage: gb_audit.py sources|check|hourly [ROOT] | reconcile A B | report PACKET --date D", file=sys.stderr)
     return 2
 
 
