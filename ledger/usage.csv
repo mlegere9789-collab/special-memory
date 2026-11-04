@@ -16,3 +16,4 @@ date,ticket,class,estimated_usage,actual_usage,review_defects,rework_count,notes
 2026-11-04,data pass 2: Union commanders at Gettysburg (35),M,,186666 tokens,0,0,mid-tier agent; 127 partial 46 unverified; 18 conflict flags
 2026-11-04,data pass 2: Confederate commanders at Gettysburg (35),M,,228648 tokens (first attempt blocked on a wrong path; resumed),0,1,mid-tier agent; 73 partial 31 unverified; 14 records flagged
 2026-11-04,supply chain gate (cargo-deny licence ledger SBOM),S,,76149 tokens,0,0,mid-tier agent; 53 packages; no real licence findings
+2026-11-04,viewer-web WebAssembly debug viewer + visual QC spike,M,,99010 tokens,0,0,mid agent; wasm hash equals native for 7 of 7; 4 goldens exact; CI job added as non-blocking

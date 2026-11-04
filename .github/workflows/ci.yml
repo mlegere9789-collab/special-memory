@@ -112,3 +112,28 @@ jobs:
           name: sbom-cyclonedx
           path: sbom-out/
           if-no-files-found: error
+
+  visual:
+    name: visual QC (wasm viewer, headless browser; not blocking yet)
+    runs-on: ubuntu-24.04
+    # Goldens were made in one container's Chromium. Remove continue-on-error after the first green run on this runner.
+    continue-on-error: true
+    steps:
+      - uses: actions/checkout@v4
+      - name: toolchain and wasm target
+        run: rustup toolchain install 1.97.0 --profile minimal && rustup target add wasm32-unknown-unknown --toolchain 1.97.0
+      - uses: actions/cache@v4
+        with:
+          path: ~/.cargo/bin/wasm-bindgen*
+          key: wasm-bindgen-cli-0.2.130-${{ runner.os }}
+      - name: wasm-bindgen CLI (must match the pinned crate)
+        run: command -v wasm-bindgen >/dev/null || cargo install wasm-bindgen-cli --version =0.2.130 --locked
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Playwright and Chromium
+        run: |
+          npm install --no-save --no-package-lock playwright@1.63.0
+          npx playwright install --with-deps chromium
+      - run: bash tools/build_viewer_web.sh
+      - run: node tools/visual_qc.mjs
