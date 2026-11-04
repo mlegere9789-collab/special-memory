@@ -74,3 +74,7 @@ pub mod scenarios;
 
 // T-026
 pub mod registry;
+
+// T-061
+pub mod morale;
+pub use morale::{MoraleKind, MoraleTable};

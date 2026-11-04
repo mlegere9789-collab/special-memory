@@ -1,0 +1,165 @@
+# Morale and cohesion table (SPEC-006 section 3). Per-training and symptom keys carry their unit
+# in the name (_ppm parts per million, _pm permille). In [globals] a key without suffix is ppm,
+# except the group from nbr_radius to flight_distance (millimetres) and the group from min_fall to
+# dwell (ticks). The research pages give only qualitative claims: morale is a regiment property
+# built from casualties, officer losses, supply, fatigue, terrain, neighbours breaking and flanking
+# (CWV p511 section 4.6); raw regiments were wildly uneven (CWV p030 section 1.3). Every number is
+# a placeholder awaiting calibration; the target of each row names the quantity that tunes it
+# (CT-006-61 loss at the first fall back, 62 flank and rear, 63 rally time, 64 leader and cover,
+# 65 symptoms before the break, 66 neighbours, 67 training ratio, 68 absence while broken).
+schema = "morale/1"
+
+[[training]]
+id = "raw"
+base_ppm = 800000
+cap_pm = 355
+up_pm = 30
+rally_pm = 8
+return_pm = 500
+nbr_pm = 1500
+confidence = "unverified"
+placeholder = true
+calibration_target = "CT-006-61"
+sources = [{ document = "CWV", page = 30, note = "raw regiments wildly uneven, section 1.3" }]
+note = "Lowest base and capacity, slowest recovery, strongest neighbour shock."
+
+[[training]]
+id = "trained"
+base_ppm = 880000
+cap_pm = 455
+up_pm = 40
+rally_pm = 14
+return_pm = 650
+nbr_pm = 1000
+confidence = "unverified"
+placeholder = true
+calibration_target = "CT-006-61"
+note = "Reference level."
+
+[[training]]
+id = "veteran"
+base_ppm = 950000
+cap_pm = 535
+up_pm = 55
+rally_pm = 25
+return_pm = 800
+nbr_pm = 700
+confidence = "unverified"
+placeholder = true
+calibration_target = "CT-006-67"
+sources = [{ document = "CWV", page = 511, note = "veterans waver too but recover faster, section 4.6" }]
+note = "Highest base and capacity, fastest recovery, weakest neighbour shock."
+
+[globals]
+waver = 600000
+steady = 680000
+fall = 350000
+fall_exit = 450000
+break = 150000
+rally = 400000
+nerve_spread = 50000
+delay = 400000
+down_pm = 80
+perm_pm = 600
+w_killed_pm = 1000
+w_wounded_pm = 1000
+w_disabled_pm = 700
+w_officer_pm = 6000
+w_colonel_pm = 10000
+calm_pm = 250
+broken_ceiling = 500000
+repeat_pen = 60000
+fatigue_pen = 150000
+fatigue_knee = 400000
+ammo_pen = 100000
+ammo_knee_pm = 250
+supply_pen = 60000
+flank_pen = 350000
+flank_f_pm = 600
+enfilade_f_pm = 1000
+rear_f_pm = 1000
+charge_pen = 120000
+disorder_pen = 60000
+cover_bonus = 80000
+wall_bonus = 60000
+leader_bonus = 60000
+nbr_shock = 90000
+nbr_fall_pm = 500
+enemy_boost = 40000
+rally_leader_pm = 1000
+cause_min = 20000
+nbr_radius = 150000
+threat_range = 400000
+pressure_radius = 120000
+charge_range = 40000
+leader_radius = 60000
+wall_reach = 4000
+skulk_rear = 60000
+flight_distance = 300000
+min_fall = 200
+min_broken = 400
+min_rallied = 400
+officerless_rally = 3600
+dwell = 60
+confidence = "unverified"
+placeholder = true
+calibration_target = "CT-006-61"
+note = "Thresholds, weights, penalties and radii; the pages give no numbers."
+
+[[symptom]]
+id = "steady"
+fire_pm = 1000
+shake_pm = 1000
+look_pm = 10
+skulk_ppm = 0
+confidence = "unverified"
+placeholder = true
+calibration_target = "CT-006-65"
+
+[[symptom]]
+id = "wavering"
+fire_pm = 1000
+shake_pm = 1000
+look_pm = 80
+skulk_ppm = 0
+fire_end_pm = 550
+shake_end_pm = 1500
+look_end_pm = 300
+skulk_end_ppm = 400
+skulk_from_ppm = 500000
+confidence = "unverified"
+placeholder = true
+calibration_target = "CT-006-65"
+note = "Start values hold at the steady threshold, end values at the fall threshold; skulking starts at skulk_from_ppm."
+
+[[symptom]]
+id = "falling_back"
+fire_pm = 0
+shake_pm = 1500
+look_pm = 400
+skulk_ppm = 1500
+confidence = "unverified"
+placeholder = true
+calibration_target = "CT-006-68"
+sources = [{ document = "CWV", page = 65, note = "straggling cost thousands of men" }]
+
+[[symptom]]
+id = "broken"
+fire_pm = 0
+shake_pm = 1500
+look_pm = 800
+skulk_ppm = 6000
+confidence = "unverified"
+placeholder = true
+calibration_target = "CT-006-68"
+sources = [{ document = "CWV", page = 65, note = "rout phenomena, section 9.4" }]
+
+[[symptom]]
+id = "rallied"
+fire_pm = 800
+shake_pm = 1250
+look_pm = 120
+skulk_ppm = 0
+confidence = "unverified"
+placeholder = true
+calibration_target = "CT-006-65"
