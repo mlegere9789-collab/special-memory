@@ -1,7 +1,7 @@
 //! The battle state hash (SPEC-004 section 11).
 
 use crate::orders::gait_tag;
-use crate::{BattleState, Order, RegimentState};
+use crate::{BattleState, FireMode, Order, RegimentState};
 use sim_state::StateHasher;
 
 /// The fields of an order as hashed: `(tag, x, y, gait)`. Move writes its target and gait; Form
@@ -16,8 +16,8 @@ fn order_fields(order: &Order) -> (u8, i64, i64, u8) {
 }
 
 /// The hash of a battle: the world, then every regiment ascending by id, then every locomotion
-/// slot ascending, then three reserved `u32 = 0` blocks (fire, smoke, casualty log) that SPEC-005
-/// fills. FNV-1a 64 over little-endian fields.
+/// slot ascending, then the fire block, the smoke block and the casualty block (a reserved
+/// `u32 = 0` until the casualty rules land) of SPEC-005. FNV-1a 64 over little-endian fields.
 ///
 /// Per regiment: `id u16, team u8, training u8, state tag u8 (0 steady, 1 forming), from u8,
 /// to u8, ticks_left u32, anchor x i64, anchor y i64, heading u32, order tag u8, order x i64,
@@ -66,8 +66,74 @@ pub fn battle_hash(state: &BattleState) -> u64 {
         h.write_i64(l.slot.v.raw());
         h.write_u8(u8::from(l.catchup));
     }
-    for _reserved in 0..3 {
-        h.write_u32(0);
-    }
+    write_fire(&mut h, state);
+    write_smoke(&mut h, state);
+    h.write_u32(0); // casualty records (SPEC-005, filled by the casualty rules)
     h.finish()
+}
+
+/// The fire block: `u32` count of fire slots; with none (nothing equipped) that is the whole
+/// block. Otherwise every `FireExt` ascending (`rounds u16, ammo_sel u8, step u8, left u16,
+/// fouling u16, mag u8, disabled_until u64, rng 4 x u64`), then `seq u64`, the pool (`u32`
+/// count, then per projectile `seq u64, owner u32, unit u32, team u8, ammo u8, pos x i64,
+/// pos y i64, z i64, vel x i64, vel y i64, vz i64, travelled_mm u32, bounces u8, hits u8,
+/// fuse u32, seed u64`), then per regiment `weapon u8 (255 none), ammo row u8, mode u8, target
+/// u16`.
+fn write_fire(h: &mut StateHasher, state: &BattleState) {
+    h.write_u32(u32::try_from(state.fire.len()).unwrap_or(u32::MAX));
+    if state.fire.is_empty() {
+        return;
+    }
+    for f in &state.fire {
+        h.write_u16(f.rounds);
+        h.write_u8(f.ammo_sel);
+        h.write_u8(f.step);
+        h.write_u16(f.left);
+        h.write_u16(f.fouling);
+        h.write_u8(f.mag);
+        h.write_u64(f.disabled_until);
+        for w in f.rng {
+            h.write_u64(w);
+        }
+    }
+    h.write_u64(state.seq);
+    h.write_u32(u32::try_from(state.pool.len()).unwrap_or(u32::MAX));
+    for p in &state.pool {
+        h.write_u64(p.seq);
+        h.write_u32(p.owner);
+        h.write_u32(p.unit);
+        h.write_u8(p.team);
+        h.write_u8(p.ammo);
+        for v in [p.pos.x, p.pos.y, p.z, p.vel.x, p.vel.y, p.vz] {
+            h.write_i64(v.raw());
+        }
+        h.write_u32(p.travelled_mm);
+        h.write_u8(p.bounces);
+        h.write_u8(p.hits);
+        h.write_u32(p.fuse as u32);
+        h.write_u64(p.seed);
+    }
+    for r in &state.regfire {
+        h.write_u8(r.weapon.unwrap_or(u8::MAX));
+        h.write_u8(r.ammo_row);
+        let (mode, target) = match r.mode {
+            FireMode::HoldFire => (0u8, 0u16),
+            FireMode::AtWill { target } => (1, target.0),
+        };
+        h.write_u8(mode);
+        h.write_u16(target);
+    }
+}
+
+/// The smoke block: `u32` count of cells with smoke, then `(cell index u32, density u32)`
+/// ascending. A clear grid is a single zero.
+fn write_smoke(h: &mut StateHasher, state: &BattleState) {
+    let lit = state.smoke.density.iter().filter(|&&d| d != 0).count();
+    h.write_u32(u32::try_from(lit).unwrap_or(u32::MAX));
+    for (i, &d) in state.smoke.density.iter().enumerate() {
+        if d != 0 {
+            h.write_u32(i as u32);
+            h.write_u32(d);
+        }
+    }
 }

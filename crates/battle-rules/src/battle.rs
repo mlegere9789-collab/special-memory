@@ -2,10 +2,12 @@
 //! machine (SPEC-004 sections 7 and 11). Steering and anchor movement belong to the movement
 //! step; this module owns orders, the `Forming` countdown and the close-up of a thinned line.
 
+use crate::fire::{RangeEntry, RegFire};
 use crate::{
     assign_slots, slot_layout, transition_ticks, DrillTable, Formation, Order, Regiment,
     RegimentId, RegimentSpec, RegimentState, SlotLocal, Tables, TerrainGrid, F_DISABLED, F_WOUNDED,
 };
+use crate::{Counters, FireExt, Projectile, SmokeGrid, Weather};
 use core_math::{StreamId, Vec2Fx};
 use sim_state::{AgentId, AgentInit, AgentStore, SpatialGrid, WorldState};
 
@@ -47,6 +49,22 @@ pub struct BattleState {
     pub grid: SpatialGrid,
     /// Rules tables.
     pub tables: Tables,
+    /// Fire state, one entry per agent slot once a regiment is equipped (empty before).
+    pub fire: Vec<FireExt>,
+    /// Projectiles in flight in ascending `seq`.
+    pub pool: Vec<Projectile>,
+    /// Smoke density; an empty grid until the scenario sets one.
+    pub smoke: SmokeGrid,
+    /// Scenario weather.
+    pub weather: Weather,
+    /// `seq` of the next projectile.
+    pub seq: u64,
+    /// Weapon and fire mode per regiment.
+    pub(crate) regfire: Vec<RegFire>,
+    /// Range tables built for the equipped weapon and ammunition pairs.
+    pub(crate) ranges: Vec<RangeEntry>,
+    /// F0 counters.
+    pub(crate) counters: Counters,
 }
 
 /// Drops soldiers that are gone, disabled or wounded; marks the regiment dirty if any left.
@@ -136,6 +154,14 @@ impl BattleState {
             terrain,
             grid,
             tables,
+            fire: Vec::new(),
+            pool: Vec::new(),
+            smoke: SmokeGrid::empty(),
+            weather: Weather::DRY,
+            seq: 0,
+            regfire: Vec::new(),
+            ranges: Vec::new(),
+            counters: Counters::default(),
         }
     }
 
@@ -187,6 +213,7 @@ impl BattleState {
             dirty: false,
             slots: layout,
         });
+        self.regfire.push(RegFire::NONE);
         id
     }
 

@@ -81,3 +81,13 @@ pub use morale::{MoraleKind, MoraleTable};
 
 // T-071
 pub mod command;
+
+// T-022
+pub mod aim;
+pub mod fire;
+pub mod smoke;
+pub use fire::{
+    decode_fire_mode, encode_fire_mode, misfire_ppm, step_ticks, Counters, FireExt, FireMode,
+    Weather,
+};
+pub use smoke::{SmokeGrid, SMOKE_REF_UNITS};
