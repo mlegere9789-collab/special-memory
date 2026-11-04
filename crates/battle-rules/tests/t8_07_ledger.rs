@@ -28,14 +28,51 @@ fn r(i: u16) -> RegimentId {
     RegimentId(i)
 }
 
+/// Ticks a refused hand-over may wait for the regiment's projectiles to land before the
+/// test fails. A condense is refused while the regiment owns a pooled projectile (SPEC-008),
+/// and the caller retries at the next tick boundary; flight times depend on calibration data.
+const RETRY_LIMIT: u64 = 600;
+
+/// A planned class change that has not yet been accepted, with the tick it was planned on.
+struct Pending {
+    reg: u16,
+    class: u8,
+    planned: u64,
+}
+
+/// Tries every pending class change in order at the current tick boundary. A change that is
+/// refused stays queued, and so does every later change of the same regiment, so the order of
+/// the plan is kept per regiment.
+fn retry(b: &mut BattleState, pending: &mut Vec<Pending>) {
+    let tick = b.world.tick;
+    let mut waiting: Vec<Pending> = Vec::new();
+    for p in pending.drain(..) {
+        let blocked = waiting.iter().any(|w| w.reg == p.reg);
+        if !blocked && hand_over(b, r(p.reg), FidelityClass(p.class)) {
+            check(b, "after a hand-over");
+        } else {
+            assert!(
+                tick - p.planned <= RETRY_LIMIT,
+                "hand-over of regiment {} to class {} refused for {} ticks",
+                p.reg,
+                p.class,
+                tick - p.planned
+            );
+            waiting.push(p);
+        }
+    }
+    *pending = waiting;
+}
+
 /// The forced class changes of one tick, preceded by a kill, a wound and a disabling hit.
-fn handovers(b: &mut BattleState, tick: u64) {
+/// Changes refused because a projectile is still in flight are retried at later boundaries.
+fn handovers(b: &mut BattleState, tick: u64, pending: &mut Vec<Pending>) {
     let plan: &[(u16, u8)] = match tick {
         100 => &[(1, 2), (4, 2)],
         300 => &[(0, 2), (1, 0), (5, 2)],
         500 => &[(0, 1), (2, 2), (4, 1)],
         900 => &[(1, 2), (2, 0), (3, 2), (5, 1)],
-        _ => return,
+        _ => &[],
     };
     // Casualties land on the tick of the hand-over, in the regiments about to change.
     for &(reg, _) in plan {
@@ -50,26 +87,37 @@ fn handovers(b: &mut BattleState, tick: u64) {
             hit(b, a, HitOutcome::Disabled);
         }
     }
-    b.step_casualties();
-    check(b, "after the casualties of a hand-over tick");
-    for &(reg, class) in plan {
-        assert!(hand_over(b, r(reg), FidelityClass(class)));
-        check(b, "after a hand-over");
+    if !plan.is_empty() {
+        b.step_casualties();
+        check(b, "after the casualties of a hand-over tick");
     }
+    pending.extend(plan.iter().map(|&(reg, class)| Pending {
+        reg,
+        class,
+        planned: tick,
+    }));
+    retry(b, pending);
 }
 
 #[test]
 fn soldiers_and_rounds_are_conserved_through_class_changes() {
     let mut b = six(3);
+    let mut pending: Vec<Pending> = Vec::new();
     check(&b, "at the start");
     for _ in 0..1000 {
         let tick = b.world.tick;
-        handovers(&mut b, tick);
+        handovers(&mut b, tick, &mut pending);
         if tick == 200 {
             assert!(b.resupply(r(3), 7));
         }
         b.step();
         check(&b, &format!("tick {tick}"));
+    }
+    // Changes planned late may still wait for a projectile to land; every one is accepted.
+    while !pending.is_empty() {
+        retry(&mut b, &mut pending);
+        b.step();
+        check(&b, "while the last hand-overs wait");
     }
     assert!(b.soldier_serial > 0, "soldiers were materialised");
     assert!(
