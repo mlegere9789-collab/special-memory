@@ -1,0 +1,359 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "gb-regiment.schema.json",
+  "title": "Gettysburg unit record (army, corps, division, brigade, regiment) and shared audit definitions",
+  "description": "Root: one unit of the order of battle (SPEC-013 section 3). Batteries use gb-battery.schema.json. The $defs are shared by every gb-*.schema.json file: integer facts with claims, time facts, stamps, command stints, the source registry and the audit report. Unknown values are omitted, never filled with a guess; every number is an integer.",
+  "type": "object",
+  "required": ["schema", "id", "side", "level", "name", "commanders"],
+  "additionalProperties": false,
+  "properties": {
+    "schema": {"const": "gb-unit/1"},
+    "id": {"$ref": "#/$defs/unit_id"},
+    "side": {"$ref": "common.schema.json#/$defs/side"},
+    "level": {"enum": ["army", "corps", "division", "brigade", "regiment"]},
+    "name": {"type": "string", "minLength": 1, "maxLength": 120},
+    "designation": {"$ref": "#/$defs/designation"},
+    "assignments": {"type": "array", "items": {"$ref": "#/$defs/assignment"}},
+    "commanders": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/stint"}},
+    "strength": {"$ref": "#/$defs/strength"},
+    "arms": {"type": "array", "items": {"$ref": "#/$defs/arm"}},
+    "casualties": {"type": "array", "items": {"$ref": "#/$defs/loss"}},
+    "experience": {
+      "type": "object",
+      "minProperties": 1,
+      "additionalProperties": false,
+      "properties": {
+        "raised": {
+          "allOf": [
+            {"$ref": "common.schema.json#/$defs/fact_text"},
+            {"properties": {"value": {"$ref": "common.schema.json#/$defs/iso_date"}}}
+          ]
+        },
+        "prior_battles": {"$ref": "#/$defs/int_fact"}
+      }
+    },
+    "note": {"type": "string", "maxLength": 600}
+  },
+  "allOf": [
+    {
+      "if": {"properties": {"level": {"const": "regiment"}}, "required": ["level"]},
+      "then": {
+        "required": ["designation", "strength", "assignments"],
+        "properties": {"strength": {"required": ["engaged"]}, "assignments": {"minItems": 1}}
+      },
+      "else": {"not": {"required": ["designation"]}}
+    },
+    {
+      "if": {"properties": {"level": {"const": "army"}}, "required": ["level"]},
+      "then": {"properties": {"assignments": {"maxItems": 0}}},
+      "else": {"required": ["assignments"], "properties": {"assignments": {"minItems": 1}}}
+    }
+  ],
+  "$defs": {
+    "unit_id": {"type": "string", "pattern": "^(us|cs)_[a-z0-9_]{2,60}$"},
+    "slug": {"type": "string", "pattern": "^[a-z0-9][a-z0-9_]{1,59}$"},
+    "stamp": {
+      "type": "string",
+      "pattern": "^1863-0[67]-(0[1-9]|[12][0-9]|3[01])T([01][0-9]|2[0-3]):[0-5][0-9]$",
+      "description": "Local clock time as the source reports it, minute resolution, no zone. Calendar validity and the campaign window are checked by rule GB08."
+    },
+    "doc_code": {"type": "string", "pattern": "^[A-Z][A-Z0-9_]{1,15}$"},
+    "second_source_ref": {"type": "string", "pattern": "^[A-Z][A-Z0-9_]{1,15}:[0-9]+$", "description": "document code and page of the independent confirmation"},
+    "claim_int": {
+      "type": "object",
+      "required": ["document", "page", "figure"],
+      "additionalProperties": false,
+      "properties": {
+        "document": {"$ref": "#/$defs/doc_code"},
+        "page": {"type": "integer", "minimum": 1},
+        "figure": {"type": "integer", "minimum": 0, "maximum": 100000000},
+        "figure_high": {"type": "integer", "minimum": 0, "maximum": 100000000, "description": "upper end when the source itself gives a range"},
+        "tag": {"type": "string"}
+      }
+    },
+    "claim_time": {
+      "type": "object",
+      "required": ["document", "page", "at"],
+      "additionalProperties": false,
+      "properties": {
+        "document": {"$ref": "#/$defs/doc_code"},
+        "page": {"type": "integer", "minimum": 1},
+        "at": {"$ref": "#/$defs/stamp"},
+        "at_late": {"$ref": "#/$defs/stamp", "description": "end of the interval when the source gives a span such as 2 to 3 p.m."},
+        "tag": {"type": "string"}
+      }
+    },
+    "int_fact": {
+      "type": "object",
+      "required": ["value", "confidence", "sources"],
+      "additionalProperties": false,
+      "properties": {
+        "value": {"type": "integer", "minimum": 0, "maximum": 100000000},
+        "low": {"type": "integer", "minimum": 0, "maximum": 100000000},
+        "high": {"type": "integer", "minimum": 0, "maximum": 100000000},
+        "confidence": {"$ref": "common.schema.json#/$defs/confidence"},
+        "sources": {"$ref": "common.schema.json#/$defs/sources"},
+        "claims": {"type": "array", "items": {"$ref": "#/$defs/claim_int"}},
+        "second_source": {"$ref": "#/$defs/second_source_ref"},
+        "flag": {"type": "string"},
+        "note": {"type": "string"}
+      },
+      "if": {"properties": {"confidence": {"const": "verified"}}, "required": ["confidence"]},
+      "then": {"required": ["second_source", "claims"], "properties": {"claims": {"minItems": 2}}}
+    },
+    "time_fact": {
+      "type": "object",
+      "required": ["at", "confidence", "sources"],
+      "additionalProperties": false,
+      "properties": {
+        "at": {"$ref": "#/$defs/stamp"},
+        "early": {"$ref": "#/$defs/stamp"},
+        "late": {"$ref": "#/$defs/stamp"},
+        "confidence": {"$ref": "common.schema.json#/$defs/confidence"},
+        "sources": {"$ref": "common.schema.json#/$defs/sources"},
+        "claims": {"type": "array", "items": {"$ref": "#/$defs/claim_time"}},
+        "second_source": {"$ref": "#/$defs/second_source_ref"},
+        "flag": {"type": "string"},
+        "note": {"type": "string"}
+      },
+      "if": {"properties": {"confidence": {"const": "verified"}}, "required": ["confidence"]},
+      "then": {"required": ["second_source", "claims"], "properties": {"claims": {"minItems": 2}}}
+    },
+    "designation": {
+      "type": "object",
+      "required": ["state", "ordinal", "arm"],
+      "additionalProperties": false,
+      "properties": {
+        "state": {"type": "string", "pattern": "^[A-Z]{2}$", "description": "two-letter state code, or US for a federal regiment"},
+        "ordinal": {"type": "integer", "minimum": 1, "maximum": 999},
+        "arm": {"enum": ["infantry", "cavalry", "artillery", "sharpshooters", "other"]}
+      }
+    },
+    "assignment": {
+      "type": "object",
+      "required": ["parent", "kind", "confidence", "sources"],
+      "additionalProperties": false,
+      "properties": {
+        "parent": {"$ref": "#/$defs/unit_id"},
+        "kind": {"enum": ["organic", "attached"]},
+        "from": {"$ref": "#/$defs/stamp"},
+        "to": {"$ref": "#/$defs/stamp"},
+        "confidence": {"$ref": "common.schema.json#/$defs/confidence"},
+        "sources": {"$ref": "common.schema.json#/$defs/sources"},
+        "second_source": {"$ref": "#/$defs/second_source_ref"},
+        "note": {"type": "string"}
+      }
+    },
+    "stint": {
+      "type": "object",
+      "required": ["person", "kind", "confidence", "sources"],
+      "additionalProperties": false,
+      "properties": {
+        "person": {
+          "type": "object",
+          "required": ["id", "name"],
+          "additionalProperties": false,
+          "properties": {"id": {"$ref": "#/$defs/slug"}, "name": {"type": "string", "minLength": 1}}
+        },
+        "kind": {"enum": ["command", "acting", "temporary_higher"]},
+        "rank": {"type": "string"},
+        "from": {"$ref": "#/$defs/stamp"},
+        "to": {"$ref": "#/$defs/stamp"},
+        "confidence": {"$ref": "common.schema.json#/$defs/confidence"},
+        "sources": {"$ref": "common.schema.json#/$defs/sources"},
+        "second_source": {"$ref": "#/$defs/second_source_ref"},
+        "flag": {"type": "string"},
+        "note": {"type": "string"}
+      }
+    },
+    "strength": {
+      "type": "object",
+      "minProperties": 1,
+      "additionalProperties": false,
+      "properties": {
+        "present": {"$ref": "#/$defs/int_fact", "description": "all ranks reported present on arrival"},
+        "engaged": {"$ref": "#/$defs/int_fact", "description": "carried into action during the battle; the figure the chain sums use"},
+        "headquarters": {"$ref": "#/$defs/int_fact", "description": "staff and escort counted in this formation but in no child"}
+      }
+    },
+    "arm": {
+      "type": "object",
+      "required": ["weapon", "count"],
+      "additionalProperties": false,
+      "properties": {
+        "weapon": {"type": "string", "pattern": "^[a-z0-9_]+$", "description": "an id of data/rules/weapons.toml"},
+        "count": {"$ref": "#/$defs/int_fact"},
+        "note": {"type": "string"}
+      }
+    },
+    "loss": {
+      "type": "object",
+      "required": ["scope"],
+      "minProperties": 2,
+      "additionalProperties": false,
+      "properties": {
+        "scope": {"enum": ["battle", "day1", "day2", "day3"]},
+        "killed": {"$ref": "#/$defs/int_fact"},
+        "wounded": {"$ref": "#/$defs/int_fact"},
+        "missing_captured": {"$ref": "#/$defs/int_fact"},
+        "total": {"$ref": "#/$defs/int_fact"}
+      }
+    },
+    "source_row": {
+      "type": "object",
+      "required": ["code", "title", "kind", "lineage", "licence_class", "consulted"],
+      "additionalProperties": false,
+      "properties": {
+        "code": {"$ref": "#/$defs/doc_code"},
+        "title": {"type": "string", "minLength": 1},
+        "kind": {"enum": ["primary_official", "primary_map", "primary_photo", "specialist_compilation", "study", "park_material", "compilation_web", "internal_research"]},
+        "lineage": {"$ref": "#/$defs/slug", "description": "sources that derive from one another share a lineage; two-source confirmation needs two lineages"},
+        "licence_class": {"enum": ["public_domain", "open_licence", "permission_required", "facts_only", "internal", "unknown"]},
+        "licence_text": {"type": "string"},
+        "edition": {"type": "string"},
+        "publisher": {"type": "string"},
+        "year": {"type": "integer", "minimum": 1860, "maximum": 2100},
+        "access": {"type": "string", "description": "where the copy was found: shelfmark, archive reference or address"},
+        "page_scheme": {"type": "string", "description": "what a page number means for this source: printed page, sheet, plate or PDF page"},
+        "consulted": {"type": "boolean"},
+        "consulted_on": {"$ref": "common.schema.json#/$defs/iso_date"},
+        "cleared_by": {
+          "type": "object",
+          "required": ["who", "date"],
+          "additionalProperties": false,
+          "properties": {"who": {"type": "string"}, "date": {"$ref": "common.schema.json#/$defs/iso_date"}}
+        },
+        "note": {"type": "string"}
+      },
+      "if": {"properties": {"consulted": {"const": true}}, "required": ["consulted"]},
+      "then": {"required": ["edition", "access", "licence_text", "consulted_on", "page_scheme"]},
+      "else": {"not": {"required": ["consulted_on"]}}
+    },
+    "source_registry": {
+      "type": "object",
+      "required": ["schema", "source"],
+      "additionalProperties": false,
+      "properties": {
+        "schema": {"const": "gb-sources/1"},
+        "source": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/source_row"}}
+      }
+    },
+    "audit_report": {
+      "type": "object",
+      "required": ["schema", "packet", "scope", "pass", "agent", "date", "sources_used", "findings"],
+      "additionalProperties": false,
+      "properties": {
+        "schema": {"const": "gb-audit/1"},
+        "packet": {"type": "string", "pattern": "^AP-[a-z0-9_-]{3,60}$"},
+        "scope": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/unit_id"}},
+        "pass": {"enum": ["first", "second_blind", "reconcile", "review"]},
+        "agent": {
+          "type": "object",
+          "required": ["role", "session"],
+          "additionalProperties": false,
+          "properties": {
+            "role": {"enum": ["librarian", "auditor", "blind_auditor", "reconciler", "reviewer"]},
+            "session": {"type": "string", "minLength": 1}
+          }
+        },
+        "date": {"$ref": "common.schema.json#/$defs/iso_date"},
+        "saw_prior_values": {"type": "boolean"},
+        "sources_used": {"type": "array", "items": {"$ref": "#/$defs/doc_code"}},
+        "counts": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "records": {"type": "integer", "minimum": 0},
+            "claims": {"type": "integer", "minimum": 0},
+            "promoted": {"type": "integer", "minimum": 0},
+            "demoted": {"type": "integer", "minimum": 0}
+          }
+        },
+        "findings": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["rule", "severity", "record", "message", "disposition"],
+            "additionalProperties": false,
+            "properties": {
+              "rule": {"type": "string", "pattern": "^GB[0-9]{2}$"},
+              "severity": {"enum": ["E", "W", "I"]},
+              "record": {"type": "string"},
+              "path": {"type": "string"},
+              "message": {"type": "string"},
+              "disposition": {"enum": ["open", "fixed", "waived", "disputed"]},
+              "waiver_reason": {"type": "string"}
+            },
+            "if": {"properties": {"disposition": {"const": "waived"}}, "required": ["disposition"]},
+            "then": {"required": ["waiver_reason"]}
+          }
+        },
+        "reconciliation": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["record", "path", "claims", "decision"],
+            "additionalProperties": false,
+            "properties": {
+              "record": {"type": "string"},
+              "path": {"type": "string"},
+              "claims": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/claim_int"}},
+              "decision": {"enum": ["verified", "partial_range", "unverified", "unresolved"]},
+              "value": {"type": "integer", "minimum": 0},
+              "low": {"type": "integer", "minimum": 0},
+              "high": {"type": "integer", "minimum": 0}
+            }
+          }
+        },
+        "headline": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["record", "path", "headline", "audited_low", "audited_high"],
+            "additionalProperties": false,
+            "properties": {
+              "record": {"type": "string"},
+              "path": {"type": "string"},
+              "headline": {"type": "integer", "minimum": 0},
+              "audited_low": {"type": "integer", "minimum": 0},
+              "audited_high": {"type": "integer", "minimum": 0},
+              "note": {"type": "string"}
+            }
+          }
+        },
+        "review": {
+          "type": "object",
+          "required": ["sample_size", "re_derived", "mismatches", "outcome", "reviewer_of"],
+          "additionalProperties": false,
+          "properties": {
+            "sample_size": {"type": "integer", "minimum": 0},
+            "re_derived": {"type": "integer", "minimum": 0},
+            "mismatches": {"type": "integer", "minimum": 0},
+            "outcome": {"enum": ["pass", "fail"]},
+            "reviewer_of": {"type": "array", "items": {"type": "string"}, "description": "sessions of the first and blind passes this reviewer checked"}
+          }
+        },
+        "historian": {
+          "type": "object",
+          "required": ["reviewer", "date", "outcome"],
+          "additionalProperties": false,
+          "properties": {
+            "reviewer": {"type": "string"},
+            "date": {"$ref": "common.schema.json#/$defs/iso_date"},
+            "outcome": {"enum": ["accepted", "changes_required"]}
+          }
+        }
+      },
+      "allOf": [
+        {
+          "if": {"properties": {"pass": {"const": "second_blind"}}, "required": ["pass"]},
+          "then": {"required": ["saw_prior_values"], "properties": {"saw_prior_values": {"const": false}}}
+        },
+        {
+          "if": {"properties": {"pass": {"const": "review"}}, "required": ["pass"]},
+          "then": {"required": ["review"]}
+        }
+      ]
+    }
+  }
+}

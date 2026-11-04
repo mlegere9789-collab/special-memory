@@ -1,0 +1,54 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "gb-battery.schema.json",
+  "title": "Gettysburg battery record",
+  "description": "One battery of artillery (SPEC-013 section 3). A battalion or artillery brigade that groups batteries is a gb-unit record at level brigade. Shared definitions come from gb-regiment.schema.json.",
+  "type": "object",
+  "required": ["schema", "id", "side", "name", "designation", "assignments", "commanders", "strength", "guns"],
+  "additionalProperties": false,
+  "properties": {
+    "schema": {"const": "gb-battery/1"},
+    "id": {"$ref": "gb-regiment.schema.json#/$defs/unit_id"},
+    "side": {"$ref": "common.schema.json#/$defs/side"},
+    "name": {"type": "string", "minLength": 1, "maxLength": 120},
+    "designation": {
+      "type": "object",
+      "required": ["state", "label"],
+      "additionalProperties": false,
+      "properties": {
+        "state": {"type": "string", "pattern": "^[A-Z]{2}$"},
+        "label": {"type": "string", "minLength": 1, "maxLength": 40, "description": "the battery's own period label, for example a letter, a number or a founder's name"},
+        "parent_regiment": {"type": "string", "maxLength": 60, "description": "the artillery regiment it was drawn from, when the source names one"}
+      }
+    },
+    "assignments": {"type": "array", "minItems": 1, "items": {"$ref": "gb-regiment.schema.json#/$defs/assignment"}},
+    "commanders": {"type": "array", "minItems": 1, "items": {"$ref": "gb-regiment.schema.json#/$defs/stint"}},
+    "strength": {
+      "type": "object",
+      "required": ["engaged"],
+      "additionalProperties": false,
+      "properties": {
+        "present": {"$ref": "gb-regiment.schema.json#/$defs/int_fact"},
+        "engaged": {"$ref": "gb-regiment.schema.json#/$defs/int_fact", "description": "officers and men with the battery in action"}
+      }
+    },
+    "guns": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 8,
+      "items": {
+        "type": "object",
+        "required": ["weapon", "count"],
+        "additionalProperties": false,
+        "properties": {
+          "weapon": {"type": "string", "pattern": "^[a-z0-9_]+$", "description": "an id of data/rules/weapons.toml"},
+          "count": {"$ref": "gb-regiment.schema.json#/$defs/int_fact"},
+          "pattern_note": {"type": "string", "description": "the tube pattern as the source words it"}
+        }
+      }
+    },
+    "rounds_per_gun": {"$ref": "gb-regiment.schema.json#/$defs/int_fact"},
+    "casualties": {"type": "array", "items": {"$ref": "gb-regiment.schema.json#/$defs/loss"}},
+    "note": {"type": "string", "maxLength": 600}
+  }
+}

@@ -1,0 +1,33 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "gb-arrival.schema.json",
+  "title": "Gettysburg arrival or departure record",
+  "description": "One arrival, deployment, withdrawal or departure of a formation (SPEC-013 section 3). Times are stamps with an uncertainty interval; the hour bucket is derived (floor of minutes divided by 60), never stored.",
+  "type": "object",
+  "required": ["schema", "id", "formation", "event", "at", "place"],
+  "additionalProperties": false,
+  "properties": {
+    "schema": {"const": "gb-arrival/1"},
+    "id": {"type": "string", "pattern": "^ar_[a-z0-9_]{2,60}$"},
+    "formation": {"$ref": "gb-regiment.schema.json#/$defs/unit_id", "description": "any level from corps down to a battery"},
+    "event": {"enum": ["arrive", "deploy", "withdraw", "depart"]},
+    "at": {"$ref": "gb-regiment.schema.json#/$defs/time_fact"},
+    "place": {
+      "type": "object",
+      "required": ["name", "confidence", "sources"],
+      "additionalProperties": false,
+      "properties": {
+        "name": {"type": "string", "minLength": 1},
+        "x_mm": {"type": "integer", "minimum": -200000000, "maximum": 200000000},
+        "y_mm": {"type": "integer", "minimum": -200000000, "maximum": 200000000},
+        "frame": {"const": "gb_local_v1"},
+        "road": {"type": "string", "pattern": "^[a-z0-9][a-z0-9_]*$", "description": "id of a terrain record of kind road"},
+        "confidence": {"$ref": "common.schema.json#/$defs/confidence"},
+        "sources": {"$ref": "common.schema.json#/$defs/sources"},
+        "second_source": {"$ref": "gb-regiment.schema.json#/$defs/second_source_ref"}
+      },
+      "dependentRequired": {"x_mm": ["y_mm", "frame"], "y_mm": ["x_mm", "frame"]}
+    },
+    "note": {"type": "string", "maxLength": 600}
+  }
+}
