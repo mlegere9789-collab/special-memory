@@ -1,0 +1,13 @@
+[package]
+name = "perf-kit"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+publish.workspace = true
+description = "Integer reference functions for render tiers and aggregated fire audio (prototype baseline for the M1 measurements)"
+
+[lints]
+workspace = true
+
+[dev-dependencies]
+proptest = "1"
