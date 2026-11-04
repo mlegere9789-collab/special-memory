@@ -1,0 +1,25 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "survey-buildings.schema.json",
+  "title": "Building footprints, buildings.toml (SPEC-014 section 3)",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema"],
+  "properties": {
+    "schema": {"const": "survey-buildings/1"},
+    "building": {"type": "array", "items": {"$ref": "#/$defs/building"}}
+  },
+  "$defs": {
+    "building": {
+      "allOf": [{"$ref": "survey-common.schema.json#/$defs/provenance"}],
+      "required": ["id", "height_mm", "outer"],
+      "unevaluatedProperties": false,
+      "properties": {
+        "id": {"$ref": "survey-common.schema.json#/$defs/id"},
+        "height_mm": {"type": "integer", "minimum": 1, "maximum": 65535},
+        "outer": {"$ref": "survey-common.schema.json#/$defs/ring"}
+
+      }
+    }
+  }
+}

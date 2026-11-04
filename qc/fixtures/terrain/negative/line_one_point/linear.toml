@@ -1,0 +1,11 @@
+# Negative fixture for the geometry check: a road with one vertex (line_short)
+schema = "survey-linear/1"
+
+[[line]]
+id = 1
+kind = "road"
+half_width_mm = 3000
+dead_end = true
+points = [[100000, 100000]]
+confidence = "unverified"
+sources = [{ source = 1, sheet = "synthetic" }]

@@ -1,0 +1,33 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "survey.schema.json",
+  "title": "Survey frame and extent, survey.toml (SPEC-014 sections 2, 3 and 9)",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema", "origin_easting_mm", "origin_northing_mm", "crs", "tiles_x", "tiles_y", "width_posts", "height_posts"],
+  "properties": {
+    "schema": {"const": "survey/1"},
+    "origin_easting_mm": {"type": "integer"},
+    "origin_northing_mm": {"type": "integer"},
+    "crs": {"$ref": "survey-common.schema.json#/$defs/text"},
+    "tiles_x": {"type": "integer", "minimum": 1, "maximum": 1024},
+    "tiles_y": {"type": "integer", "minimum": 1, "maximum": 1024},
+    "width_posts": {"type": "integer", "minimum": 1, "description": "columns of dem_cm.i32 and coverage.u8 (1 m posts); 512 * tiles_x + 1 covers every vertex"},
+    "height_posts": {"type": "integer", "minimum": 1},
+    "slab": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "x0", "y0", "x1", "y1"],
+        "properties": {
+          "id": {"type": "string", "pattern": "^[a-z0-9_]+$"},
+          "x0": {"type": "integer", "minimum": 0},
+          "y0": {"type": "integer", "minimum": 0},
+          "x1": {"type": "integer", "minimum": 0},
+          "y1": {"type": "integer", "minimum": 0}
+        }
+      }
+    }
+  }
+}

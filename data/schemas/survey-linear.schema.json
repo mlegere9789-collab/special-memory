@@ -1,0 +1,35 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "survey-linear.schema.json",
+  "title": "Polyline features, linear.toml (SPEC-014 section 3)",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema"],
+  "properties": {
+    "schema": {"const": "survey-linear/1"},
+    "line": {"type": "array", "items": {"$ref": "#/$defs/line"}}
+  },
+  "$defs": {
+    "line": {
+      "allOf": [
+        {"$ref": "survey-common.schema.json#/$defs/provenance"},
+        {
+          "if": {"properties": {"kind": {"enum": ["road", "creek"]}}, "required": ["kind"]},
+          "then": {"required": ["half_width_mm"]},
+          "else": {"not": {"anyOf": [{"required": ["half_width_mm"]}, {"required": ["dead_end"]}]}}
+        },
+        {"if": {"properties": {"kind": {"const": "road"}}, "required": ["kind"]}, "else": {"not": {"required": ["dead_end"]}}}
+      ],
+      "required": ["id", "kind", "points"],
+      "unevaluatedProperties": false,
+      "properties": {
+        "id": {"$ref": "survey-common.schema.json#/$defs/id"},
+        "kind": {"enum": ["road", "creek", "stone_wall", "rail_fence", "board_fence", "hedge", "earthwork"]},
+        "half_width_mm": {"type": "integer", "minimum": 1, "maximum": 100000},
+        "dead_end": {"type": "boolean", "description": "roads only: the open end is intended"},
+        "points": {"$ref": "survey-common.schema.json#/$defs/ring", "description": "creek flow follows vertex order; at least 2 vertices without a zero-length segment is enforced by hd-terrain check"}
+
+      }
+    }
+  }
+}

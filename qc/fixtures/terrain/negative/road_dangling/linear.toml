@@ -1,0 +1,10 @@
+# Negative fixture for the geometry check: a road from the extent edge that ends in open ground (road_dangling)
+schema = "survey-linear/1"
+
+[[line]]
+id = 1
+kind = "road"
+half_width_mm = 3000
+points = [[0, 100000], [200000, 100000]]
+confidence = "unverified"
+sources = [{ source = 1, sheet = "synthetic" }]

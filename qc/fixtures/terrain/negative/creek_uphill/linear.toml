@@ -1,0 +1,10 @@
+# Negative fixture for the geometry check: a creek whose flow climbs 500 cm (creek_uphill)
+schema = "survey-linear/1"
+
+[[line]]
+id = 1
+kind = "creek"
+half_width_mm = 2000
+points = [[100000, 300000], [200000, 300000]]
+confidence = "unverified"
+sources = [{ source = 1, sheet = "synthetic" }]

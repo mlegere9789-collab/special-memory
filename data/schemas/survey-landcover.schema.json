@@ -1,0 +1,27 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "survey-landcover.schema.json",
+  "title": "Land cover polygons, landcover.toml (SPEC-014 section 3)",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema"],
+  "properties": {
+    "schema": {"const": "survey-landcover/1"},
+    "polygon": {"type": "array", "items": {"$ref": "#/$defs/polygon"}}
+  },
+  "$defs": {
+    "polygon": {
+      "allOf": [{"$ref": "survey-common.schema.json#/$defs/provenance"}],
+      "required": ["id", "class", "outer"],
+      "unevaluatedProperties": false,
+      "properties": {
+        "id": {"$ref": "survey-common.schema.json#/$defs/id"},
+        "class": {"enum": ["crop", "orchard", "woods", "thicket", "rocky", "marsh", "yard", "deep_water", "ford"]},
+        "occ_dm": {"type": "integer", "minimum": 0, "maximum": 255, "description": "overrides the default cover height of the class"},
+        "outer": {"$ref": "survey-common.schema.json#/$defs/ring"},
+        "holes": {"type": "array", "items": {"$ref": "survey-common.schema.json#/$defs/ring"}}
+
+      }
+    }
+  }
+}

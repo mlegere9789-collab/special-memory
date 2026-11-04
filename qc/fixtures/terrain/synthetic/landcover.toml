@@ -1,0 +1,32 @@
+# Synthetic land cover for the rasteriser tests (hand-computed cell sets): not historical data.
+schema = "survey-landcover/1"
+
+[[polygon]]
+id = 1
+class = "crop"
+occ_dm = 12
+outer = [[80000, 80000], [96000, 80000], [96000, 96000], [80000, 96000]]
+confidence = "unverified"
+sources = [{ source = 1, sheet = "synthetic" }]
+
+[[polygon]]
+id = 2
+class = "woods"
+outer = [[160000, 80000], [178000, 80000], [160000, 98000]]
+confidence = "unverified"
+sources = [{ source = 1, sheet = "synthetic" }]
+
+[[polygon]]
+id = 3
+class = "yard"
+outer = [[240000, 80000], [280000, 80000], [280000, 120000], [240000, 120000]]
+holes = [[[252000, 92000], [252000, 108000], [268000, 108000], [268000, 92000]]]
+confidence = "unverified"
+sources = [{ source = 1, sheet = "synthetic" }]
+
+[[polygon]]
+id = 5
+class = "woods"
+outer = [[60000, 180000], [80000, 180000], [80000, 220000], [60000, 220000]]
+confidence = "unverified"
+sources = [{ source = 1, sheet = "synthetic" }]

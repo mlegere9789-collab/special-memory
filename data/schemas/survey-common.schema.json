@@ -1,0 +1,41 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "survey-common.schema.json",
+  "title": "Shared definitions for survey feature files (SPEC-014 section 3)",
+  "$defs": {
+    "point": {
+      "type": "array",
+      "minItems": 2,
+      "maxItems": 2,
+      "items": {"type": "integer"},
+      "description": "[x, y] in world millimetres, origin at the south-west corner of tile (0, 0)"
+    },
+    "ring": {"type": "array", "items": {"$ref": "#/$defs/point"}, "description": "vertices without repeating the first; ring rules are enforced by hd-terrain check"},
+    "id": {"type": "integer", "minimum": 1, "maximum": 4294967295},
+    "text": {"type": "string", "minLength": 1},
+    "confidence": {"enum": ["verified", "partial", "unverified"]},
+    "source_ref": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["source"],
+      "properties": {
+        "source": {"type": "integer", "minimum": 1, "maximum": 65535, "description": "id in the survey's sources.toml"},
+        "page": {"type": "integer", "minimum": 1},
+        "sheet": {"$ref": "#/$defs/text"}
+      },
+      "oneOf": [{"required": ["page"]}, {"required": ["sheet"]}]
+    },
+    "provenance": {
+      "type": "object",
+      "required": ["confidence", "sources"],
+      "properties": {
+        "confidence": {"$ref": "#/$defs/confidence"},
+        "sources": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/source_ref"}},
+        "second_source": {"$ref": "#/$defs/text"},
+        "note": {"$ref": "#/$defs/text"}
+      },
+      "if": {"properties": {"confidence": {"const": "verified"}}, "required": ["confidence"]},
+      "then": {"required": ["second_source"]}
+    }
+  }
+}
