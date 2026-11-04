@@ -113,6 +113,10 @@ pub struct Regiment {
     pub aggregate: Aggregate,
     /// Round account.
     pub acct: RoundsAccount,
+    /// Largest peek offset of its soldiers at the last sight period, mm (SPEC-004 amendment A6).
+    pub peek_mm: u16,
+    /// Enough of its soldiers stand at the peek limit and still cannot see (SPEC-009 section 6).
+    pub view_blocked: bool,
 }
 
 /// True when the regiment may fire: `Steady(Line)` or `Steady(Skirmish)`. A regiment in column or

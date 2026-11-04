@@ -251,7 +251,7 @@ pub fn materialise(state: &mut BattleState, id: RegimentId, class: FidelityClass
         state.loco[agent.index as usize] = LocoExt {
             fatigue: fatigue as u32,
             slot: *slot,
-            catchup: false,
+            ..LocoExt::default()
         };
         let serial = state.soldier_serial;
         state.soldier_serial = serial.wrapping_add(1);

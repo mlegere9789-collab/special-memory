@@ -181,3 +181,9 @@ Section 4 gains the heat multipliers of SPEC-009 section 7; REGISTRY section 6.5
 - **Moving.** `fatigue += drain_ppm_per_tick(gait) * effort_pm * drain_pm / 10^6` (one floor over the whole product); at `drain_pm = 1000` this equals `drain_ppm_per_tick * effort_pm / 1000`.
 - **Resting.** `fatigue -= rest_recover_ppm_per_tick * rest_pm / 1000` (floor, saturating at 0); at `rest_pm = 1000` this equals the plain recovery.
 - **Code.** `fatigue_step_scaled(fatigue, gait, effort, applied_speed, table, drain_pm, rest_pm)` is the general form; `fatigue_step` is it with both multipliers 1000, so every caller and golden with `env = None` is unchanged. The movement step passes the multipliers of `BattleState.env` (1000 and 1000 with `env = None`).
+
+## Amendment A6 (from T-095, SPEC-009)
+Section 9 gains the peek offset of SPEC-009 section 6; with `env` `None` every offset is 0 and nothing changes.
+- **Fields.** `LocoExt` gains `peek_mm: u16`, `blind: bool` and `fired: bool` (all zero or false at spawn and when a soldier is materialised); `Regiment` gains `peek_mm: u16` (the largest `peek_mm` of its soldiers as of the last peek update, 0 after a `Move`) and `view_blocked: bool` (false at spawn). The `LocoExt` hash block of section 11 does not write them; the environment block of SPEC-009 section 9 does.
+- **Steering target.** The slot a soldier steers to, and the slot it snaps onto, is `anchor + right * u + forward * (v + peek_mm)`, `peek_mm` in millimetres converted by `fx_ratio(peek_mm, 1000)`; slot assignment, the `catchup_mm` test and the close-up are unchanged and use the plain slot.
+- **Reset.** When a `Move` becomes the standing order of a regiment (at once from `Steady`, or when a pending `Move` starts after a transition), the `peek_mm` of every soldier of its roster and the regiment's `peek_mm` are set to 0.

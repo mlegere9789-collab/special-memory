@@ -69,6 +69,16 @@ fn slot_world(reg: &Regiment, f: (Vec2Fx, Vec2Fx), slot: crate::SlotLocal) -> Ve
     reg.anchor + f.1.scale(slot.u) + f.0.scale(slot.v)
 }
 
+/// The point a soldier steers to and snaps onto: its slot moved forward by its peek offset
+/// (SPEC-004 amendment A6); the plain slot when the offset is 0.
+fn target_world(reg: &Regiment, f: (Vec2Fx, Vec2Fx), l: &LocoExt) -> Vec2Fx {
+    let mut slot = l.slot;
+    if l.peek_mm != 0 {
+        slot.v += fx_ratio(i64::from(l.peek_mm), 1000);
+    }
+    slot_world(reg, f, slot)
+}
+
 /// The gait a regiment's soldiers use: double-quick while forming, the ordered gait on the
 /// march, quick otherwise.
 fn base_gait(reg: &Regiment) -> Gait {
@@ -144,7 +154,7 @@ impl BattleState {
             .copied()
             .unwrap_or_default();
         let class = self.terrain.class_at(a.pos);
-        let to = slot_world(reg, fr, loco.slot) - a.pos;
+        let to = target_world(reg, fr, &loco) - a.pos;
         let dir = to.normalize();
         let dist = to.dot(dir);
 
@@ -350,7 +360,7 @@ impl BattleState {
                     heat.0,
                     heat.1,
                 ));
-                let slot = slot_world(reg, frames[usize::from(reg.id.0)], l.slot);
+                let slot = target_world(reg, frames[usize::from(reg.id.0)], l);
                 let reach = Fx::from_raw(vel.length_sq().raw() / 400);
                 if !p.push
                     && a.vel.length_sq() <= c.accel_tick * c.accel_tick

@@ -5,15 +5,17 @@
 //! shot reads a fixed 50 words from that stream ([`crate::aim::draw_shot`]) whatever the
 //! outcome, so a soldier's shots depend on nothing but its own stream and situation.
 
-use crate::aim::{aim, draw_shot, launch_speeds, smoke_pm, AimInput};
+use crate::aim::{aim_in_smoke, draw_shot, launch_speeds, smoke_pm, AimInput};
 use crate::registry::TAG_SET_FIRE_MODE;
 use crate::smoke::shot_units;
 use crate::{
-    can_fire, fx_ratio, soldier_stream, BattleState, DataError, OrderDecodeError, Posture,
-    Projectile, RangeTable, RegimentId, Training, WeaponRow, FATIGUE_MAX, F_DISABLED, F_GUN,
-    F_KNEEL, F_PRONE, F_WOUNDED,
+    aim_mm, can_fire, eye_mm, fx_ratio, sight, soldier_stream, BattleState, DamageTable, DataError,
+    Environment, ObstacleLayer, OrderDecodeError, Posture, Projectile, RangeTable, RegimentId,
+    SightWorld, SmokeGrid, Training, WeaponRow, FATIGUE_MAX, F_DISABLED, F_GUN, F_KNEEL, F_PRONE,
+    F_WOUNDED,
 };
-use core_math::{Angle, Rng, Vec2Fx};
+use core_math::{Angle, Fx, Rng, Vec2Fx};
+use sim_state::{AgentId, AgentStore};
 
 /// `FireExt::step` value of a revolver waiting out `cycle_ticks` between rounds of a magazine.
 pub const CYCLE_STEP: u8 = u8::MAX;
@@ -117,6 +119,12 @@ pub struct Counters {
     pub projectiles_spawned: u64,
     /// Hit chances drawn per unit or volley; always 0.
     pub unit_level_rolls: u64,
+    /// Calls of `sight` made by the targeting gate (SPEC-005 amendment A9).
+    pub sight_queries: u64,
+    /// Soldiers that held fire because no tested target was visible, per tick.
+    pub shots_withheld: u64,
+    /// Gate queries whose answer was not visible.
+    pub sight_blocked: u64,
 }
 
 /// A regiment's weapon and what it shoots at.
@@ -217,6 +225,67 @@ pub(crate) fn posture_of(flags: u16) -> Posture {
         Posture::Kneeling
     } else {
         Posture::Standing
+    }
+}
+
+/// What the targeting gate decided for one shooter.
+enum Pick {
+    /// Shoot at the target at `pos`, seen through `transmit_pm` of the smoke.
+    Target { pos: Vec2Fx, transmit_pm: u16 },
+    /// Entries were tested and none was visible: hold fire and mark the soldier blind.
+    Blind,
+    /// Every entry was beyond reach or gone: nothing to do, as without the environment.
+    NoTarget,
+}
+
+/// The layers a gate query reads.
+struct GateWorld<'a> {
+    env: &'a Environment,
+    obstacles: &'a ObstacleLayer,
+    smoke: &'a SmokeGrid,
+    damage: &'a DamageTable,
+    agents: &'a AgentStore,
+}
+
+/// The SPEC-009 section 6 gate for the shooter at `pos` with `flags` and roster index `j`: tries
+/// `min(retries + 1, n)` entries `(j + k) % n` of `troster` in order, skips one beyond `reach`
+/// without a query, and takes the first that `sight` calls visible.
+fn pick_target(
+    g: &GateWorld<'_>,
+    (pos, flags, j): (Vec2Fx, u16, usize),
+    troster: &[AgentId],
+    reach: Fx,
+    counters: &mut Counters,
+) -> Pick {
+    let (table, sp) = (g.env.table(), &g.env.table().sight);
+    let world = SightWorld::new(g.env.relief(), g.obstacles, g.smoke, &table.smoke, sp);
+    let eye = eye_mm(g.damage, posture_of(flags));
+    let tries = (sp.retries as usize + 1).min(troster.len());
+    let mut tested = false;
+    for k in 0..tries {
+        let t = troster[(j + k) % troster.len()];
+        let (Some(tpos), Some(tflags)) = (g.agents.pos(t), g.agents.flags(t)) else {
+            continue;
+        };
+        if (tpos - pos).length() > reach {
+            continue;
+        }
+        tested = true;
+        counters.sight_queries += 1;
+        let aim = aim_mm(g.damage, posture_of(tflags));
+        let s = sight(&world, pos, eye, tpos, aim, sp.step_mm);
+        if s.visible {
+            return Pick::Target {
+                pos: tpos,
+                transmit_pm: s.transmit_pm,
+            };
+        }
+        counters.sight_blocked += 1;
+    }
+    if tested {
+        Pick::Blind
+    } else {
+        Pick::NoTarget
     }
 }
 
@@ -373,6 +442,7 @@ impl BattleState {
             weather,
             counters,
             env,
+            obstacles,
             ..
         } = self;
         let source = env.as_ref().map(|e| &e.table().smoke);
@@ -424,19 +494,54 @@ impl BattleState {
             if troster.is_empty() {
                 continue;
             }
-            let Some(tpos) = agents.pos(troster[j as usize % troster.len()]) else {
-                continue;
+            let reach = fx_ratio(i64::from(w.extended_mm), 1000);
+            let (tpos, range_pm) = match env.as_ref() {
+                Some(e) => {
+                    let g = GateWorld {
+                        env: e,
+                        obstacles,
+                        smoke,
+                        damage: &tables.damage,
+                        agents,
+                    };
+                    match pick_target(&g, (pos, flags, j as usize), troster, reach, counters) {
+                        Pick::Target { pos, transmit_pm } => {
+                            let gain = u64::from(e.table().sight.range_smoke_gain_pm);
+                            let thin = 1000 - u64::from(transmit_pm.min(1000));
+                            (pos, (1000 + gain * thin / 1000) as u32)
+                        }
+                        Pick::Blind => {
+                            counters.shots_withheld += 1;
+                            if let Some(l) = loco.get_mut(idx as usize) {
+                                l.blind = true;
+                            }
+                            continue;
+                        }
+                        Pick::NoTarget => continue,
+                    }
+                }
+                None => {
+                    let Some(tpos) = agents.pos(troster[j as usize % troster.len()]) else {
+                        continue;
+                    };
+                    if (tpos - pos).length() > reach {
+                        continue;
+                    }
+                    (tpos, 1000)
+                }
             };
             let delta = tpos - pos;
             let range = delta.length();
-            if range > fx_ratio(i64::from(w.extended_mm), 1000) {
-                continue;
-            }
 
             let mut rng = Rng::from_state(f.rng);
             let d = draw_shot(&mut rng);
             f.rng = rng.state();
             counters.shots_fired += 1;
+            if env.is_some() {
+                if let Some(l) = loco.get_mut(idx as usize) {
+                    l.fired = true;
+                }
+            }
             spent[usize::from(ri)] += 1;
             f.rounds -= 1;
             let forward = Vec2Fx::from_angle(agents.facing(id).unwrap_or(reg.heading));
@@ -452,18 +557,23 @@ impl BattleState {
                 continue;
             }
             let ammo = &tables.ammo.rows()[usize::from(rf.ammo_row)];
-            let a = aim(
+            let at_shooter = match env.as_ref() {
+                Some(e) => smoke.smoke_pm(pos, e.table().smoke.ref_units),
+                None => smoke_pm(smoke.cell_density(pos)),
+            };
+            let a = aim_in_smoke(
                 &AimInput {
                     weapon: w,
                     ammo,
                     table: &ranges[usize::from(rf.range)].table,
                     training: reg.training,
                     fatigue_ppm: loco.get(idx as usize).map_or(0, |l| l.fatigue),
-                    smoke_pm: smoke_pm(smoke.cell_density(pos)),
+                    smoke_pm: at_shooter,
                     range,
                     bearing: Angle::atan2(delta.y, delta.x),
                 },
                 &d,
+                range_pm,
             );
             let (horizontal, vz) = launch_speeds(ammo.muzzle_mm_s, a.elevation);
             let muzzle_mm = tables.damage.posture(posture_of(flags)).muzzle_height_mm;

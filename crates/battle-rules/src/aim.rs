@@ -132,8 +132,19 @@ pub struct AimInput<'a> {
 /// `1000 + range_sigma_pm * g` permille, the elevation is the table's for that estimate plus the
 /// training bias, and azimuth and elevation errors are `sigma * gauss` micro-radians.
 pub fn aim(i: &AimInput, d: &ShotDraws) -> Aim {
+    aim_in_smoke(i, d, 1000)
+}
+
+/// [`aim`] with the range-estimate error multiplied by `range_err_pm / 1000` (SPEC-009 section
+/// 6: thin smoke widens the error before it blocks the view). At 1000 the multiplication is
+/// skipped, so the result equals [`aim`] bit for bit.
+pub fn aim_in_smoke(i: &AimInput, d: &ShotDraws, range_err_pm: u32) -> Aim {
     let thousand = Fx::from_int(1000);
-    let scale = thousand + Fx::from_int(range_sigma_pm(i.training) as i32) * d.range;
+    let mut err = Fx::from_int(range_sigma_pm(i.training) as i32) * d.range;
+    if range_err_pm != 1000 {
+        err = err * Fx::from_int(range_err_pm.min(i32::MAX as u32) as i32) / thousand;
+    }
+    let scale = thousand + err;
     let r_est = (i.range * scale / thousand).max(Fx::ZERO);
     let range_mm = (i64::from((i.range * thousand).to_int_floor())).max(0) as u64;
     let sigma = sigma_urad(i.weapon, i.training, i.fatigue_ppm, i.smoke_pm, range_mm);

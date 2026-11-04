@@ -57,6 +57,8 @@ pub(super) fn add_regiments(state: &mut BattleState, s: &Scenario) -> Result<(),
             since: 0,
             aggregate: Aggregate::default(),
             acct: crate::RoundsAccount::default(),
+            peek_mm: 0,
+            view_blocked: false,
         });
         state.regfire.push(crate::fire::RegFire::NONE);
         state.equip_regiment(id, &u.weapon, 0)?;

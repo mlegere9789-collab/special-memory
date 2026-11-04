@@ -8,7 +8,7 @@ mod t93_support;
 use battle_rules::SmokeGrid;
 use core_math::Vec2Fx;
 use t022_support::{duel, metres, no_misfire};
-use t93_support::{env_table, grid, params, put, weather, Lcg};
+use t93_support::{env_table, env_table_with, grid, params, put, weather, Lcg};
 
 #[test]
 fn the_grid_changes_only_on_ticks_that_are_three_mod_four() {
@@ -76,7 +76,11 @@ fn with_the_environment_on_a_shot_adds_the_yield_and_no_per_tick_decay_runs() {
         40,
     );
     b.smoke = SmokeGrid::new(1_000_000, 2, 1, Vec2Fx::ZERO).unwrap();
-    b.set_environment(env_table(), weather(&[(0, 700, 500, 0, 0, 0)]));
+    // The one 1000 m cell fills with smoke and would hide the targets from the gate of SPEC-009
+    // section 6; a zero visibility threshold keeps every shot, so that the yield is what is
+    // measured.
+    let open_sight = env_table_with(&[("min_transmit_pm = 50", "min_transmit_pm = 0")]);
+    b.set_environment(open_sight, weather(&[(0, 700, 500, 0, 0, 0)]));
     no_misfire(&mut b);
     for f in b.fire.iter_mut().take(100) {
         f.rounds = 1;
