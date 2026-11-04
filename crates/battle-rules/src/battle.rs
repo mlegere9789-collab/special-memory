@@ -3,11 +3,12 @@
 //! step; this module owns orders, the `Forming` countdown and the close-up of a thinned line.
 
 use crate::fire::{RangeEntry, RegFire};
+use crate::hit::{ObstacleLayer, QueuedHit};
 use crate::{
     assign_slots, slot_layout, transition_ticks, DrillTable, Formation, Order, Regiment,
     RegimentId, RegimentSpec, RegimentState, SlotLocal, Tables, TerrainGrid, F_DISABLED, F_WOUNDED,
 };
-use crate::{Counters, FireExt, Projectile, SmokeGrid, Weather};
+use crate::{Casualty, Counters, FireExt, Projectile, SmokeGrid, Weather};
 use core_math::{StreamId, Vec2Fx};
 use sim_state::{AgentId, AgentInit, AgentStore, SpatialGrid, WorldState};
 
@@ -55,6 +56,10 @@ pub struct BattleState {
     pub pool: Vec<Projectile>,
     /// Smoke density; an empty grid until the scenario sets one.
     pub smoke: SmokeGrid,
+    /// Walls and earthworks (scenario data, not hashed).
+    pub obstacles: ObstacleLayer,
+    /// The casualty log, in order of application.
+    pub casualties: Vec<Casualty>,
     /// Scenario weather.
     pub weather: Weather,
     /// `seq` of the next projectile.
@@ -63,12 +68,14 @@ pub struct BattleState {
     pub(crate) regfire: Vec<RegFire>,
     /// Range tables built for the equipped weapon and ammunition pairs.
     pub(crate) ranges: Vec<RangeEntry>,
+    /// Hits found by the flight phase, applied by the casualty step (empty between ticks).
+    pub(crate) pending: Vec<QueuedHit>,
     /// F0 counters.
     pub(crate) counters: Counters,
 }
 
 /// Drops soldiers that are gone, disabled or wounded; marks the regiment dirty if any left.
-fn sync_roster(agents: &AgentStore, reg: &mut Regiment) {
+pub(crate) fn sync_roster(agents: &AgentStore, reg: &mut Regiment) {
     let before = reg.roster.len();
     reg.roster.retain(|&id| {
         agents.is_alive(id)
@@ -157,10 +164,13 @@ impl BattleState {
             fire: Vec::new(),
             pool: Vec::new(),
             smoke: SmokeGrid::empty(),
+            obstacles: ObstacleLayer::default(),
+            casualties: Vec::new(),
             weather: Weather::DRY,
             seq: 0,
             regfire: Vec::new(),
             ranges: Vec::new(),
+            pending: Vec::new(),
             counters: Counters::default(),
         }
     }
@@ -304,6 +314,29 @@ impl BattleState {
         self.regiments
             .get(usize::from(id.0))
             .is_some_and(crate::can_fire)
+    }
+
+    /// One whole tick in the order of REGISTRY section 6.2 for the steps that exist: TK-04
+    /// movement, TK-05 grid rebuild and release of expired disables, TK-06 fire, TK-07 flight and
+    /// hit, TK-10 casualties, TK-12 smoke decay, TK-14 roster updates, TK-15 `advance_tick`
+    /// (SPEC-005 amendment A5). A later layer adds its step here at its place.
+    pub fn step(&mut self) {
+        self.step_with(false);
+    }
+
+    /// [`BattleState::step`] with the flight phase resolved forwards or backwards (test hook;
+    /// the result is the same).
+    #[doc(hidden)]
+    pub fn step_with(&mut self, reverse_flight: bool) {
+        self.move_agents();
+        self.grid.rebuild(&self.world.agents);
+        self.release_disables();
+        self.step_fire();
+        self.step_flight_with(reverse_flight);
+        self.step_casualties();
+        self.step_smoke();
+        self.step_rosters();
+        self.world.advance_tick();
     }
 
     /// The state hash, see [`battle_hash`](crate::battle_hash).

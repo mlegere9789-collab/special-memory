@@ -287,6 +287,13 @@ impl BattleState {
     /// fatigue updated, and a soldier within one step of its slot, unpushed and nearly at rest,
     /// snapped onto it. The tick counter advances last.
     pub fn step_movement(&mut self) {
+        self.move_agents();
+        self.world.advance_tick();
+    }
+
+    /// Everything [`step_movement`](BattleState::step_movement) does except advancing the tick
+    /// counter, which [`step`](BattleState::step) does last.
+    pub(crate) fn move_agents(&mut self) {
         self.grid.rebuild(&self.world.agents);
         self.step_drill();
         let c = Consts::new(&self.tables.locomotion);
@@ -363,6 +370,5 @@ impl BattleState {
                 };
             }
         }
-        self.world.advance_tick();
     }
 }
