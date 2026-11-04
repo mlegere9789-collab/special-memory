@@ -1,7 +1,9 @@
 # SPEC-005: battle-rules II, weapons, flight, hits, casualties and the F0 rule
 
+> Shared namespaces (input tags and actors, random streams, flags, hash blocks, tick order, CT ids, amendment labels, ticket ids) are owned by [REGISTRY.md](REGISTRY.md); conflicts and their resolutions are in [CONFLICTS.md](CONFLICTS.md).
+
 Crate: `crates/battle-rules` (created by SPEC-004; adds modules `weapons`, `flight`, `aim`, `fire`, `hit`, `damage`, `smoke`, `calibration`). Same rules, data units and provenance as SPEC-004 sections 1 and 2.
-Source key: **CWV pNNN** = "The American Civil War: Research Volume and Game Design", PDF page NNN, with the tag the page gives. 1 yd = 914.4 mm, 1 ft = 304.8 mm, 1 lb = 453.592 g. Invented numbers are `placeholder` with a calibration target CT-n (section 12).
+Source key: **CWV pNNN** = "The American Civil War: Research Volume and Game Design", PDF page NNN, with the tag the page gives. 1 yd = 914.4 mm, 1 ft = 304.8 mm, 1 lb = 453.592 g. Invented numbers are `placeholder` with a calibration target CT-005-n (section 12).
 **Amendment A1 to SPEC-002:** `SpatialGrid::query_segment(p0, p1, half_width, out: &mut Vec<AgentId>)` returns every alive agent within `half_width` of segment `p0..p1`, sorted by `(s, index)`, `s` being the raw `Fx` projection of `pos - p0` on the segment clamped to `[0, |p1-p0|]`; it equals a brute-force reference.
 
 ## 1. Tables (`data/rules/ammo.toml`, `weapons.toml`, `damage.toml`; matching `*.schema.json`)
@@ -9,29 +11,29 @@ Ammo row: `id, kind (ball|conical|shot|shell|case|canister), mass_g, diameter_mm
 
 | id | kind | mass_g | dia_mm | cd_pm | muzzle_mm_s | basis |
 |---|---|---:|---:|---:|---:|---|
-| ball_69 | ball | 27 | 17 | 470 | 300000 | calibre .69 (CWV p459, V S21); rest placeholder CT-1 |
-| minie_58 | conical | 32 | 15 | 300 | 290000 | calibre .58 (CWV p459, V S21); rest placeholder CT-1 |
-| carbine_52 | conical | 29 | 13 | 300 | 250000 | placeholder CT-1 |
-| revolver_44 | ball | 9 | 11 | 400 | 230000 | placeholder CT-1 |
-| shot_12 | shot | 5443 | 117 | 470 | 452600 | 1485 ft/s (CWV p459, V S19); 12-pounder (CWV p030); diameter, Cd placeholder CT-2 |
-| shell_12 | shell | 5579 | 117 | 470 | 400000 | 12.3 lb (CWV p459, V S19); velocity placeholder CT-2 |
-| case_12 | case | 5400 | 117 | 470 | 400000 | placeholder CT-2 |
-| canister_12 | canister | 5400 | 117 | 470 | 400000 | 27 iron balls of 1.5 in (CWV p459, V S20); rest placeholder CT-2 |
+| ball_69 | ball | 27 | 17 | 470 | 300000 | calibre .69 (CWV p459, V S21); rest placeholder CT-005-1 |
+| minie_58 | conical | 32 | 15 | 300 | 290000 | calibre .58 (CWV p459, V S21); rest placeholder CT-005-1 |
+| carbine_52 | conical | 29 | 13 | 300 | 250000 | placeholder CT-005-1 |
+| revolver_44 | ball | 9 | 11 | 400 | 230000 | placeholder CT-005-1 |
+| shot_12 | shot | 5443 | 117 | 470 | 452600 | 1485 ft/s (CWV p459, V S19); 12-pounder (CWV p030); diameter, Cd placeholder CT-005-2 |
+| shell_12 | shell | 5579 | 117 | 470 | 400000 | 12.3 lb (CWV p459, V S19); velocity placeholder CT-005-2 |
+| case_12 | case | 5400 | 117 | 470 | 400000 | placeholder CT-005-2 |
+| canister_12 | canister | 5400 | 117 | 470 | 400000 | 27 iron balls of 1.5 in (CWV p459, V S20); rest placeholder CT-005-2 |
 
-Bursts (placeholder CT-2 except counts and size): canister 27 pellets of 38 mm, mass derived at load as iron 7.2 g/cm3 times sphere volume (208 g), cone, `spread_sigma_urad 60000`, `pellet_speed_pm 850`, fuse 0; case 76 pellets of 17 mm, cone 25000, `fuse_sigma_substeps 15`, `dud_ppm 30000`; shell 40 fragments of 60 g, sphere, 150 m/s, same fuse and dud. Shot `restitution_pm 400`.
+Bursts (placeholder CT-005-2 except counts and size): canister 27 pellets of 38 mm, mass derived at load as iron 7.2 g/cm3 times sphere volume (208 g), cone, `spread_sigma_urad 60000`, `pellet_speed_pm 850`, fuse 0; case 76 pellets of 17 mm, cone 25000, `fuse_sigma_substeps 15`, `dud_ppm 30000`; shell 40 fragments of 60 g, sphere, 150 m/s, same fuse and dud. Shot `restitution_pm 400`.
 
 Weapon row: `id, class (smoothbore|rifled|carbine|revolver|field_gun), ammo[], magazine, load_steps[{id,ticks}], cycle_ticks, misfire_restart_step, sigma0_urad, sigma_slope_urad_per_100m, aim_scale_pm, powder_mg, misfire_ppm, misfire_fouling_ppm, fouling_per_shot, ram_penalty_pm, fire_drain_ppm, effective_mm, extended_mm, reach_mm, rounds`.
 
 | id | steps (ticks, Trained) | sum | sigma0 / slope | effective / extended mm | basis |
 |---|---|---:|---|---|---|
-| smoothbore_69 | handle 120, seat 60, ram 140, prime 100, ready 60 | 480 | 6000 / 4000 | 45720 / 182880 | 50 and 200 yd (CWV p459, V S21); rest placeholder CT-3 |
-| rifle_58 | handle 120, seat 60, ram 160, prime 100, ready 60 | 500 | 700 / 250 | 274320 / 804672 | 300 yd and half a mile (CWV p459, V S21); steps CT-4 |
-| carbine_52 | open 40, insert 60, close 30, prime 20 | 150 | 1000 / 300 | 183000 / 500000 | placeholder CT-3, CT-4; breechloaders rare (CWV p510 4.2) |
-| revolver_44 | magazine 6, cycle 20; reload 300, 600, 300 | 1200 | 5000 / 3000 | 25000 / 80000 | placeholder CT-3, CT-4 |
-| napoleon_12 | sponge 200, load 300, ram 200, prime 200, lay 300 | 1200 | 1500 / 400 | 320040 / 1536192 | 1 round/min (CWV p453, p459, V S19); canister effective 350 yd, shot max 1680 yd (CWV p459, V S19); splits CT-4 |
+| smoothbore_69 | handle 120, seat 60, ram 140, prime 100, ready 60 | 480 | 6000 / 4000 | 45720 / 182880 | 50 and 200 yd (CWV p459, V S21); rest placeholder CT-005-3 |
+| rifle_58 | handle 120, seat 60, ram 160, prime 100, ready 60 | 500 | 700 / 250 | 274320 / 804672 | 300 yd and half a mile (CWV p459, V S21); steps CT-005-4 |
+| carbine_52 | open 40, insert 60, close 30, prime 20 | 150 | 1000 / 300 | 183000 / 500000 | placeholder CT-005-3, CT-005-4; breechloaders rare (CWV p510 4.2) |
+| revolver_44 | magazine 6, cycle 20; reload 300, 600, 300 | 1200 | 5000 / 3000 | 25000 / 80000 | placeholder CT-005-3, CT-005-4 |
+| napoleon_12 | sponge 200, load 300, ram 200, prime 200, lay 300 | 1200 | 1500 / 400 | 320040 / 1536192 | 1 round/min (CWV p453, p459, V S19); canister effective 350 yd, shot max 1680 yd (CWV p459, V S19); splits CT-005-4 |
 
-Common placeholders (CT-3): `aim_scale_pm` 1000 (revolver 1500, gun 150); `powder_mg` 3900 (revolver 1000; gun 907000, the "2.0 lb charge", CWV p459, V S19, partial); `misfire_ppm` 20000 (gun 10000); `misfire_fouling_ppm` 30000; `fouling_per_shot` 12; `ram_penalty_pm` 500; `fire_drain_ppm` 2000; `reach_mm = 2 * extended_mm`; `rounds` 60 (carbine 40, revolver 18; gun shot 20, shell 20, case 10, canister 6). Load speed by training `load_pm`: raw 1200, trained 1000, veteran 840; step ticks `ceil(ticks * load_pm / 1000)`. Rate of fire: trained infantry 2 to 3 rounds/min (CWV p453, `[Memory/Estimate]`), 2.5 planning figure (CWV p459); the table gives 2.08 raw, 2.5 trained, 2.98 veteran.
-Postures (`damage.toml`, placeholder CT-5), width / height / muzzle height / `cover_pm` in mm and permille: standing 500/1700/1450/500, kneeling 500/1200/1000/800, prone 500/450/300/1000; a gun (`F_GUN`) 1400/1300. Hit height fraction: legs below 500 permille, torso below 850, head above. Energy bands (J): B0 below 150, B1 150-499, B2 500-1499, B3 1500 and up. Outcome permille `killed/wounded/disabled`, remainder no effect. Derivation: lethality rises with energy and with torso or head hits, legs are rarely fatal, spent balls mostly bruise (placeholder CT-6):
+Common placeholders (CT-005-3): `aim_scale_pm` 1000 (revolver 1500, gun 150); `powder_mg` 3900 (revolver 1000; gun 907000, the "2.0 lb charge", CWV p459, V S19, partial); `misfire_ppm` 20000 (gun 10000); `misfire_fouling_ppm` 30000; `fouling_per_shot` 12; `ram_penalty_pm` 500; `fire_drain_ppm` 2000; `reach_mm = 2 * extended_mm`; `rounds` 60 (carbine 40, revolver 18; gun shot 20, shell 20, case 10, canister 6). Load speed by training `load_pm`: raw 1200, trained 1000, veteran 840; step ticks `ceil(ticks * load_pm / 1000)`. Rate of fire: trained infantry 2 to 3 rounds/min (CWV p453, `[Memory/Estimate]`), 2.5 planning figure (CWV p459); the table gives 2.08 raw, 2.5 trained, 2.98 veteran.
+Postures (`damage.toml`, placeholder CT-005-5), width / height / muzzle height / `cover_pm` in mm and permille: standing 500/1700/1450/500, kneeling 500/1200/1000/800, prone 500/450/300/1000; a gun (`F_GUN`) 1400/1300. Hit height fraction: legs below 500 permille, torso below 850, head above. Energy bands (J): B0 below 150, B1 150-499, B2 500-1499, B3 1500 and up. Outcome permille `killed/wounded/disabled`, remainder no effect. Derivation: lethality rises with energy and with torso or head hits, legs are rarely fatal, spent balls mostly bruise (placeholder CT-005-6):
 
 | band | legs | torso | head |
 |---|---|---|---|
@@ -52,8 +54,8 @@ Bursts: when `fuse` reaches 0, or a shell or case strikes the ground, the parent
 
 ## 3. Aiming and dispersion (`aim`)
 `RangeTable` per ammo: entries every 25 m to `reach_mm`, built at load by 24-step bisection of elevation in `[0, 15 deg]` with the section 2 integrator (no wind) so the projectile first reaches horizontal range `r` at aim height 1200 mm; stores `(Angle, time_of_flight_substeps)`, interpolated linearly.
-Per shot the soldier's stream is read in this **fixed order whatever the outcome**: one `u32` misfire roll, `gauss` for range, azimuth, elevation, fuse, one `u64` projectile seed. Range estimate `r_est = max(0, r * (1000 + range_sigma_pm * g) / 1000)` with `range_sigma_pm` raw 250, trained 150, veteran 100 (placeholder CT-7; range estimation is hard, CWV p030 1.4). Elevation `table(r_est) + aim_high_urad` (raw 4000, trained 2000, veteran 1000, placeholder CT-7; aiming too high, CWV p459, V S21). Fuse (shell, case) `tof(r_est) + fuse_sigma_substeps * g`; canister bursts at the muzzle.
-`sigma_b = sigma0 + slope * r / 100000` (urad, r in mm); `sigma_s = aim_sigma * aim_scale_pm/1000 * (1000 + 600 * fatigue/10^6)/1000 * (1000 + 4 * smoke_at_shooter)/1000`, `aim_sigma` raw 12000, trained 6000, veteran 4000 (placeholder CT-7); `sigma = sqrt(sigma_b^2 + sigma_s^2)` by `Fx::sqrt`. Azimuth and elevation errors are `sigma * gauss`, converted by `angle_from_urad(u)` = raw `u * 2^32 / 6283185`.
+Per shot the soldier's stream is read in this **fixed order whatever the outcome**: one `u32` misfire roll, `gauss` for range, azimuth, elevation, fuse, one `u64` projectile seed. Range estimate `r_est = max(0, r * (1000 + range_sigma_pm * g) / 1000)` with `range_sigma_pm` raw 250, trained 150, veteran 100 (placeholder CT-005-7; range estimation is hard, CWV p030 1.4). Elevation `table(r_est) + aim_high_urad` (raw 4000, trained 2000, veteran 1000, placeholder CT-005-7; aiming too high, CWV p459, V S21). Fuse (shell, case) `tof(r_est) + fuse_sigma_substeps * g`; canister bursts at the muzzle.
+`sigma_b = sigma0 + slope * r / 100000` (urad, r in mm); `sigma_s = aim_sigma * aim_scale_pm/1000 * (1000 + 600 * fatigue/10^6)/1000 * (1000 + 4 * smoke_at_shooter)/1000`, `aim_sigma` raw 12000, trained 6000, veteran 4000 (placeholder CT-005-7); `sigma = sqrt(sigma_b^2 + sigma_s^2)` by `Fx::sqrt`. Azimuth and elevation errors are `sigma * gauss`, converted by `angle_from_urad(u)` = raw `u * 2^32 / 6283185`.
 
 ## 4. Loading, firing, fouling, ammunition (`fire`)
 `FireExt` per slot: `rounds u16, ammo_sel u8, step u8, left u16, fouling u16, mag u8, disabled_until u64, rng [u64;4]`. Stream `STREAM_SOLDIER_BASE (0x4000_0000) + slot index` is derived at spawn with `RngStreams::stream`; state hashed. Initial `left` gets `range_u32(0, step ticks)` from the stream so regiments do not fire in lockstep.
@@ -62,18 +64,18 @@ Each tick a soldier with rounds does `left -= 1`; at 0 it advances a step (the `
 ## 5. Hit test and line of fire (`hit`)
 Each tick a projectile flies 10 sub-steps giving a chord `p0..p1`, `z0..z1`, cut at the first ground or burst event. Everything reads the **frozen start-of-tick snapshot**. Events on the chord, `s` its fraction:
 1. **Obstacles** (`ObstacleLayer`, `Vec<Obstacle {a, b: Vec2Fx, height_mm: u16}>`): 2D `i128` cross-product intersection; stops the projectile if `z(s) <= height`. Walls and earthworks are the research's prepared positions (CWV p065, p511 4.4); heights are scenario data.
-2. **Soldiers**: `query_segment(p0, p1, 700 mm)`; skip the owner, down soldiers (`F_DISABLED`, `F_WOUNDED`) and own-unit soldiers while `travelled_mm < 2500` (placeholder CT-5); hit if horizontal distance to the chord is within half-width and `0 <= z(s) <= height`.
+2. **Soldiers**: `query_segment(p0, p1, 700 mm)`; skip the owner, down soldiers (`F_DISABLED`, `F_WOUNDED`) and own-unit soldiers while `travelled_mm < 2500` (placeholder CT-005-5); hit if horizontal distance to the chord is within half-width and `0 <= z(s) <= height`.
 Earliest event wins, obstacle first on ties. A soldier hit rolls cover from the projectile's `SplitMix64(seed)` (draw index = `hits`): absorbed if `roll % 1000 < terrain.cover_pm * posture.cover_pm / 1000`. Otherwise `E = mass_g * speed^2 / 2000` J, band, region, outcome roll `% 10^6` against cumulative permille times 1000, and a further draw for `disabled_ticks`; queue `(target index, severity, disabled_ticks, seq)`. If `E - absorb_j >= 150` J and `hits < 8` the projectile continues with `speed * sqrt(E'/E)`; else it ends.
 
 ## 6. Casualties and simultaneous shots (`damage`)
 Projectiles never change agents in flight, so resolution is a pure function of the snapshot and independent of projectile order. At tick end, queued hits are grouped by target ascending; per target the outcome is the most severe (Killed, Wounded, Disabled), ties to the lowest `seq`, `disabled_ticks` the maximum. Killed: log then `despawn`. Wounded: `F_WOUNDED`, `hp = 25`. Disabled: `F_DISABLED`, `hp = 60`, `disabled_until = tick + n` (released at tick start). Casualties leave the roster (SPEC-004 close-up). `Casualty {tick, target_index, unit, team, kind, shooter_unit, ammo}` is appended in ascending target index (persistent, CWV p512 4.9). A soldier hit on tick t still fires on tick t.
 
 ## 7. Tick order and the F0 exact rule
-`BattleState::step`: (1) movement (SPEC-004); (2) rebuild grid, release expired disables; (3) fire phase, ascending shooter slot, spawning ascending `seq` and adding smoke; (4) flight and hit phase, ascending `seq`, children join the tail; (5) apply casualties; (6) smoke decay, roster updates, `advance_tick`.
+`BattleState::step` (this six-step list is the F0 core; the single ordered list that includes every optional layer is REGISTRY section 6, steps TK-04 to TK-15, SPEC-005 amendment A5): (1) movement (SPEC-004); (2) rebuild grid, release expired disables; (3) fire phase, ascending shooter slot, spawning ascending `seq` and adding smoke; (4) flight and hit phase, ascending `seq`, children join the tail; (5) apply casualties; (6) smoke decay, roster updates, `advance_tick`.
 **F0 (ADR 0002):** in a class-0 scenario every shot that satisfies section 4 is a pooled projectile integrated by section 2 for its whole life and tested against individual soldiers by section 5; no hit chance is drawn per unit or per volley; random draws come only from the soldier stream (fire) and the projectile seed (impact), in counts independent of distance, visibility, load or machine speed; nothing is culled, merged or skipped for load. If the budget in section 12 cannot be met, the scenario shrinks, never the rule. Counters `shots_fired`, `misfires`, `projectiles_spawned`, `unit_level_rolls` (must stay 0) are exposed.
 
 ## 8. Smoke source (`smoke`)
-`SmokeGrid {cell_mm, width, height, origin, density: Vec<u32>}`. Each shot adds `powder_mg * SMOKE_UNITS_PER_G / 1000` (integer division; misfire a quarter) to the muzzle cell (`SMOKE_UNITS_PER_G = 1`, placeholder CT-8; smoke as a density field, CWV p511 4.3). Each tick `d -= ceil(d * 5000 / 10^6)` (placeholder CT-8). Wind transport and rendering are out of scope.
+`SmokeGrid {cell_mm, width, height, origin, density: Vec<u32>}`. Each shot adds `powder_mg * SMOKE_UNITS_PER_G / 1000` (integer division; misfire a quarter) to the muzzle cell (`SMOKE_UNITS_PER_G = 1`, placeholder CT-005-8; smoke as a density field, CWV p511 4.3). Each tick `d -= ceil(d * 5000 / 10^6)` (placeholder CT-005-8). Wind transport and rendering are out of scope.
 
 ## 9. Calibration harness (`calibration`, bands in `qc/calibration/bands.toml`)
 `cal_line(weapon, training, range_mm, wall)`: two regiments of 200 (100 files, 2 ranks), `Steady(Line)`, facing, `range_mm` apart, both `AtWill`, 60 rounds each, 2400 ticks, seeds 1 to 8; `wall` adds a 1000 mm obstacle in front of side B. `cal_rof`: one regiment firing at a distant wall. `cal_range`: single-shot range checks. `cal_canister(range_mm)`: one gun at a 100-man standing line, 200 rounds per range.
@@ -81,17 +83,17 @@ Metrics: casualties (killed, wounded, disabled) per 100 men; killed share; round
 
 | band | quantity | at | low | high | tag and source |
 |---|---|---|---:|---:|---|
-| B1 | rifle casualties/100 | 46/91/137/183/274/366 m | 20/15/10/6/2/0.5 | 60/50/40/30/15/8 | unverified placeholder CT-9; most firefights under 150 yd (CWV p030, partial) |
-| B2 | smoothbore casualties/100 | 46/91/137/183 m | 8/2/0/0 | 40/15/5/2 | unverified placeholder CT-9 |
+| B1 | rifle casualties/100 | 46/91/137/183/274/366 m | 20/15/10/6/2/0.5 | 60/50/40/30/15/8 | unverified placeholder CT-005-9; most firefights under 150 yd (CWV p030, partial) |
+| B2 | smoothbore casualties/100 | 46/91/137/183 m | 8/2/0/0 | 40/15/5/2 | unverified placeholder CT-005-9 |
 | B3 | rifle / smoothbore | 183 m | 3 | none | partial: "much higher lethality" (CWV p510 4.2) |
 | B4 | casualties non-increasing in range | B1, B2 ranges | n/a | n/a | partial, same page |
 | B5 | smoothbore rounds/soldier/min | trained/raw/veteran | 2.3/1.9/2.8 | 2.7/2.2/3.2 | partial: 2 to 3 (CWV p453, Memory/Estimate) |
 | B6 | gun rounds/min | trained | 0.9 | 1.1 | partial: nominal 1 (CWV p459, V S19) |
 | B7 | range to first ground contact | shot 5 deg / shell 3.75 deg / case 3.75 deg | 1382/1070/934 m | 1690/1308/1142 m | partial: 1680 (alt. 1619) / 1300 / 1135 yd, +-10 percent (CWV p459, V S19) |
-| B8 | canister hits per round | 183/320/366/457 m | 3/0/0/0 | 12 / 0.5x / 0.3x / 0.1x of the 183 m value | order partial: effective 350 yd, peak 200, max 400 yd (CWV p459, V S19, S20); values unverified CT-9 |
+| B8 | canister hits per round | 183/320/366/457 m | 3/0/0/0 | 12 / 0.5x / 0.3x / 0.1x of the 183 m value | order partial: effective 350 yd, peak 200, max 400 yd (CWV p459, V S19, S20); values unverified CT-005-9 |
 | B9 | wall: attacker / defender casualties | 91 m | 2.0 | none | partial: "2-to-1 or more" (CWV p065 9.3; p030 1.4) |
-| B10 | killed share of killed+wounded | all runs | 0.15 | 0.30 | unverified placeholder CT-6 |
-| B11 | friendly hits / hits | all runs | 0 | 0.02 | unverified placeholder CT-5 |
+| B10 | killed share of killed+wounded | all runs | 0.15 | 0.30 | unverified placeholder CT-005-6 |
+| B11 | friendly hits / hits | all runs | 0 | 0.02 | unverified placeholder CT-005-5 |
 
 Curves go to `qc/calibration/f0-curves.json`, the reference for ADR 0002's F1/F2 tolerance tests.
 
@@ -119,7 +121,7 @@ Curves go to `qc/calibration/f0-curves.json`, the reference for ADR 0002's F1/F2
 - **T5-21 perf (ignored test, prints mean, p99, max):** `f0_large`, all `AtWill`.
 
 ## 12. Calibration targets and performance budget
-CT-1 infantry ammo (T5-06 sanity, `ref_flight`). CT-2 gun ammo (B7; if `cd_pm` is fitted record `confidence unverified, note "fitted"`). CT-3 dispersion, misfire (B1, B2, B10). CT-4 load step splits (sums fixed by B5, B6). CT-5 body size, cover, friendly-fire clearance (B11, T5-08). CT-6 damage table (B10). CT-7 aim, range error, bias (B1 shape). CT-8 smoke source and decay, set at the rendering milestone (dense smoke forces shorter fighting, CWV p511 4.3). CT-9 numeric bands B1, B2, B8 from `data/history` battle records with a second source.
+CT-005-1 infantry ammo (T5-06 sanity, `ref_flight`). CT-005-2 gun ammo (B7; if `cd_pm` is fitted record `confidence unverified, note "fitted"`). CT-005-3 dispersion, misfire (B1, B2, B10). CT-005-4 load step splits (sums fixed by B5, B6). CT-005-5 body size, cover, friendly-fire clearance (B11, T5-08). CT-005-6 damage table (B10). CT-005-7 aim, range error, bias (B1 shape). CT-005-8 smoke source and decay, set at the rendering milestone (dense smoke forces shorter fighting, CWV p511 4.3). CT-005-9 numeric bands B1, B2, B8 from `data/history` battle records with a second source.
 Hypothesis H5: 20,000 soldiers firing at will give about 42 shots per tick (20,000 x 2.5 / 60 / 20; the research gives about 830 shots/s, CWV p459) and about 1,250 projectiles in flight. F0 fire, flight and hit phases take at most 12 ms mean on top of SPEC-004's H4, so the whole tick is at most 30 ms mean and 45 ms p99 inside the 50 ms budget, against the measured toy baseline of about 12 ms (`docs/cycle-reports/CYCLE-00-baseline.md`). A one-tick volley of all 20,000 must finish in 250 ms (a spike, not sustained). All figures are hypotheses until T5-21 is recorded.
 
 ## 13. Done when

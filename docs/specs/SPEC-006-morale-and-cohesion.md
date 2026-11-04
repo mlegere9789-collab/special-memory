@@ -1,7 +1,9 @@
 # SPEC-006: battle-rules III, morale and cohesion
 
+> Shared namespaces (input tags and actors, random streams, flags, hash blocks, tick order, CT ids, amendment labels, ticket ids) are owned by [REGISTRY.md](REGISTRY.md); conflicts and their resolutions are in [CONFLICTS.md](CONFLICTS.md).
+
 Crate: `crates/battle-rules` (adds module `morale`; data `data/rules/morale.toml`, schema `morale.schema.json`). Same conventions, data units and provenance as SPEC-004 sections 1 and 2; `Casualty`, `FireExt`, `ObstacleLayer` come from SPEC-005. Integers only; ascending-id iteration; no `HashMap`.
-Source key: **CWV pNNN** = PDF page NNN of the research volume; pages carry no verification tag unless stated. Every number below is a `placeholder` with a calibration target (CT-61 to CT-68, section 10). The pages give only qualitative claims: morale is a regiment property built from casualties, officer losses, supply, fatigue, terrain, neighbours breaking, flanking or enfilade and a respected commander; veterans waver too but recover faster; the player sees symptoms and a coarse indicator, never a hit-point bar (CWV p511 4.6). Raw regiments were "wildly uneven" and commands "came apart through confusion rather than casualties" (CWV p030 1.3); flanking decided attacks and rout phenomena are documented (CWV p065 9.3, 9.4); Wheatfield regiments took 30 to 50 percent losses with flank-fire panic and charges "worked via morale rather than melee" (CWV p085, p082, no tag); the 1st Minnesota held at about 82 percent casualties (CWV p082, no tag).
+Source key: **CWV pNNN** = PDF page NNN of the research volume; pages carry no verification tag unless stated. Every number below is a `placeholder` with a calibration target (CT-006-61 to CT-006-68, section 10). The pages give only qualitative claims: morale is a regiment property built from casualties, officer losses, supply, fatigue, terrain, neighbours breaking, flanking or enfilade and a respected commander; veterans waver too but recover faster; the player sees symptoms and a coarse indicator, never a hit-point bar (CWV p511 4.6). Raw regiments were "wildly uneven" and commands "came apart through confusion rather than casualties" (CWV p030 1.3); flanking decided attacks and rout phenomena are documented (CWV p065 9.3, 9.4); Wheatfield regiments took 30 to 50 percent losses with flank-fire panic and charges "worked via morale rather than melee" (CWV p085, p082, no tag); the 1st Minnesota held at about 82 percent casualties (CWV p082, no tag).
 
 ## 1. Purpose and scope
 A regiment-level model deciding whether a regiment fires, holds, retires or runs, driven by quantities the core already computes. It adds no hit chances (casualties come from F0 fire, SPEC-005 section 7) and runs identically in every fidelity class (ADR 0002). Out of scope: melee, command friction, campaign morale, rendering of symptoms.
@@ -34,7 +36,7 @@ Schema: every field an integer in range (`*_pm` 0..=10000, `*_ppm` 0..=1000000, 
 `enable_morale(&mut self)` (once, after spawns and `equip_regiment`) per regiment: `s0 = roster.len()`; `shock_unit = ceil(10^9 / (s0 * cap_pm))` (`s0` at least 1); `c = base`; `n_off = max(2, s0 / 40)`; officers are roster entries at index `(2k + 1) * s0 / (2 * n_off)` for `k = 0..n_off`, the colonel is `k = 0`; the stream is `RngStreams::stream(StreamId(STREAM_MORALE_BASE + id))`; `nerve_offset = range_i32(-nerve_spread, nerve_spread)` from that stream; `rounds_full` is the sum of `FireExt.rounds`.
 
 ## 5. Algorithm
-`step_morale` runs after SPEC-005 step (5) and before step (6). Regiments are processed ascending. Slow-period work reads a frozen snapshot first and writes after.
+`step_morale` is step TK-11 of the tick order in REGISTRY section 6: after casualties are applied (TK-10) and before smoke and environment work (TK-12). Regiments are processed ascending. Slow-period work reads a frozen snapshot first and writes after.
 
 **5.1 Casualties (every tick).** For each log entry from `cursor` to the end (ascending, as appended): skip if `unit` has no morale or the target is in `absent`. Weight `w` = `w_colonel_pm` if the target is the colonel, `w_officer_pm` if an officer (then remove it from `officers`), else the kind weight. `shock = shock_unit * w / 1000`; with leader, `shock = shock * (1000 - calm_pm * leader_pm / 1000) / 1000`. Then `c = c.saturating_sub(shock)`, `loss += shock * perm_pm / 1000` (cap 10^6), `window += shock`. Set `cursor`; `state_ticks += 1`.
 
@@ -62,15 +64,15 @@ Neighbour events from the previous period apply now, before transitions, in reco
 
 **5.7 Interface.** Indicator from state: Wavering is `Uneasy` if `c >= 500000` else `Shaken`; others map one to one. It worsens immediately and improves only after `dwell` ticks. `window + loss` and the section 5.2 penalties are ranked as causes (`Losses, Officers, Fatigue, Ammunition, Supply, Flank, Charge, Neighbours, Terrain`; ties by that order; officer losses count in `Officers` as `officers_lost * w_officer_pm * shock_unit / 1000`). `MoraleReport` carries the two largest at least `cause_min`; `c` and `loss` are never public (`#[cfg(test)]` accessors only).
 
-**5.8 Fire interplay (amendments).**
+**5.8 Fire interplay (amendments: SPEC-004 A7 and SPEC-005 A11, REGISTRY section 9; the fire-phase gate order is REGISTRY section 6, step TK-06).**
 - **SPEC-004 section 7:** `issue_order` returns `false` for a regiment in FallingBack or Broken. `can_fire(&Regiment)` is unchanged; `BattleState::can_fire(id)` is `drill can_fire && kind in {Steady, Wavering, Rallied}`.
 - **SPEC-004 section 8 and roster:** `regiment_roster` and `sync_roster` also skip `F_SKULK`.
 - **SPEC-005 section 4:** loading progress (`left -= 1`, the `ram` multiplier unchanged) occurs on a tick only if `load_gate(tick, slot_index, fire_pm)`: `let a = (tick + slot_index) * fire_pm; (a + fire_pm) / 1000 > a / 1000` in `u64`. Shooters with `F_SKULK` never fire.
-- **SPEC-005 section 3:** `sigma_s` is multiplied by `shake_pm / 1000`.
+- **SPEC-005 section 3:** `sigma_s` is multiplied by `shake_pm / 1000`, applied last in the chain (after the fatigue and smoke factors of SPEC-005 section 3), each factor floored separately.
 Regiments without morale (`morale = None`) behave as before.
 
 ## 6. Hash
-After SPEC-005's three blocks, only when `morale` is `Some`: `u32` regiment count; per regiment ascending: `kind u8, state_ticks u32, c u32, loss u32, window u32, nerve_offset i32, broken_count u8, s0 u16, rounds_full u32, supply_pm u16, leader_pm u16, colonel u32, officer count u32 and indices, absent count u32 and indices, rng 4 x u64, indicator u8, dwell u16`; `u32` leader count and per leader `id u16, team u8, alive u8, x i64, y i64, prestige u16`; `cursor u64`; `u32` event count and per event `kind u8, regiment u16, x i64, y i64`; rally points as `u8 present, x i64, y i64` per team. With `None` nothing is written, so SPEC-004 and SPEC-005 goldens are unchanged. Soldier flags are already hashed by `write_world`.
+After SPEC-005's three blocks, only when `morale` is `Some` (block order and magics: REGISTRY section 5): `u32 0x4D4F_5231`, then `u32` regiment count; per regiment ascending: `kind u8, state_ticks u32, c u32, loss u32, window u32, nerve_offset i32, broken_count u8, s0 u16, rounds_full u32, supply_pm u16, leader_pm u16, colonel u32, officer count u32 and indices, absent count u32 and indices, rng 4 x u64, indicator u8, dwell u16`; `u32` leader count and per leader `id u16, team u8, alive u8, x i64, y i64, prestige u16`; `cursor u64`; `u32` event count and per event `kind u8, regiment u16, x i64, y i64`; rally points as `u8 present, x i64, y i64` per team. With `None` nothing is written, so SPEC-004 and SPEC-005 goldens are unchanged. Soldier flags are already hashed by `write_world`.
 
 ## 7. Public API (exact)
 `MoraleTable::from_toml_str(&str) -> Result<MoraleTable, DataError>` (and `Tables.morale`); `MoraleKind`, `Indicator`, `Cause`, `MoraleReport { indicator, causes: [Option<Cause>; 2], fire_pm: u16, shake_pm: u16, looking: u16, absent: u16, thinning_pm: u16 }` (`thinning_pm` = permille of `S0` that is dead, wounded, disabled or absent), `Leader`, `MoraleEvent`, `MoraleState`; `shock_unit(s0, cap_pm) -> u32`; `classify_exposure(f: i128, r: i128) -> Exposure`; `load_gate(tick: u64, slot_index: u32, fire_pm: u16) -> bool`; `lerp`; `BattleState::{enable_morale, set_leader, set_supply, set_rally_point, step_morale, morale_report(RegimentId) -> Option<MoraleReport>, fire_pm, shake_pm}`; constants above. `hd-sim battle` gains `--morale on|off` (default off).
@@ -100,22 +102,22 @@ Per-tick work is the casualty scan (about 42 entries per tick, SPEC-005 H5). A s
 
 | band | quantity | raw | trained | veteran | tag and source |
 |---|---|---|---|---|---|
-| M1 | fast loss fraction at 8 per s (percent) | 12 to 20 | 18 to 28 | 25 to 38 | unverified placeholder CT-61 |
-| M2 | slow loss fraction at 0.5 per s (percent) | 18 to 35 | 30 to 48 | 40 to 65 | CT-61; Wheatfield 30 to 50 percent (CWV p082, p085) |
-| M3 | flank (90 degrees, all enemy firing) over frontal M1 | at most 0.70 | at most 0.70 | at most 0.70 | partial: flanking decided attacks (CWV p065 9.3); CT-62 |
-| M4 | rear over frontal M1 | at most 0.55 | at most 0.55 | at most 0.55 | CT-62 |
-| M5 | rally time, unpressed, from Broken (s) | 120 to 300 | 60 to 150 | 30 to 90 | veterans recover faster (CWV p511 4.6); CT-63 |
-| M6 | veteran with leader prestige 1000 and wall: M1 plus points | n/a | n/a | at least 8 | partial: 1st Minnesota (CWV p082); CT-64 |
-| M7 | Wavering dwell before FallingBack at 8 per s (median, s) | at least 6 | at least 6 | at least 6 | symptoms must be visible before the break; CT-65 |
-| M8 | neighbour cascade: trained neighbour 100 m away with 10 percent losses is at least Wavering within 3 periods of a Broke event | n/a | yes | n/a | rout phenomena (CWV p065 9.4); CT-66 |
+| M1 | fast loss fraction at 8 per s (percent) | 12 to 20 | 18 to 28 | 25 to 38 | unverified placeholder CT-006-61 |
+| M2 | slow loss fraction at 0.5 per s (percent) | 18 to 35 | 30 to 48 | 40 to 65 | CT-006-61; Wheatfield 30 to 50 percent (CWV p082, p085) |
+| M3 | flank (90 degrees, all enemy firing) over frontal M1 | at most 0.70 | at most 0.70 | at most 0.70 | partial: flanking decided attacks (CWV p065 9.3); CT-006-62 |
+| M4 | rear over frontal M1 | at most 0.55 | at most 0.55 | at most 0.55 | CT-006-62 |
+| M5 | rally time, unpressed, from Broken (s) | 120 to 300 | 60 to 150 | 30 to 90 | veterans recover faster (CWV p511 4.6); CT-006-63 |
+| M6 | veteran with leader prestige 1000 and wall: M1 plus points | n/a | n/a | at least 8 | partial: 1st Minnesota (CWV p082); CT-006-64 |
+| M7 | Wavering dwell before FallingBack at 8 per s (median, s) | at least 6 | at least 6 | at least 6 | symptoms must be visible before the break; CT-006-65 |
+| M8 | neighbour cascade: trained neighbour 100 m away with 10 percent losses is at least Wavering within 3 periods of a Broke event | n/a | yes | n/a | rout phenomena (CWV p065 9.4); CT-006-66 |
 
-Also CT-67 (veteran over raw M1 ratio 1.5 to 2.5; CWV p030) and CT-68 (a Broken regiment loses 30 to 60 percent of its roster to absence in 120 s; straggling cost thousands of men, CWV p065). Hand check, M1 trained: `(880000 - 350000) / 5495 = 96` casualties, 24 percent of 400; the implementer records all bands once with the script.
+Also CT-006-67 (veteran over raw M1 ratio 1.5 to 2.5; CWV p030) and CT-006-68 (a Broken regiment loses 30 to 60 percent of its roster to absence in 120 s; straggling cost thousands of men, CWV p065). Hand check, M1 trained: `(880000 - 350000) / 5495 = 96` casualties, 24 percent of 400; the implementer records all bands once with the script.
 
 ## 11. Assumptions
 Officers are chosen by roster index. Neighbours are felt by distance, without line of sight or smoke. Leaders come from scenario data until a command spec exists. Recovered disabled soldiers do not undo their shock. Retiring regiments turn and walk.
 
 ## 12. Risks
-Flicker near thresholds (hysteresis and `dwell`). Hidden cohesion frustrates players unless `causes` is reliable (genre checklist 7, 12). Cascades may chain too eagerly (CT-66). The anchor lag halt (SPEC-004 section 7) may stall a running Broken line; T6-07 includes a movement check.
+Flicker near thresholds (hysteresis and `dwell`). Hidden cohesion frustrates players unless `causes` is reliable (genre checklist 7, 12). Cascades may chain too eagerly (CT-006-66). The anchor lag halt (SPEC-004 section 7) may stall a running Broken line; T6-07 includes a movement check.
 
 ## 13. Done when
 fmt, clippy `-D warnings`, `cargo test --workspace` (also `--release`) and T6-01 to T6-15 pass; schema, data, bands and goldens committed and verified on three platforms; scans pass; public items documented; no floating point outside `#[cfg(test)]`; amendments of 5.8 applied to SPEC-004 and SPEC-005 text in the same change that lands the code; T6-15 numbers recorded in a cycle report.

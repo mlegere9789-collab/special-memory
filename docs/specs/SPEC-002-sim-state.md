@@ -1,5 +1,7 @@
 # SPEC-002: sim-state (agent store, spatial index, state hash, replay format)
 
+> Shared namespaces (input tags and actors, random streams, flags, hash blocks, tick order, CT ids, amendment labels, ticket ids) are owned by [REGISTRY.md](REGISTRY.md); conflicts and their resolutions are in [CONFLICTS.md](CONFLICTS.md).
+
 Crate: `crates/sim-state`, depends only on `core-math` (path) and `proptest` (dev). `#![forbid(unsafe_code)]`.
 It contains no game rules. It provides the deterministic data foundations that rules will run on.
 

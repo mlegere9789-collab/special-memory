@@ -1,7 +1,9 @@
 # SPEC-004: battle-rules I, movement, drill and formations
 
+> Shared namespaces (input tags and actors, random streams, flags, hash blocks, tick order, CT ids, amendment labels, ticket ids) are owned by [REGISTRY.md](REGISTRY.md); conflicts and their resolutions are in [CONFLICTS.md](CONFLICTS.md).
+
 Crate: `crates/battle-rules` (new; add to workspace `members`). Depends on `core-math`, `sim-state` (path), `serde` and `toml` (exact-pinned, rules loader only), `proptest` (dev). `#![forbid(unsafe_code)]`. SPEC-005 adds weapon modules to the same crate. State is `Fx`/integers only, iteration is ascending id, no `HashMap`.
-Source key: **CWV pNNN** = "The American Civil War: Research Volume and Game Design", PDF page NNN, with the tag the page gives. An invented number is `placeholder` with a named calibration target (CT-n, section 10).
+Source key: **CWV pNNN** = "The American Civil War: Research Volume and Game Design", PDF page NNN, with the tag the page gives. An invented number is `placeholder` with a named calibration target (CT-004-n, section 10).
 
 ## 1. Conventions
 - `TICK_HZ: u32 = 20` (matches SPEC-003). Lengths in metres (`Fx`), speeds in m/s, angles in `Angle`.
@@ -16,7 +18,7 @@ Source key: **CWV pNNN** = "The American Civil War: Research Volume and Game Des
  "required":["confidence"],"properties":{
   "confidence":{"$ref":"common.schema.json#/$defs/confidence"},
   "placeholder":{"type":"boolean"},
-  "calibration_target":{"type":"string","pattern":"^CT-[0-9]+$"},
+  "calibration_target":{"type":"string","pattern":"^CT-[0-9]{3}-[0-9]+$"},
   "sources":{"$ref":"common.schema.json#/$defs/sources"},
   "second_source":{"type":"string"},"note":{"type":"string"}},
  "allOf":[{"if":{"properties":{"placeholder":{"const":true}},"required":["placeholder"]},
@@ -25,17 +27,17 @@ Source key: **CWV pNNN** = "The American Civil War: Research Volume and Game Des
 Data rows in sections 3 to 6 carry these fields flattened (`confidence`, `placeholder`, `calibration_target`, `sources`); the loader enforces the same rule (`DataError::Provenance`).
 
 ## 3. Locomotion (`data/rules/locomotion.toml`, schema `locomotion.schema.json`)
-The research text names Hardee (1855) and Casey (1862) as the drill references and says it did not open them (CWV p453, `[Memory; I did not open these manuals]`). **No page gives a drill rate**, so all four speeds are placeholders. Candidates are remembered cadence times step length (90, 110, 165 steps/min at 28, 28, 33 inch), unsourced; replace with manual-sourced figures (CT-1).
+The research text names Hardee (1855) and Casey (1862) as the drill references and says it did not open them (CWV p453, `[Memory; I did not open these manuals]`). **No page gives a drill rate**, so all four speeds are placeholders. Candidates are remembered cadence times step length (90, 110, 165 steps/min at 28, 28, 33 inch), unsourced; replace with manual-sourced figures (CT-004-1).
 
 | id | speed_mm_s | drain_ppm_per_tick | basis |
 |---|---:|---:|---|
-| walk (common time) | 1067 | 7 | placeholder, CT-1, CT-2 |
-| quick | 1303 | 28 | placeholder, CT-1, CT-2 |
-| double_quick | 2305 | 139 | placeholder, CT-1, CT-2 |
-| run | 3600 | 1111 | placeholder, CT-1, CT-2 |
+| walk (common time) | 1067 | 7 | placeholder, CT-004-1, CT-004-2 |
+| quick | 1303 | 28 | placeholder, CT-004-1, CT-004-2 |
+| double_quick | 2305 | 139 | placeholder, CT-004-1, CT-004-2 |
+| run | 3600 | 1111 | placeholder, CT-004-1, CT-004-2 |
 
-Globals (all placeholder, CT-3): `accel_mm_s2 = 3000`, `body_radius_mm = 250`, `personal_space_mm = 500`, `avoid_gain_mm_s = 1200`, `max_lag_mm = 6000`, `catchup_mm = 1500`, `catchup_fatigue_limit_ppm = 600000`, `rest_recover_ppm_per_tick = 83`, `rest_speed_mm_s = 100`.
-Fatigue speed curve `[[fatigue_curve]] fatigue_ppm, speed_pm`: (0,1000), (500000,900), (800000,650), (1000000,400); placeholder, CT-2.
+Globals (all placeholder, CT-004-3): `accel_mm_s2 = 3000`, `body_radius_mm = 250`, `personal_space_mm = 500`, `avoid_gain_mm_s = 1200`, `max_lag_mm = 6000`, `catchup_mm = 1500`, `catchup_fatigue_limit_ppm = 600000`, `rest_recover_ppm_per_tick = 83`, `rest_speed_mm_s = 100`.
+Fatigue speed curve `[[fatigue_curve]] fatigue_ppm, speed_pm`: (0,1000), (500000,900), (800000,650), (1000000,400); placeholder, CT-004-2.
 Schema (`locomotion.schema.json`): required `schema` (const `"locomotion/1"`), `tick_hz` (const 20), `gait[]` (one item per id: `id` enum, `speed_mm_s` int>0, `drain_ppm_per_tick` int>=0, provenance), `globals` (the integer keys above), `fatigue_curve[]` (`fatigue_ppm` 0..1000000 strictly increasing from 0 to 1000000, `speed_pm` 0..1000 non-increasing).
 
 ## 4. Fatigue (integer model)
@@ -44,10 +46,10 @@ Per-soldier `fatigue: u32` in `0..=1_000_000` (ppm of exhaustion). Each tick, in
 2. Not moving (displacement 0 or speed below `rest_speed_mm_s`): `fatigue -= rest_recover_ppm_per_tick`.
 3. Clamp to `[0, 1_000_000]`. SPEC-005 adds a firing drain in the same step.
 `fatigue_speed_pm(f)`: linear interpolation between the two bracketing curve points, `p = p0 + (p1-p0) * (f-f0) / (f1-f0)` with `i64` division truncating toward zero.
-Targets (placeholders, +-20 percent, CT-2): a fresh soldier on open ground reaches 500000 ppm after 900 s at quick and 180 s at double-quick, 1000000 after 45 s at run; at rest 500000 recovers to 0 in 300 s. The section 3 drains derive from these (500000 / (180 s * 20) = 139).
+Targets (placeholders, +-20 percent, CT-004-2): a fresh soldier on open ground reaches 500000 ppm after 900 s at quick and 180 s at double-quick, 1000000 after 45 s at run; at rest 500000 recovers to 0 in 300 s. The section 3 drains derive from these (500000 / (180 s * 20) = 139).
 
 ## 5. Terrain (`data/rules/terrain.toml`, schema `terrain.schema.json`)
-`[[class]]` rows: `id: u8` (unique, ascending), `name`, `speed_pm`, `effort_pm`, `line_disorder_pm`, `cover_pm` (consumed by SPEC-005), `blocks_movement: bool` + provenance. Qualitative source: woods slow movement and break formations (CWV p511 section 4.4); swamps, creek bottoms and thickets are named obstacles (CWV p065, terrain bullets before section 9.3; CWV p511). All numbers are placeholders (CT-4).
+`[[class]]` rows: `id: u8` (unique, ascending), `name`, `speed_pm`, `effort_pm`, `line_disorder_pm`, `cover_pm` (consumed by SPEC-005), `blocks_movement: bool` + provenance. Qualitative source: woods slow movement and break formations (CWV p511 section 4.4); swamps, creek bottoms and thickets are named obstacles (CWV p065, terrain bullets before section 9.3; CWV p511). All numbers are placeholders (CT-004-4).
 
 | id | name | speed_pm | effort_pm | line_disorder_pm | cover_pm | blocks |
 |---:|---|---:|---:|---:|---:|---|
@@ -63,7 +65,7 @@ Targets (placeholders, +-20 percent, CT-2): a fresh soldier on open ground reach
 Grid file (`data/scenarios/<name>.toml`, table `[terrain]`): `cell_mm` (default 8000), `origin_x_mm`, `origin_y_mm`, `legend` (single char to class id, array of `{ch, class}`), `rows` (array of equal-length strings, row 0 at the south). `TerrainGrid::class_at(pos) -> u8`: cell index = floor((pos - origin) / cell) clamped to the grid (outside positions take the nearest edge cell). Positions entering a `blocks_movement` cell are not applied (displacement for that axis step is zero; soldier slides along the other axis if free).
 
 ## 6. Drill (`data/rules/drill.toml`, schema `drill.schema.json`)
-Formations: `Column`, `Line`, `Skirmish`. Training: `Raw`, `Trained`, `Veteran`. Qualitative sources: units are "wildly uneven in training" (CWV p030 section 1.3); transitions take time and a well-trained regiment changes formation faster (CWV p511 section 4.5). All numbers are placeholders (CT-5).
+Formations: `Column`, `Line`, `Skirmish`. Training: `Raw`, `Trained`, `Veteran`. Qualitative sources: units are "wildly uneven in training" (CWV p030 section 1.3); transitions take time and a well-trained regiment changes formation faster (CWV p511 section 4.5). All numbers are placeholders (CT-004-5).
 - `[[training]] id, transition_pm`: raw 1300, trained 1000, veteran 750.
 - `[[transition]] from, to, base_ticks`: column to line 1200, line to column 1000, line to skirmish 1500, skirmish to line 1500, column to skirmish 1800, skirmish to column 1200 (other pairs invalid). Duration `T = ceil(base_ticks * transition_pm / 1000)` (integer ceiling).
 - `[[formation]] id, cols (see below), file_width_mm, rank_gap_mm, deployed_pm, reserve_offset_mm`: line `ranks = 2`, file width 560, rank gap 900; column `cols = 8`, file width 560, rank gap 900; skirmish deployed_pm 100, interval 3500 mm, reserve column 8 wide placed `reserve_offset_mm = 100000` behind the skirmish rank. (Two-rank line and the interval are remembered drill practice, unverified.)
@@ -74,7 +76,7 @@ Schema (`drill.schema.json`): `transition[]` (`from != to`, `base_ticks` int>=1)
 `RegimentId(u16)`, assigned ascending from 0. `Regiment { id, team: u8, training, state: RegimentState, anchor: Vec2Fx, heading: Angle, order: Order, pending: Option<Order>, roster: Vec<AgentId>, dirty: bool, slots: Vec<SlotLocal> }`; `RegimentState = Steady(Formation) | Forming { from, to, ticks_left: u32 }`; `Order = Hold | Move { to: Vec2Fx, gait: Gait } | Form(Formation) | Face(Angle)`.
 - `issue_order(id, Order)` takes effect at the start of the next step. While `Forming`, `Hold` applies immediately; any other order replaces `pending` and starts when the transition ends.
 - `Form(f)` from `Steady(g)`, `f != g`: compute target slots for `f` at the current anchor and heading (section 8), run `assign_slots`, enter `Forming { from: g, to: f, ticks_left: T }`. The anchor does not move while forming. Soldiers steer to their new slots at the double-quick gait. At `ticks_left == 0` the state becomes `Steady(f)`. `Form(g)` while already `Steady(g)` is a no-op.
-- `Move`: allowed in `Steady` only. Anchor speed `A = min over roster of soldier_cap(s)` (section 9, regiment gait, no catch-up), additionally multiplied by `(1000 - line_disorder_pm(terrain at s)) / 1000` while `Steady(Line)`. The anchor halts (no move, no turn) on a tick where `max slot error > max_lag_mm`. Otherwise it first turns toward the target at most `turn_per_tick = Angle::from_degrees_int(1)` raw per tick (placeholder, CT-3; 20 degrees/s) then moves `min(A / TICK_HZ, distance)` along the heading. On arrival the order becomes `Hold`.
+- `Move`: allowed in `Steady` only. Anchor speed `A = min over roster of soldier_cap(s)` (section 9, regiment gait, no catch-up), additionally multiplied by `(1000 - line_disorder_pm(terrain at s)) / 1000` while `Steady(Line)`. The anchor halts (no move, no turn) on a tick where `max slot error > max_lag_mm`. Otherwise it first turns toward the target at most `turn_per_tick = Angle::from_degrees_int(1)` raw per tick (placeholder, CT-004-3; 20 degrees/s) then moves `min(A / TICK_HZ, distance)` along the heading. On arrival the order becomes `Hold`.
 - `Face(a)`: turns the heading at `turn_per_tick`; soldiers follow their slots (a wheel emerges from slot geometry).
 - `can_fire(&Regiment) -> bool` is true iff state is `Steady(Line)` or `Steady(Skirmish)` (consumed by SPEC-005). Cohesion and morale are out of scope (a later spec).
 
@@ -97,12 +99,12 @@ Phase B (ascending id): `vel += clamp_length(desired - vel, accel / TICK_HZ)`; `
 Men at design spacing exert no push (`personal_space_mm = 500` is below 560 and 900). Pathing is straight line plus slot steering only; no general path-finding.
 
 ## 10. Calibration targets
-CT-1 gait speeds against the manuals (second source required). CT-2 fatigue (section 4 targets). CT-3 acceleration, lag, avoidance, turn rate (no page figure; set by playtest review). CT-4 woods: a line of battle moves at most 50 percent of its open-field rate (qualitative, CWV p511 section 4.4). CT-5 transitions: veteran/raw ratio 0.4 to 0.8, raw column to line 60 to 120 s (placeholder band). Promotion beyond `unverified` needs `second_source`.
+CT-004-1 gait speeds against the manuals (second source required). CT-004-2 fatigue (section 4 targets). CT-004-3 acceleration, lag, avoidance, turn rate (no page figure; set by playtest review). CT-004-4 woods: a line of battle moves at most 50 percent of its open-field rate (qualitative, CWV p511 section 4.4). CT-004-5 transitions: veteran/raw ratio 0.4 to 0.8, raw column to line 60 to 120 s (placeholder band). Promotion beyond `unverified` needs `second_source`.
 
 ## 11. `BattleState`, hash and public API
 `BattleState { world: WorldState, regiments: Vec<Regiment>, loco: Vec<LocoExt> (indexed by slot index), terrain: TerrainGrid, grid: SpatialGrid, tables: Tables }`, `LocoExt { fatigue: u32, slot: SlotLocal, catchup: bool }`.
 `battle_hash(&BattleState) -> u64`: `StateHasher`; `write_world`, then `u32` regiment count and per regiment (ascending id): `id u16, team u8, training u8, state tag u8, from u8, to u8, ticks_left u32, anchor.x i64, anchor.y i64, heading u32, order tag u8, order target x,y i64, gait u8, dirty u8, roster_len u32, roster slot indices u32`; then `u32` slot_count and per slot ascending: `fatigue u32, slot.u i64, slot.v i64, catchup u8`; then three reserved `u32 = 0` blocks (fire, smoke, casualty log) that SPEC-005 fills.
-Public API (exact): `TICK_HZ`, `fx_ratio`, `STREAM_BATTLE_SETUP`, flag consts; `Gait`, `Formation`, `Training`, `RegimentId`, `RegimentState`, `Order`, `Regiment`, `RegimentSpec { team, count, training, formation, anchor, heading }`, `SlotLocal`, `TerrainGrid::{from_rows, class_at}`, `LocomotionTable`, `DrillTable`, `TerrainTable` each with `from_toml_str(&str) -> Result<Self, DataError>`, `Tables::load_dir(&str)`, `DataError` (enum: `Parse`, `Float`, `UnknownKey`, `Provenance`, `Range`), `fatigue_speed_pm`, `slot_layout`, `assign_slots`, `transition_ticks(from, to, training, &DrillTable) -> u32`, `BattleState::{new, spawn_regiment, issue_order, step_movement, desired_velocity, can_fire, hash}`, `encode_order`/`decode_order`, `battle_hash`. `step_movement` runs: rebuild grid; regiments ascending (orders, drill state, anchor, close-up); phase A; phase B. Order wire format (replay input payload): `u8 tag (1 Hold, 2 Move, 3 Form, 4 Face), u16 regiment, then Move: i64 x, i64 y, u8 gait; Form: u8 formation; Face: u32 raw angle`.
+Public API (exact): `TICK_HZ`, `fx_ratio`, `STREAM_BATTLE_SETUP`, flag consts; `Gait`, `Formation`, `Training`, `RegimentId`, `RegimentState`, `Order`, `Regiment`, `RegimentSpec { team, count, training, formation, anchor, heading }`, `SlotLocal`, `TerrainGrid::{from_rows, class_at}`, `LocomotionTable`, `DrillTable`, `TerrainTable` each with `from_toml_str(&str) -> Result<Self, DataError>`, `Tables::load_dir(&str)`, `DataError` (enum: `Parse`, `Float`, `UnknownKey`, `Provenance`, `Range`), `fatigue_speed_pm`, `slot_layout`, `assign_slots`, `transition_ticks(from, to, training, &DrillTable) -> u32`, `BattleState::{new, spawn_regiment, issue_order, step_movement, desired_velocity, can_fire, hash}`, `encode_order`/`decode_order`, `battle_hash`. `step_movement` runs: rebuild grid; regiments ascending (orders, drill state, anchor, close-up); phase A; phase B. Order wire format (replay input payload; the whole tag space and the actor ids are in REGISTRY section 2): `u8 tag (1 Hold, 2 Move, 3 Form, 4 Face), u16 regiment, then Move: i64 x, i64 y, u8 gait; Form: u8 formation; Face: u32 raw angle`.
 `spawn_regiment` places men on their formation slots; ids ascend with slot order.
 
 ## 12. Headless scenarios (library functions in `battle_rules::scenarios`, also run by `hd-sim battle --scenario NAME --ticks N --seed S`)
@@ -116,7 +118,7 @@ Public API (exact): `TICK_HZ`, `fx_ratio`, `STREAM_BATTLE_SETUP`, flag consts; `
 - **T4-02 fx_ratio:** `fx_ratio(1067,1000)`, `(-1,3)`, `(1,0)` match listed raw values.
 - **T4-03 march:** `march_single` arrival tick is within 1 percent of `ceil(distance * 20 / speed)` for each of the four gaits (distance 200 m) and the maximum slot error never exceeds `max_lag_mm`. The reference values come from an independent script `qc/fixtures/ref_march.py` using `fractions.Fraction`; the implementer runs it once and commits its output.
 - **T4-04 terrain:** in `terrain_strip` the ticks spent inside the strip equal `strip_length / (speed * 0.6) * 20` within 2 percent.
-- **T4-05 fatigue:** CT-2 targets hold within 20 percent; fatigue never leaves `[0, 1_000_000]`; `fatigue_speed_pm` equals the curve at every breakpoint and is non-increasing (proptest).
+- **T4-05 fatigue:** CT-004-2 targets hold within 20 percent; fatigue never leaves `[0, 1_000_000]`; `fatigue_speed_pm` equals the curve at every breakpoint and is non-increasing (proptest).
 - **T4-06 accel:** per tick `|vel_new - vel_old| <= accel / 20` plus one ulp, for every soldier over `deploy_pair`.
 - **T4-07 drill timing:** for all six transitions and three training levels the number of ticks in `Forming` equals `transition_ticks`; `can_fire` is false while `Forming` and in `Column`.
 - **T4-08 settle:** in `deploy_pair`, by tick `T + settle_budget_ticks` every soldier is within `settle_tol_mm` of its slot, for both regiments.
@@ -133,4 +135,4 @@ Baseline: toy scenario mean 11.8 ms, p99 17 ms per tick at 20,000 agents, single
 fmt, clippy `-D warnings`, `cargo test --workspace` (also `--release`) and all T4 tests pass; the tools scans pass; schemas, data and golden hashes committed and verified on three platforms; public items documented; no floating point outside `#[cfg(test)]`; T4-13 numbers recorded.
 
 ## Amendment A1 (from T-016 implementation, 2026-11-04)
-Open inconsistency to settle in calibration ticket T-024: calibration target CT-4 says woods slow a line to 50 percent of its open-ground speed or less, but the `woods` terrain row is `speed_pm = 600`. The data keep the 600 value (a placeholder); the calibration run decides which of the two is changed. `Gait` is defined in `crates/battle-rules/src/locomotion.rs` and T-018 must reuse it. `TerrainGrid::from_rows` takes the `TerrainTable` so it can reject unknown legend classes and record which classes block movement. `fatigue_step` takes the applied speed as `Fx`; zero means the displacement was blocked. Blocking is applied per axis, x then y. `assign_slots` returns pairs in ascending slot index and surplus soldiers receive no slot; `transition_ticks` is 0 when `from == to`; `regiment_roster` skips disabled and wounded soldiers.
+Open inconsistency to settle in calibration ticket T-024: calibration target CT-004-4 says woods slow a line to 50 percent of its open-ground speed or less, but the `woods` terrain row is `speed_pm = 600`. The data keep the 600 value (a placeholder); the calibration run decides which of the two is changed. `Gait` is defined in `crates/battle-rules/src/locomotion.rs` and T-018 must reuse it. `TerrainGrid::from_rows` takes the `TerrainTable` so it can reject unknown legend classes and record which classes block movement. `fatigue_step` takes the applied speed as `Fx`; zero means the displacement was blocked. Blocking is applied per axis, x then y. `assign_slots` returns pairs in ascending slot index and surplus soldiers receive no slot; `transition_ticks` is 0 when `from == to`; `regiment_roster` skips disabled and wounded soldiers.

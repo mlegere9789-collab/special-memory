@@ -1,5 +1,7 @@
 # SPEC-001: core-math (deterministic arithmetic and random streams)
 
+> Shared namespaces (input tags and actors, random streams, flags, hash blocks, tick order, CT ids, amendment labels, ticket ids) are owned by [REGISTRY.md](REGISTRY.md); conflicts and their resolutions are in [CONFLICTS.md](CONFLICTS.md).
+
 Crate: `crates/core-math`. No dependencies except `proptest` (dev). `#![forbid(unsafe_code)]`.
 Goal: arithmetic and randomness whose results are bit-identical on every platform, compiler
 and optimisation level, with no floating point in the authoritative path.

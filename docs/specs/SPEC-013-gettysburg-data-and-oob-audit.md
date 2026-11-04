@@ -1,6 +1,8 @@
 # SPEC-013: Gettysburg data model and order-of-battle audit
 
-Data model, checker and audit workflow for the Gettysburg order of battle to regiment and battery level. Python tooling and TOML data only; no change to `crates/`. **CWV pNNN** = the research volume, PDF page NNN, with the page's own tag (`untagged` when none); every figure is a hypothesis at that confidence. Invented numbers are placeholders with a calibration target (CT-1301 to CT-1305, section 13; the 13xx range avoids the CT-1 to CT-9 reuse between SPEC-004 and SPEC-005).
+> Shared namespaces (input tags and actors, random streams, flags, hash blocks, tick order, CT ids, amendment labels, ticket ids) are owned by [REGISTRY.md](REGISTRY.md); conflicts and their resolutions are in [CONFLICTS.md](CONFLICTS.md).
+
+Data model, checker and audit workflow for the Gettysburg order of battle to regiment and battery level. Python tooling and TOML data only; no change to `crates/`. **CWV pNNN** = the research volume, PDF page NNN, with the page's own tag (`untagged` when none); every figure is a hypothesis at that confidence. Invented numbers are placeholders with a calibration target (CT-013-1301 to CT-013-1305, section 13; ids carry the spec prefix of REGISTRY section 7).
 
 ## 1. Purpose and scope
 In scope: formations, strengths with ranges, commanders over time, weapons mix, arrivals and departures, terrain objects, timeline events, weather, the source plan, the two-source rule, consistency rules, the audit report, regression fixtures and the agent split. Out of scope: elevation, calibration bands, the scenario loader that consumes these records, morale. No source except CWV has been consulted; this spec asserts nothing about any other source.
@@ -67,11 +69,11 @@ Severity E fails `validate_data.py`; W is printed and must be listed in the repo
 - `t_min(stamp) = (days_from_civil(y, m, d) - days_from_civil(1863, 7, 1)) * 1440 + hh * 60 + mm`, using the standard proleptic Gregorian day count; an impossible date (June 31) is GB08. `hour_of(t) = floor_div(t, 60)`.
 - Bounds of a fact: `lo = low or value`, `hi = high or value`. Chain sum for parent P with children `C_i` and optional `headquarters` H: pass iff `sum(lo_i) + lo_H <= hi_P` and `sum(hi_i) + hi_H >= lo_P`. When P and every child are `verified` the test is exact: `sum(value_i) + value_H == value_P`.
 - Percentage: `pct(loss, base) = floor((loss * 100 + base / 2) / base)` (integer division); a recorded rate must equal it within 1.
-- Verified agreement for times: `max(at) - min(at) <= TIME_TOL_MIN` over all claims (`at_late` counts), `TIME_TOL_MIN = 15` (placeholder, CT-1301).
+- Verified agreement for times: `max(at) - min(at) <= TIME_TOL_MIN` over all claims (`at_late` counts), `TIME_TOL_MIN = 15` (placeholder, CT-013-1301).
 - Temperature for consumers: `temp_dc = floor_div((temp_f - 32) * 100 + 9, 18)` (tenths of a degree Celsius).
-- `training_class(raised, prior_battles, as_of)`: `months = days_between(raised, as_of) / 30` (floor); `Veteran` if `prior_battles >= 3 and months >= 12`; `Trained` if `prior_battles >= 1 or months >= 6`; else `Raw` (placeholder thresholds, CT-1302).
+- `training_class(raised, prior_battles, as_of)`: `months = days_between(raised, as_of) / 30` (floor); `Veteran` if `prior_battles >= 3 and months >= 12`; `Trained` if `prior_battles >= 1 or months >= 6`; else `Raw` (placeholder thresholds, CT-013-1302).
 - Hourly schedule: arrivals, deploys, withdrawals and departures sorted by `(hour_of(at), formation id, event rank arrive < deploy < withdraw < depart, id)`.
-- Review sample: `n = min(count, max(10, (count * 10 + 99) / 100))` records per packet (CT-1303); every proposed promotion is re-derived.
+- Review sample: `n = min(count, max(10, (count * 10 + 99) / 100))` records per packet (CT-013-1303); every proposed promotion is re-derived.
 
 ## 8. Audit workflow, split and review
 Roles, each a separate session, never two on one packet: **Librarian** (registry); **Auditor** (first pass, one packet, under about 400 changed lines); **Blind auditor** (second pass, sees no values); **Reconciler** (runs `reconcile`, records decisions); **Reviewer** (re-derives from the source page, writes the review block); **Historian** (human sign-off, plan section 9). Order: registry; tree skeleton (army to brigade) from the first consulted official source; packets by corps; arrivals, events, terrain and weather in parallel. The orchestrator opens one ticket per packet from `docs/ticket-template.md` after T-135; packet counts are known only after the skeleton exists.
@@ -113,10 +115,10 @@ write_report(path: str, report: dict, date: str) -> None
 ```
 CLI: `python3 tools/gb_audit.py check|hourly|reconcile A B|report PACKET --date D`; exit 1 on any E finding.
 
-**Extending `tools/validate_data.py`** (T-131 edits it): add `GB_SCHEMAS = {"units": "gb-regiment", "batteries": "gb-battery", "arrivals": "gb-arrival", "terrain": "gb-terrain-object", "events": "gb-timeline-event", "weather": "gb-weather"}` and `check_gettysburg(reg) -> (files, problems)`, called in `main()` after `check_rules`, adding to `count` and `problems`. It returns `(0, 0)` when `data/history/gettysburg` is absent; validates `sources.toml` against `gb-regiment.schema.json#/$defs/source_registry` and each record against its schema (existing message format, rule R8 for schema errors and floats); imports `gb_audit` (tools directory put on `sys.path`) and prints each finding as `path: GBnn message`, counting only E. R6 also runs `check_fixtures` on `qc/fixtures/gb-known-conflicts.toml`. `tools/test_validate_data.py` gains throwaway-root tests.
+**Extending `tools/validate_data.py`** (T-131; since T-027 the extension is the validator plugin `tools/validators/gettysburg.py`, loaded by `validate_data.py`, with unchanged behaviour): add `GB_SCHEMAS = {"units": "gb-regiment", "batteries": "gb-battery", "arrivals": "gb-arrival", "terrain": "gb-terrain-object", "events": "gb-timeline-event", "weather": "gb-weather"}` and `check_gettysburg(reg) -> (files, problems)`, called in `main()` after `check_rules`, adding to `count` and `problems`. It returns `(0, 0)` when `data/history/gettysburg` is absent; validates `sources.toml` against `gb-regiment.schema.json#/$defs/source_registry` and each record against its schema (existing message format, rule R8 for schema errors and floats); imports `gb_audit` (tools directory put on `sys.path`) and prints each finding as `path: GBnn message`, counting only E. R6 also runs `check_fixtures` on `qc/fixtures/gb-known-conflicts.toml`. `tools/test_validate_data.py` gains throwaway-root tests.
 
 ## 11. Performance budget (hypothesis H13)
-`check` on 2,000 records and 200 reports in at most 10 s; whole validator at most 30 s (CT-1305). Record count is unknown until the skeleton exists.
+`check` on 2,000 records and 200 reports in at most 10 s; whole validator at most 30 s (CT-013-1305). Record count is unknown until the skeleton exists.
 
 ## 12. Acceptance tests (tests first; thresholds are not edited to pass)
 - **T13-01 schemas:** each of the six files passes the Draft 2020-12 metaschema check; every file in `qc/fixtures/gb/good/` validates; each file in `bad/` fails with its expected code.
@@ -133,7 +135,7 @@ CLI: `python3 tools/gb_audit.py check|hourly|reconcile A B|report PACKET --date 
 - **T13-12 validator:** `python3 tools/validate_data.py` exits 0 on the repository and 1 on a throwaway root with a bad unit; existing tests pass unchanged.
 
 ## 13. Calibration targets
-CT-1301 `TIME_TOL_MIN` against audited first-hand accounts. CT-1302 training thresholds against SPEC-004 CT-5. CT-1303 review sample against the pilot packet's defect rate. CT-1304 the 60-minute child-before-parent warning against audited arrivals. CT-1305 performance. None changes a stored fact.
+CT-013-1301 `TIME_TOL_MIN` against audited first-hand accounts. CT-013-1302 training thresholds against CT-004-5. CT-013-1303 review sample against the pilot packet's defect rate. CT-013-1304 the 60-minute child-before-parent warning against audited arrivals. CT-013-1305 performance. None changes a stored fact.
 
 ## 14. Assumptions
 A1 Stamps are reported clock times; no zone or railroad-time correction. A2 Frame `gb_local_v1` (origin, axes, millimetres) is fixed by the terrain pipeline spec (SPEC-014); until then `x_mm`, `y_mm` are optional. A3 Weather fields are reconciled with SPEC-009 by amendment. A4 Weapons beyond the five in `weapons.toml` need a SPEC-005 amendment. A5 Counsel decides what each `licence_class` permits; the checker enforces only `cleared_by`. A6 Auditors are agents with human historian sign-off.
