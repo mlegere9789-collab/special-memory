@@ -351,6 +351,7 @@ Labels are sequential per base spec in landing order (wave, then ticket id). A l
 | Label | Content | Source | Ticket | Wave | Status |
 |---|---|---|---|---|---|
 | A1 | sections 1 to 5 and 10: one owner per historical row (ADR 0010 D-06), `[[override]]` rows, unit anchors, compile rules, policy rows | ADR 0010 | T-111 | 2 | landed |
+| A2 | section 4.4: `Unstable` needs `n >= 3` (agrees with T11-05) | T-113 | T-113 | 5 | landed |
 
 Reserved: SPEC-009 A1 (weather fields reconciled with SPEC-013, SPEC-013 assumption A3) and SPEC-005 A17 (weapons beyond the five rows, SPEC-013 assumption A4) have no ticket and take the next free label when a ticket exists. No spec proposes amendments to SPEC-001 or to specs 006 to 016 other than these.
 
