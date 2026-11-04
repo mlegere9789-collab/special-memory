@@ -1,0 +1,103 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "drill.schema.json",
+  "title": "Drill table (SPEC-004 section 6)",
+  "type": "object",
+  "required": ["globals", "training", "transition", "formation"],
+  "additionalProperties": false,
+  "properties": {
+    "globals": {
+      "type": "object",
+      "required": ["closeup_interval_ticks", "settle_tol_mm", "settle_budget_ticks"],
+      "allOf": [{"$ref": "#/$defs/provenance_fields"}],
+      "unevaluatedProperties": false,
+      "properties": {
+        "closeup_interval_ticks": {"type": "integer", "minimum": 1},
+        "settle_tol_mm": {"type": "integer", "minimum": 1},
+        "settle_budget_ticks": {"type": "integer", "minimum": 1}
+      }
+    },
+    "training": {
+      "type": "array",
+      "minItems": 3,
+      "maxItems": 3,
+      "uniqueItems": true,
+      "items": {
+        "type": "object",
+        "required": ["id", "transition_pm"],
+        "allOf": [{"$ref": "#/$defs/provenance_fields"}],
+        "unevaluatedProperties": false,
+        "properties": {
+          "id": {"enum": ["raw", "trained", "veteran"]},
+          "transition_pm": {"type": "integer", "minimum": 1, "maximum": 10000}
+        }
+      }
+    },
+    "transition": {
+      "type": "array",
+      "minItems": 6,
+      "maxItems": 6,
+      "items": {
+        "type": "object",
+        "required": ["from", "to", "base_ticks"],
+        "allOf": [{"$ref": "#/$defs/provenance_fields"}],
+        "unevaluatedProperties": false,
+        "properties": {
+          "from": {"$ref": "#/$defs/formation_id"},
+          "to": {"$ref": "#/$defs/formation_id"},
+          "base_ticks": {"type": "integer", "minimum": 1, "maximum": 1000000}
+        },
+        "not": {"anyOf": [
+          {"properties": {"from": {"const": "column"}, "to": {"const": "column"}}, "required": ["from", "to"]},
+          {"properties": {"from": {"const": "line"}, "to": {"const": "line"}}, "required": ["from", "to"]},
+          {"properties": {"from": {"const": "skirmish"}, "to": {"const": "skirmish"}}, "required": ["from", "to"]}
+        ]}
+      },
+      "description": "One row per ordered pair of distinct formations; the loader refuses a row with from equal to to and any missing or repeated pair."
+    },
+    "formation": {
+      "type": "array",
+      "minItems": 3,
+      "maxItems": 3,
+      "items": {
+        "type": "object",
+        "required": ["id", "file_width_mm", "rank_gap_mm"],
+        "unevaluatedProperties": false,
+        "properties": {
+          "id": {"$ref": "#/$defs/formation_id"},
+          "ranks": {"type": "integer", "minimum": 1, "maximum": 64},
+          "cols": {"type": "integer", "minimum": 1, "maximum": 64},
+          "file_width_mm": {"type": "integer", "minimum": 1, "maximum": 100000},
+          "rank_gap_mm": {"type": "integer", "minimum": 1, "maximum": 100000},
+          "deployed_pm": {"type": "integer", "minimum": 1, "maximum": 1000},
+          "interval_mm": {"type": "integer", "minimum": 1, "maximum": 100000},
+          "reserve_offset_mm": {"type": "integer", "minimum": 1, "maximum": 10000000}
+        },
+        "allOf": [
+          {"$ref": "#/$defs/provenance_fields"},
+          {"if": {"properties": {"id": {"const": "line"}}, "required": ["id"]},
+           "then": {"required": ["ranks"], "not": {"required": ["cols"]}}},
+          {"if": {"properties": {"id": {"const": "column"}}, "required": ["id"]},
+           "then": {"required": ["cols"], "not": {"required": ["ranks"]}}},
+          {"if": {"properties": {"id": {"const": "skirmish"}}, "required": ["id"]},
+           "then": {"required": ["cols", "deployed_pm", "interval_mm", "reserve_offset_mm"], "not": {"required": ["ranks"]}}}
+        ]
+      }
+    }
+  },
+  "$defs": {
+    "formation_id": {"enum": ["column", "line", "skirmish"]},
+    "provenance_fields": {
+      "type": "object",
+      "required": ["confidence"],
+      "properties": {
+        "confidence": {"$ref": "common.schema.json#/$defs/confidence"},
+        "placeholder": {"type": "boolean"},
+        "calibration_target": {"type": "string", "pattern": "^CT-[0-9]+$"},
+        "sources": {"$ref": "common.schema.json#/$defs/sources"},
+        "second_source": {"type": "string"},
+        "note": {"type": "string"}
+      }
+    }
+  }
+}

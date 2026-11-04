@@ -26,3 +26,12 @@ mod terrain;
 pub use fatigue::{fatigue_speed_pm, fatigue_step};
 pub use locomotion::{CurvePoint, Gait, GaitRow, LocomotionGlobals, LocomotionTable, FATIGUE_MAX};
 pub use terrain::{TerrainClass, TerrainGrid, TerrainTable, DEFAULT_CELL_MM};
+
+// T-017
+pub mod drill;
+pub mod slots;
+pub use drill::{
+    transition_ticks, DrillGlobals, DrillTable, Formation, FormationRow, Training, TrainingRow,
+    TransitionRow,
+};
+pub use slots::{assign_slots, regiment_roster, slot_layout, SlotLocal};
