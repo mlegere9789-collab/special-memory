@@ -1,0 +1,31 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "perf-flight.schema.json",
+  "title": "Performance camera flight",
+  "description": "qc/perf/flights/F*.toml (SPEC-016 sections 2 and 3.3). Positions are slab-local centimetres, z_cm is height above the ground under the camera, angles are 1/65536 turns (yaw unwrapped, 0 looks north, clockwise). Frames run 0 to frames - 1; the last waypoint is on frame frames - 1 or frames.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema", "id", "frames", "waypoint"],
+  "properties": {
+    "schema": {"const": "perf-flight/1"},
+    "id": {"type": "string", "pattern": "^F[1-9][0-9]*$"},
+    "frames": {"type": "integer", "minimum": 2},
+    "waypoint": {
+      "type": "array",
+      "minItems": 2,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["frame", "x_cm", "y_cm", "z_cm", "yaw_turn", "pitch_turn"],
+        "properties": {
+          "frame": {"type": "integer", "minimum": 0},
+          "x_cm": {"type": "integer", "minimum": 0, "maximum": 1000000},
+          "y_cm": {"type": "integer", "minimum": 0, "maximum": 1000000},
+          "z_cm": {"type": "integer", "minimum": 0, "maximum": 100000},
+          "yaw_turn": {"type": "integer", "minimum": -1048576, "maximum": 1048576},
+          "pitch_turn": {"type": "integer", "minimum": -16384, "maximum": 16384}
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,484 @@
+# Camera flight F5 (SPEC-016 section 3.3). Eight stations with a cut every 120 frames.
+schema = "perf-flight/1"
+id = "F5"
+frames = 3600
+
+[[waypoint]]
+frame = 0
+x_cm = 60000
+y_cm = 100000
+z_cm = 170
+yaw_turn = 0
+pitch_turn = 0
+
+[[waypoint]]
+frame = 119
+x_cm = 60000
+y_cm = 100000
+z_cm = 170
+yaw_turn = 0
+pitch_turn = 0
+
+[[waypoint]]
+frame = 120
+x_cm = 120000
+y_cm = 110000
+z_cm = 300
+yaw_turn = 4096
+pitch_turn = -200
+
+[[waypoint]]
+frame = 239
+x_cm = 120000
+y_cm = 110000
+z_cm = 300
+yaw_turn = 4096
+pitch_turn = -200
+
+[[waypoint]]
+frame = 240
+x_cm = 180000
+y_cm = 120000
+z_cm = 170
+yaw_turn = 12288
+pitch_turn = 0
+
+[[waypoint]]
+frame = 359
+x_cm = 180000
+y_cm = 120000
+z_cm = 170
+yaw_turn = 12288
+pitch_turn = 0
+
+[[waypoint]]
+frame = 360
+x_cm = 240000
+y_cm = 130000
+z_cm = 600
+yaw_turn = 16384
+pitch_turn = -400
+
+[[waypoint]]
+frame = 479
+x_cm = 240000
+y_cm = 130000
+z_cm = 600
+yaw_turn = 16384
+pitch_turn = -400
+
+[[waypoint]]
+frame = 480
+x_cm = 100000
+y_cm = 160000
+z_cm = 170
+yaw_turn = 24576
+pitch_turn = 0
+
+[[waypoint]]
+frame = 599
+x_cm = 100000
+y_cm = 160000
+z_cm = 170
+yaw_turn = 24576
+pitch_turn = 0
+
+[[waypoint]]
+frame = 600
+x_cm = 160000
+y_cm = 170000
+z_cm = 1500
+yaw_turn = 32768
+pitch_turn = -1500
+
+[[waypoint]]
+frame = 719
+x_cm = 160000
+y_cm = 170000
+z_cm = 1500
+yaw_turn = 32768
+pitch_turn = -1500
+
+[[waypoint]]
+frame = 720
+x_cm = 220000
+y_cm = 180000
+z_cm = 170
+yaw_turn = 49152
+pitch_turn = 0
+
+[[waypoint]]
+frame = 839
+x_cm = 220000
+y_cm = 180000
+z_cm = 170
+yaw_turn = 49152
+pitch_turn = 0
+
+[[waypoint]]
+frame = 840
+x_cm = 270000
+y_cm = 190000
+z_cm = 3000
+yaw_turn = 57344
+pitch_turn = -2500
+
+[[waypoint]]
+frame = 959
+x_cm = 270000
+y_cm = 190000
+z_cm = 3000
+yaw_turn = 57344
+pitch_turn = -2500
+
+[[waypoint]]
+frame = 960
+x_cm = 60000
+y_cm = 100000
+z_cm = 170
+yaw_turn = 0
+pitch_turn = 0
+
+[[waypoint]]
+frame = 1079
+x_cm = 60000
+y_cm = 100000
+z_cm = 170
+yaw_turn = 0
+pitch_turn = 0
+
+[[waypoint]]
+frame = 1080
+x_cm = 120000
+y_cm = 110000
+z_cm = 300
+yaw_turn = 4096
+pitch_turn = -200
+
+[[waypoint]]
+frame = 1199
+x_cm = 120000
+y_cm = 110000
+z_cm = 300
+yaw_turn = 4096
+pitch_turn = -200
+
+[[waypoint]]
+frame = 1200
+x_cm = 180000
+y_cm = 120000
+z_cm = 170
+yaw_turn = 12288
+pitch_turn = 0
+
+[[waypoint]]
+frame = 1319
+x_cm = 180000
+y_cm = 120000
+z_cm = 170
+yaw_turn = 12288
+pitch_turn = 0
+
+[[waypoint]]
+frame = 1320
+x_cm = 240000
+y_cm = 130000
+z_cm = 600
+yaw_turn = 16384
+pitch_turn = -400
+
+[[waypoint]]
+frame = 1439
+x_cm = 240000
+y_cm = 130000
+z_cm = 600
+yaw_turn = 16384
+pitch_turn = -400
+
+[[waypoint]]
+frame = 1440
+x_cm = 100000
+y_cm = 160000
+z_cm = 170
+yaw_turn = 24576
+pitch_turn = 0
+
+[[waypoint]]
+frame = 1559
+x_cm = 100000
+y_cm = 160000
+z_cm = 170
+yaw_turn = 24576
+pitch_turn = 0
+
+[[waypoint]]
+frame = 1560
+x_cm = 160000
+y_cm = 170000
+z_cm = 1500
+yaw_turn = 32768
+pitch_turn = -1500
+
+[[waypoint]]
+frame = 1679
+x_cm = 160000
+y_cm = 170000
+z_cm = 1500
+yaw_turn = 32768
+pitch_turn = -1500
+
+[[waypoint]]
+frame = 1680
+x_cm = 220000
+y_cm = 180000
+z_cm = 170
+yaw_turn = 49152
+pitch_turn = 0
+
+[[waypoint]]
+frame = 1799
+x_cm = 220000
+y_cm = 180000
+z_cm = 170
+yaw_turn = 49152
+pitch_turn = 0
+
+[[waypoint]]
+frame = 1800
+x_cm = 270000
+y_cm = 190000
+z_cm = 3000
+yaw_turn = 57344
+pitch_turn = -2500
+
+[[waypoint]]
+frame = 1919
+x_cm = 270000
+y_cm = 190000
+z_cm = 3000
+yaw_turn = 57344
+pitch_turn = -2500
+
+[[waypoint]]
+frame = 1920
+x_cm = 60000
+y_cm = 100000
+z_cm = 170
+yaw_turn = 0
+pitch_turn = 0
+
+[[waypoint]]
+frame = 2039
+x_cm = 60000
+y_cm = 100000
+z_cm = 170
+yaw_turn = 0
+pitch_turn = 0
+
+[[waypoint]]
+frame = 2040
+x_cm = 120000
+y_cm = 110000
+z_cm = 300
+yaw_turn = 4096
+pitch_turn = -200
+
+[[waypoint]]
+frame = 2159
+x_cm = 120000
+y_cm = 110000
+z_cm = 300
+yaw_turn = 4096
+pitch_turn = -200
+
+[[waypoint]]
+frame = 2160
+x_cm = 180000
+y_cm = 120000
+z_cm = 170
+yaw_turn = 12288
+pitch_turn = 0
+
+[[waypoint]]
+frame = 2279
+x_cm = 180000
+y_cm = 120000
+z_cm = 170
+yaw_turn = 12288
+pitch_turn = 0
+
+[[waypoint]]
+frame = 2280
+x_cm = 240000
+y_cm = 130000
+z_cm = 600
+yaw_turn = 16384
+pitch_turn = -400
+
+[[waypoint]]
+frame = 2399
+x_cm = 240000
+y_cm = 130000
+z_cm = 600
+yaw_turn = 16384
+pitch_turn = -400
+
+[[waypoint]]
+frame = 2400
+x_cm = 100000
+y_cm = 160000
+z_cm = 170
+yaw_turn = 24576
+pitch_turn = 0
+
+[[waypoint]]
+frame = 2519
+x_cm = 100000
+y_cm = 160000
+z_cm = 170
+yaw_turn = 24576
+pitch_turn = 0
+
+[[waypoint]]
+frame = 2520
+x_cm = 160000
+y_cm = 170000
+z_cm = 1500
+yaw_turn = 32768
+pitch_turn = -1500
+
+[[waypoint]]
+frame = 2639
+x_cm = 160000
+y_cm = 170000
+z_cm = 1500
+yaw_turn = 32768
+pitch_turn = -1500
+
+[[waypoint]]
+frame = 2640
+x_cm = 220000
+y_cm = 180000
+z_cm = 170
+yaw_turn = 49152
+pitch_turn = 0
+
+[[waypoint]]
+frame = 2759
+x_cm = 220000
+y_cm = 180000
+z_cm = 170
+yaw_turn = 49152
+pitch_turn = 0
+
+[[waypoint]]
+frame = 2760
+x_cm = 270000
+y_cm = 190000
+z_cm = 3000
+yaw_turn = 57344
+pitch_turn = -2500
+
+[[waypoint]]
+frame = 2879
+x_cm = 270000
+y_cm = 190000
+z_cm = 3000
+yaw_turn = 57344
+pitch_turn = -2500
+
+[[waypoint]]
+frame = 2880
+x_cm = 60000
+y_cm = 100000
+z_cm = 170
+yaw_turn = 0
+pitch_turn = 0
+
+[[waypoint]]
+frame = 2999
+x_cm = 60000
+y_cm = 100000
+z_cm = 170
+yaw_turn = 0
+pitch_turn = 0
+
+[[waypoint]]
+frame = 3000
+x_cm = 120000
+y_cm = 110000
+z_cm = 300
+yaw_turn = 4096
+pitch_turn = -200
+
+[[waypoint]]
+frame = 3119
+x_cm = 120000
+y_cm = 110000
+z_cm = 300
+yaw_turn = 4096
+pitch_turn = -200
+
+[[waypoint]]
+frame = 3120
+x_cm = 180000
+y_cm = 120000
+z_cm = 170
+yaw_turn = 12288
+pitch_turn = 0
+
+[[waypoint]]
+frame = 3239
+x_cm = 180000
+y_cm = 120000
+z_cm = 170
+yaw_turn = 12288
+pitch_turn = 0
+
+[[waypoint]]
+frame = 3240
+x_cm = 240000
+y_cm = 130000
+z_cm = 600
+yaw_turn = 16384
+pitch_turn = -400
+
+[[waypoint]]
+frame = 3359
+x_cm = 240000
+y_cm = 130000
+z_cm = 600
+yaw_turn = 16384
+pitch_turn = -400
+
+[[waypoint]]
+frame = 3360
+x_cm = 100000
+y_cm = 160000
+z_cm = 170
+yaw_turn = 24576
+pitch_turn = 0
+
+[[waypoint]]
+frame = 3479
+x_cm = 100000
+y_cm = 160000
+z_cm = 170
+yaw_turn = 24576
+pitch_turn = 0
+
+[[waypoint]]
+frame = 3480
+x_cm = 160000
+y_cm = 170000
+z_cm = 1500
+yaw_turn = 32768
+pitch_turn = -1500
+
+[[waypoint]]
+frame = 3599
+x_cm = 160000
+y_cm = 170000
+z_cm = 1500
+yaw_turn = 32768
+pitch_turn = -1500

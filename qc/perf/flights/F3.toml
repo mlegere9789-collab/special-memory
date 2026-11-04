@@ -1,0 +1,60 @@
+# Camera flight F3 (SPEC-016 section 3.3). Descent from 120 m to 40 m.
+schema = "perf-flight/1"
+id = "F3"
+frames = 3600
+
+[[waypoint]]
+frame = 0
+x_cm = 153600
+y_cm = 100000
+z_cm = 12000
+yaw_turn = 0
+pitch_turn = -4096
+
+[[waypoint]]
+frame = 600
+x_cm = 153600
+y_cm = 103333
+z_cm = 10667
+yaw_turn = 0
+pitch_turn = -4096
+
+[[waypoint]]
+frame = 1200
+x_cm = 153600
+y_cm = 106666
+z_cm = 9334
+yaw_turn = 0
+pitch_turn = -4096
+
+[[waypoint]]
+frame = 1800
+x_cm = 153600
+y_cm = 110000
+z_cm = 8000
+yaw_turn = 0
+pitch_turn = -4096
+
+[[waypoint]]
+frame = 2400
+x_cm = 153600
+y_cm = 113333
+z_cm = 6667
+yaw_turn = 0
+pitch_turn = -4096
+
+[[waypoint]]
+frame = 3000
+x_cm = 153600
+y_cm = 116666
+z_cm = 5334
+yaw_turn = 0
+pitch_turn = -4096
+
+[[waypoint]]
+frame = 3600
+x_cm = 153600
+y_cm = 120000
+z_cm = 4000
+yaw_turn = 0
+pitch_turn = -4096

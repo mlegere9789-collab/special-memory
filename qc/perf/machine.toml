@@ -1,0 +1,4 @@
+# Machines used for M1 runs (SPEC-016 section 2). One [[machine]] row per machine, appended when a run is made;
+# fields: id, cpu_model, cpu_cores, ram_mb, gpu_model, vram_mb, driver, os_build, internal_w, internal_h, upscaler,
+# date (YYYYMMDD). No GPU machine has been measured yet.
+schema = "perf-machine/1"

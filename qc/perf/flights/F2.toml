@@ -1,0 +1,60 @@
+# Camera flight F2 (SPEC-016 section 3.3). Low sweep at 10 m, 20 m/s.
+schema = "perf-flight/1"
+id = "F2"
+frames = 3600
+
+[[waypoint]]
+frame = 0
+x_cm = 93600
+y_cm = 153600
+z_cm = 1000
+yaw_turn = 16384
+pitch_turn = -1500
+
+[[waypoint]]
+frame = 600
+x_cm = 113600
+y_cm = 153600
+z_cm = 1000
+yaw_turn = 16384
+pitch_turn = -1500
+
+[[waypoint]]
+frame = 1200
+x_cm = 133600
+y_cm = 153600
+z_cm = 1000
+yaw_turn = 16384
+pitch_turn = -1500
+
+[[waypoint]]
+frame = 1800
+x_cm = 153600
+y_cm = 153600
+z_cm = 1000
+yaw_turn = 16384
+pitch_turn = -1500
+
+[[waypoint]]
+frame = 2400
+x_cm = 173600
+y_cm = 153600
+z_cm = 1000
+yaw_turn = 16384
+pitch_turn = -1500
+
+[[waypoint]]
+frame = 3000
+x_cm = 193600
+y_cm = 153600
+z_cm = 1000
+yaw_turn = 16384
+pitch_turn = -1500
+
+[[waypoint]]
+frame = 3600
+x_cm = 213600
+y_cm = 153600
+z_cm = 1000
+yaw_turn = 16384
+pitch_turn = -1500

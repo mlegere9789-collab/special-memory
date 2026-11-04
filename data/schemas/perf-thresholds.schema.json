@@ -1,0 +1,38 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "perf-thresholds.schema.json",
+  "title": "Performance thresholds",
+  "description": "qc/perf/thresholds.toml (SPEC-016 sections 2 and 10). Rows carry the provenance fields of rules-common.schema.json flat beside their own keys (checked by tools/validators/perf.py); every row also names a calibration target.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema", "threshold"],
+  "properties": {
+    "schema": {"const": "perf-thresholds/1"},
+    "threshold": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "scene", "machine", "metric", "stat", "op", "value", "unit", "locked", "confidence", "calibration_target"],
+        "properties": {
+          "id": {"type": "string", "pattern": "^H16-([1-9]|1[01])(-[a-z0-9_]+)*$"},
+          "scene": {"type": "string", "pattern": "^(all|S[0-6](-S[0-6])?)$", "description": "one scene, a range such as S1-S4, or all"},
+          "machine": {"enum": ["RM-R", "RM-M", "both"]},
+          "metric": {"type": "string", "pattern": "^[a-z0-9_]+$"},
+          "stat": {"type": "string", "pattern": "^(p50|p95|p99|p999|max|min|mean|sum|count|over_[0-9]+)$"},
+          "op": {"enum": ["le", "ge", "eq"]},
+          "value": {"type": "integer"},
+          "unit": {"enum": ["us", "mb", "pm", "count", "samples"]},
+          "locked": {"type": "boolean"},
+          "confidence": {"$ref": "common.schema.json#/$defs/confidence"},
+          "placeholder": {"type": "boolean"},
+          "calibration_target": {"type": "string", "pattern": "^CT-[0-9]{3}-[0-9]+$"},
+          "sources": {"$ref": "common.schema.json#/$defs/sources"},
+          "second_source": {"type": "string"},
+          "note": {"type": "string"}
+        }
+      }
+    }
+  }
+}

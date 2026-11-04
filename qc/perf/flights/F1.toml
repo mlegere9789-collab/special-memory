@@ -1,0 +1,60 @@
+# Camera flight F1 (SPEC-016 section 3.3). Ground walk along a regiment front, eye height 1.7 m, 1.5 m/s.
+schema = "perf-flight/1"
+id = "F1"
+frames = 3600
+
+[[waypoint]]
+frame = 0
+x_cm = 120000
+y_cm = 153600
+z_cm = 170
+yaw_turn = 0
+pitch_turn = 0
+
+[[waypoint]]
+frame = 600
+x_cm = 121500
+y_cm = 153600
+z_cm = 170
+yaw_turn = 0
+pitch_turn = 0
+
+[[waypoint]]
+frame = 1200
+x_cm = 123000
+y_cm = 153600
+z_cm = 170
+yaw_turn = 0
+pitch_turn = 0
+
+[[waypoint]]
+frame = 1800
+x_cm = 124500
+y_cm = 153600
+z_cm = 170
+yaw_turn = 0
+pitch_turn = 0
+
+[[waypoint]]
+frame = 2400
+x_cm = 126000
+y_cm = 153600
+z_cm = 170
+yaw_turn = 0
+pitch_turn = 0
+
+[[waypoint]]
+frame = 3000
+x_cm = 127500
+y_cm = 153600
+z_cm = 170
+yaw_turn = 0
+pitch_turn = 0
+
+[[waypoint]]
+frame = 3600
+x_cm = 129000
+y_cm = 153600
+z_cm = 170
+yaw_turn = 0
+pitch_turn = 0

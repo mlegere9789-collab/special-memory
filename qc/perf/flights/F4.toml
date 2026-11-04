@@ -1,0 +1,60 @@
+# Camera flight F4 (SPEC-016 section 3.3). Ridge pan at 25 m, one turn in 60 s.
+schema = "perf-flight/1"
+id = "F4"
+frames = 3600
+
+[[waypoint]]
+frame = 0
+x_cm = 153600
+y_cm = 153600
+z_cm = 2500
+yaw_turn = 0
+pitch_turn = -500
+
+[[waypoint]]
+frame = 600
+x_cm = 153600
+y_cm = 153600
+z_cm = 2500
+yaw_turn = 10922
+pitch_turn = -500
+
+[[waypoint]]
+frame = 1200
+x_cm = 153600
+y_cm = 153600
+z_cm = 2500
+yaw_turn = 21845
+pitch_turn = -500
+
+[[waypoint]]
+frame = 1800
+x_cm = 153600
+y_cm = 153600
+z_cm = 2500
+yaw_turn = 32768
+pitch_turn = -500
+
+[[waypoint]]
+frame = 2400
+x_cm = 153600
+y_cm = 153600
+z_cm = 2500
+yaw_turn = 43690
+pitch_turn = -500
+
+[[waypoint]]
+frame = 3000
+x_cm = 153600
+y_cm = 153600
+z_cm = 2500
+yaw_turn = 54613
+pitch_turn = -500
+
+[[waypoint]]
+frame = 3600
+x_cm = 153600
+y_cm = 153600
+z_cm = 2500
+yaw_turn = 65536
+pitch_turn = -500
