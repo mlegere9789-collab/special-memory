@@ -53,7 +53,7 @@ mod orders;
 mod regiment;
 mod tables;
 pub use battle::{soldier_stream, BattleState, LocoExt, STREAM_SOLDIER_BASE};
-pub use battle_hash::battle_hash;
+pub use battle_hash::{battle_hash, battle_hash_into};
 pub use orders::{decode_order, encode_order, Order, OrderDecodeError};
 pub use regiment::{
     can_fire, Regiment, RegimentId, RegimentSpec, RegimentState, RegimentStatus, RoundsAccount,
@@ -138,3 +138,7 @@ pub use sight::{
 
 // T-024
 pub mod calibration;
+
+// T-084
+mod runner;
+pub use runner::{embedded_rules, Battle, BattleLedger, FidelityState};

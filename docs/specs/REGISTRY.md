@@ -303,7 +303,7 @@ Labels are sequential per base spec in landing order (wave, then ticket id). A l
 | Label | Content | Source | Ticket | Status |
 |---|---|---|---|---|
 | A1 | resource limits on `run` and `verify` | review | T-H1 | landed |
-| A2 | `verify` binding dispatch and the subcommand table (section 15) | SPEC-008, 010, 011 | T-084 | pending |
+| A2 | `verify` binding dispatch and the subcommand table (section 15) | SPEC-008, 010, 011 | T-084 | landed |
 
 ### 9.3 SPEC-004 (movement)
 
