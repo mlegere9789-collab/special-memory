@@ -45,3 +45,13 @@ pub use damage::{
     energy_joules, DamageTable, HitOutcome, OutcomeCell, Posture, PostureRow, Region,
 };
 pub use weapons::{AmmoLoad, LoadStep, WeaponClass, WeaponRow, WeaponTable};
+
+// T-021
+pub mod flight;
+mod gauss;
+pub mod range;
+mod vec3;
+pub use flight::{advance_projectile, step_projectile, Ballistics, Flight, FlightEnv, Projectile};
+pub use gauss::{angle_from_urad, gauss_unit};
+pub use range::RangeTable;
+pub use vec3::Vec3Fx;
