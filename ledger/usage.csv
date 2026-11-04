@@ -5,3 +5,5 @@ date,ticket,class,estimated_usage,actual_usage,review_defects,rework_count,notes
 2026-11-02,T-011/T-012 sim-cli + goldens (SPEC-003),M,,124569 tokens,0,0,fresh implementer agent; cross-platform proof wired in CI
 2026-11-02,independent review of core-math sim-state sim-cli,M,,212156 tokens,0,0,review agent; 0 arithmetic/grid/reader defects; 1 verify hang; 15 surviving mutants
 2026-11-04,T-H1 A1 hardening (SPEC-001..003 amendments),L,,90894 tokens (finish pass; first pass stopped mid-run),0,1,fresh implementer agent; 224 debug / 225 release tests; 10 mutants proved killed; goldens unchanged
+2026-11-04,T-014 SpatialGrid::query_segment,M,,100730 tokens,0,0,fresh implementer agent; proptest vs brute force; 1000 segments of 15 m in 942 us (20k agents)
+2026-11-04,T-015 battle-rules crate + loader,M,,100728 tokens,0,0,fresh implementer agent; toml =1.2.0 serde =1.0.229 exact pins; ADR 0004
