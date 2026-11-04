@@ -114,3 +114,10 @@ pub use fidelity::{
     classify, ArmRow, ClassInput, FidelityClass, FidelityGlobals, FidelityTable, F0, F1, F2,
 };
 pub use sector::{HotWindow, SectorBody, SectorMap, SectorState};
+
+// T-091
+mod environment;
+pub use environment::{
+    exp_table, EnvTable, HeatParams, HeatPoint, RainParams, RetainRow, SightParams, SmokeParams,
+    WeatherKey, WeatherNow, WeatherTable, EXP_TABLE, WIND_MAX_MM_S,
+};

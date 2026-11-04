@@ -1,0 +1,143 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "environment.schema.json",
+  "title": "Environment rules (SPEC-009 section 3.1)",
+  "description": "data/rules/environment.toml. Integer units only. JSON Schema cannot compare fields or tables, so the loader (EnvTable::from_toml_str) and tools/validators/environment.py enforce: heat curve strictly increasing in apparent_f10, drain_pm non-decreasing, rest_pm non-increasing; one retain row per terrain class, ascending; the flow-sum limit; the smoke cell equal to the terrain cell.",
+  "$defs": {
+    "provenance_fields": {
+      "properties": {
+        "confidence": {"$ref": "common.schema.json#/$defs/confidence"},
+        "placeholder": {"type": "boolean"},
+        "calibration_target": {"type": "string", "pattern": "^CT-[0-9]{3}-[0-9]+$"},
+        "sources": {"$ref": "common.schema.json#/$defs/sources"},
+        "second_source": {"type": "string"},
+        "note": {"type": "string"}
+      },
+      "required": ["confidence"]
+    }
+  },
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema", "retain", "heat_curve", "smoke", "sight", "heat", "rain"],
+  "properties": {
+    "schema": {"const": "environment/1"},
+    "retain": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "allOf": [{"$ref": "#/$defs/provenance_fields"}],
+        "type": "object",
+        "unevaluatedProperties": false,
+        "required": ["class", "retain_pm"],
+        "properties": {
+          "class": {"type": "integer", "minimum": 0, "maximum": 255},
+          "retain_pm": {"type": "integer", "minimum": 0, "maximum": 1000}
+        }
+      }
+    },
+    "heat_curve": {
+      "type": "array",
+      "minItems": 2,
+      "items": {
+        "allOf": [{"$ref": "#/$defs/provenance_fields"}],
+        "type": "object",
+        "unevaluatedProperties": false,
+        "required": ["apparent_f10", "drain_pm", "rest_pm"],
+        "properties": {
+          "apparent_f10": {"type": "integer", "minimum": -1000, "maximum": 3000},
+          "drain_pm": {"type": "integer", "minimum": 0, "maximum": 10000},
+          "rest_pm": {"type": "integer", "minimum": 0, "maximum": 10000}
+        }
+      }
+    },
+    "smoke": {
+      "allOf": [{"$ref": "#/$defs/provenance_fields"}],
+      "type": "object",
+      "unevaluatedProperties": false,
+      "required": [
+        "period_ticks",
+        "cell_mm",
+        "height_mm",
+        "yield_pm",
+        "misfire_pm",
+        "diffuse_ppm",
+        "decay_ppm",
+        "rain_decay_gain_pm",
+        "cell_cap",
+        "ext_k",
+        "ref_units"
+      ],
+      "properties": {
+        "period_ticks": {"type": "integer", "minimum": 1, "maximum": 1200},
+        "cell_mm": {"type": "integer", "minimum": 1, "maximum": 1000000},
+        "height_mm": {"type": "integer", "minimum": 1, "maximum": 1000000},
+        "yield_pm": {"type": "integer", "minimum": 0, "maximum": 10000},
+        "misfire_pm": {"type": "integer", "minimum": 0, "maximum": 1000},
+        "diffuse_ppm": {"type": "integer", "minimum": 0, "maximum": 250000},
+        "decay_ppm": {"type": "integer", "minimum": 0, "maximum": 1000000},
+        "rain_decay_gain_pm": {"type": "integer", "minimum": 0, "maximum": 10000},
+        "cell_cap": {"type": "integer", "minimum": 1, "maximum": 4294967295},
+        "ext_k": {"type": "integer", "minimum": 0, "maximum": 10000},
+        "ref_units": {"type": "integer", "minimum": 1, "maximum": 4294967295}
+      }
+    },
+    "sight": {
+      "allOf": [{"$ref": "#/$defs/provenance_fields"}],
+      "type": "object",
+      "unevaluatedProperties": false,
+      "required": [
+        "period_ticks",
+        "step_mm",
+        "far_step_mm",
+        "clear_margin_mm",
+        "min_transmit_pm",
+        "retries",
+        "range_smoke_gain_pm",
+        "peek_step_mm",
+        "peek_max_mm",
+        "peek_back_mm",
+        "blind_report_pm",
+        "observer_samples"
+      ],
+      "properties": {
+        "period_ticks": {"type": "integer", "minimum": 1, "maximum": 1200},
+        "step_mm": {"type": "integer", "minimum": 1, "maximum": 100000},
+        "far_step_mm": {"type": "integer", "minimum": 1, "maximum": 100000},
+        "clear_margin_mm": {"type": "integer", "minimum": 0, "maximum": 10000},
+        "min_transmit_pm": {"type": "integer", "minimum": 0, "maximum": 1000},
+        "retries": {"type": "integer", "minimum": 0, "maximum": 64},
+        "range_smoke_gain_pm": {"type": "integer", "minimum": 0, "maximum": 100000},
+        "peek_step_mm": {"type": "integer", "minimum": 1, "maximum": 60000},
+        "peek_max_mm": {"type": "integer", "minimum": 0, "maximum": 60000},
+        "peek_back_mm": {"type": "integer", "minimum": 0, "maximum": 60000},
+        "blind_report_pm": {"type": "integer", "minimum": 0, "maximum": 1000},
+        "observer_samples": {"type": "integer", "minimum": 1, "maximum": 64}
+      }
+    },
+    "heat": {
+      "allOf": [{"$ref": "#/$defs/provenance_fields"}],
+      "type": "object",
+      "unevaluatedProperties": false,
+      "required": ["floor_f10", "humid_floor_pm", "div"],
+      "properties": {
+        "floor_f10": {"type": "integer", "minimum": -1000, "maximum": 3000},
+        "humid_floor_pm": {"type": "integer", "minimum": 0, "maximum": 1000},
+        "div": {"type": "integer", "minimum": 1, "maximum": 1000000}
+      }
+    },
+    "rain": {
+      "allOf": [{"$ref": "#/$defs/provenance_fields"}],
+      "type": "object",
+      "unevaluatedProperties": false,
+      "required": ["powder_rise_ppm", "powder_fall_ppm", "ground_rise_ppm", "ground_fall_ppm", "wet_extra_pm", "ground_min_pm"],
+      "properties": {
+        "powder_rise_ppm": {"type": "integer", "minimum": 0, "maximum": 1000000},
+        "powder_fall_ppm": {"type": "integer", "minimum": 0, "maximum": 1000000},
+        "ground_rise_ppm": {"type": "integer", "minimum": 0, "maximum": 1000000},
+        "ground_fall_ppm": {"type": "integer", "minimum": 0, "maximum": 1000000},
+        "wet_extra_pm": {"type": "integer", "minimum": 0, "maximum": 100000},
+        "ground_min_pm": {"type": "integer", "minimum": 0, "maximum": 1000}
+      }
+    }
+  }
+}
