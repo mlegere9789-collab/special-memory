@@ -1,0 +1,6 @@
+{
+  "format": 1,
+  "rows": [
+    {"scenario": "command_chain", "parameters": "27 regiments, telegraph and flags", "ticks": 6000, "seed": 7, "final_hash": "413d05a4b1fbf3d1"}
+  ]
+}

@@ -2,6 +2,7 @@
 //!
 //! Exit codes: `0` success or match, `1` replay mismatch, `2` malformed file or usage error.
 
+use crate::battle::run_battle;
 use crate::bench::{micros, run_bench};
 use crate::bound::verify_bound;
 use crate::history::{is_history_replay, verify_history};
@@ -24,6 +25,9 @@ commands:
          header `<scenario>/<variant>` reads data/ under --root (default .)
   resolve --scenario ID --seed S [--ticks N] [--out FILE] [--data-dir DIR]
          quick-resolve a data scenario: final hash, ledger, casualties, objectives
+  battle --scenario NAME --ticks N --seed S [--data-dir DIR]
+         run a library scenario (command_chain, march_single, ...) and print the
+         final state hash
   hash   --agents K --ticks N --seed S
          print the final state hash
   bench  --agents K --ticks N [--seed S]
@@ -254,6 +258,18 @@ fn cmd_resolve(args: &[String], out: &mut dyn Write) -> CliResult {
     Ok(0)
 }
 
+fn cmd_battle(args: &[String], out: &mut dyn Write) -> CliResult {
+    let flags = Flags::parse(args, &["scenario", "seed", "ticks", "data-dir"])?;
+    let Some(name) = flags.raw("scenario") else {
+        return err("missing required option --scenario");
+    };
+    let (seed, ticks): (u64, u64) = (flags.number("seed", None)?, flags.number("ticks", None)?);
+    let data = Path::new(flags.raw("data-dir").unwrap_or(DEFAULT_DATA_DIR));
+    let line = run_battle(data, name, seed, ticks).or_else(err)?;
+    let _ = write!(out, "{line}");
+    Ok(0)
+}
+
 fn cmd_hash(args: &[String], out: &mut dyn Write) -> CliResult {
     let flags = Flags::parse(args, &["agents", "ticks", "seed", "tick-hz"])?;
     let params = params_from(&flags, None)?;
@@ -287,6 +303,7 @@ pub fn run_cli(args: &[String], out: &mut dyn Write, errw: &mut dyn Write) -> i3
         "run" => cmd_run(rest, out),
         "verify" => cmd_verify(rest, out, errw),
         "resolve" => cmd_resolve(rest, out),
+        "battle" => cmd_battle(rest, out),
         "hash" => cmd_hash(rest, out),
         "bench" => cmd_bench(rest, out),
         "help" | "--help" | "-h" => {

@@ -8,6 +8,7 @@
 //! the issuer ([`BattleState::order_views`]). The command layer is optional state of a battle
 //! (ADR 0006): none of this changes a battle that does not enable it.
 
+mod calibration;
 mod chain;
 mod codec;
 mod data;
@@ -23,6 +24,7 @@ mod report;
 mod state;
 mod status;
 
+pub use calibration::run_command_bands;
 pub use chain::StaffJob;
 pub use codec::{
     decode_dispatch, decode_options, decode_script, encode_dispatch, encode_options, encode_script,

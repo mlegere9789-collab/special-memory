@@ -8,5 +8,6 @@ pub mod bands;
 pub mod fire;
 pub mod report;
 
+pub use crate::command::run_command_bands;
 pub use bands::{parse_bands, Band, Point};
 pub use fire::{run_band_suite, run_cal_line, BandRow, LineRun, LineSet, SuiteReport, SEEDS};

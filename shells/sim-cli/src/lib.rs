@@ -8,10 +8,12 @@
 //! * [`resolve`] and [`bound`]: `resolve` and the data-scenario binding of `verify` (SPEC-003
 //!   amendment A2).
 //! * [`cli`]: the command-line front end (`run`, `verify`, `hash`, `bench`, `resolve`).
+//! * [`battle`]: `battle`, the library scenarios (SPEC-004, SPEC-007).
 //! * [`bench`]: tick timing, the only place a wall clock is read.
 #![forbid(unsafe_code)]
 #![deny(missing_docs)]
 
+pub mod battle;
 pub mod bench;
 pub mod bound;
 pub mod cli;
