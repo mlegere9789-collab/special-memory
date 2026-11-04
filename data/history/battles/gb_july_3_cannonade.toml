@@ -1,0 +1,43 @@
+id = "gb_july_3_cannonade"
+name = "Confederate bombardment before the assault"
+theater = "eastern"
+notes = ["Planned to start about 1 p.m. and last about two hours.", "About 2:45-3 p.m. Alexander sent word to Pickett that he should come at once because ammunition was running low."]
+
+[start_date]
+value = "1863-07-03"
+confidence = "partial"
+sources = [{document = "CWV", page = 69, tag = "P"}, {document = "CWV", page = 83, tag = "untagged"}]
+
+[end_date]
+value = "1863-07-03"
+confidence = "partial"
+sources = [{document = "CWV", page = 69, tag = "P"}, {document = "CWV", page = 83, tag = "untagged"}]
+
+[location]
+state = "Pennsylvania"
+near = "Gettysburg, Seminary Ridge against Cemetery Ridge"
+
+[sides]
+
+[sides.union]
+
+[sides.union.commander]
+value = "Henry Hunt (Union artillery chief)"
+confidence = "partial"
+sources = [{document = "CWV", page = 83, tag = "untagged"}]
+
+[sides.union.casualties]
+
+[sides.confederate]
+
+[sides.confederate.commander]
+value = "Alexander, Pendleton and Hill's reserve artillery, for Longstreet"
+confidence = "partial"
+sources = [{document = "CWV", page = 83, tag = "untagged"}]
+
+[sides.confederate.casualties]
+
+[outcome]
+value = "The Confederate fire largely overshot, shelling reserves and Meade's headquarters at the Leister house; Hunt had Union batteries stop firing for a time to save ammunition."
+confidence = "partial"
+sources = [{document = "CWV", page = 69, tag = "P"}, {document = "CWV", page = 83, tag = "untagged"}]

@@ -1,0 +1,12 @@
+id = "robert_lindsay_walker"
+name = "Robert Lindsay Walker"
+side = "confederate"
+
+[[career]]
+role = "Artillery chief, Third Corps"
+
+[career.fact]
+value = "Named as the artillery chief for Hill's corps in the 1863 reorganisation into battalions."
+confidence = "unverified"
+sources = [{document = "CWV", page = 301, tag = "untagged"}, {document = "CWV", page = 316, tag = "[U]"}]
+flag = "One page gives only the surname 'Walker' for the Third Corps artillery chief; the full name comes from a separate list marked from memory, so the link between the two is an inference."

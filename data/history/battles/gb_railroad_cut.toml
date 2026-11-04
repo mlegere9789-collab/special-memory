@@ -1,0 +1,44 @@
+id = "gb_railroad_cut"
+name = "The unfinished railroad cut north of the pike"
+theater = "eastern"
+notes = ["Union regiments named: 6th Wisconsin, 95th New York and 14th Brooklyn."]
+
+[start_date]
+value = "1863-07-01"
+confidence = "partial"
+sources = [{document = "CWV", page = 80, tag = "untagged"}]
+
+[end_date]
+value = "1863-07-01"
+confidence = "partial"
+sources = [{document = "CWV", page = 80, tag = "untagged"}]
+
+[location]
+state = "Pennsylvania"
+near = "Gettysburg, north of the Chambersburg Pike"
+terrain_notes = "Unfinished railroad cut."
+
+[sides]
+
+[sides.union]
+
+[sides.union.commander]
+value = "Cutler's brigade; Dawes led the 6th Wisconsin"
+confidence = "partial"
+sources = [{document = "CWV", page = 80, tag = "untagged"}]
+
+[sides.union.casualties]
+
+[sides.confederate]
+
+[sides.confederate.commander]
+value = "Davis (brigade: 2nd and 42nd Mississippi, 55th North Carolina)"
+confidence = "partial"
+sources = [{document = "CWV", page = 80, tag = "untagged"}]
+
+[sides.confederate.casualties]
+
+[outcome]
+value = "Davis's brigade was repulsed about 11 a.m. and many of its men were trapped and captured in the cut."
+confidence = "partial"
+sources = [{document = "CWV", page = 80, tag = "untagged"}]

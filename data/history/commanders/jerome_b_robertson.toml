@@ -1,0 +1,18 @@
+id = "jerome_b_robertson"
+name = "Jerome B. Robertson"
+side = "confederate"
+
+[[career]]
+role = "Texas brigade commander"
+
+[career.fact]
+value = "Led the Texas Brigade at Fredericksburg, Gettysburg and Chickamauga. On 1863-07-02 his Texans and Georgians fought at Devil's Den, where he was wounded and Lt. Col. Philip Work took the brigade. At Gettysburg the regiments were led by Col. Van Manning, Work, Col. John C.G. Key and Col. Robert M. Powell."
+confidence = "partial"
+sources = [{document = "CWV", page = 81, tag = "untagged"}, {document = "CWV", page = 82, tag = "untagged"}, {document = "CWV", page = 317, tag = "[V]"}]
+
+[[relationships]]
+with = "john_bell_hood"
+kind = "subordinate_of"
+evidence = "Brigade commander in Hood's division."
+confidence = "partial"
+sources = [{document = "CWV", page = 81, tag = "untagged"}, {document = "CWV", page = 317, tag = "[V]"}]

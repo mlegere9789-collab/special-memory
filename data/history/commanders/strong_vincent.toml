@@ -1,0 +1,39 @@
+id = "strong_vincent"
+name = "Strong Vincent"
+side = "union"
+
+[born]
+value = "1837-06-17"
+confidence = "partial"
+sources = [{document = "CWV", page = 285, tag = "[V]"}]
+
+[died]
+value = "1863-07-07"
+confidence = "partial"
+sources = [{document = "CWV", page = 285, tag = "[V]"}]
+
+[[career]]
+role = "Brigade commander, V Corps"
+from = "1863-05-20"
+to = "1863-07-02"
+
+[career.fact]
+value = "Lieutenant colonel of the 83rd Pennsylvania from 1861-09-14 and colonel the next June; took command of 3rd Brigade, 1st Division, V Corps on 1863-05-20."
+confidence = "partial"
+sources = [{document = "CWV", page = 285, tag = "[V]"}]
+
+[[career]]
+role = "Little Round Top"
+from = "1863-07-02"
+to = "1863-07-07"
+
+[career.fact]
+value = "Placed his brigade on Little Round Top on 1863-07-02 saying 'I will take the responsibility' and was shot through the thigh and groin on the right flank; Meade recommended him for brigadier general that evening, dated 1863-07-03; he died on 1863-07-07."
+confidence = "partial"
+sources = [{document = "CWV", page = 285, tag = "[V]"}, {document = "CWV", page = 81, tag = "untagged"}]
+
+[[traits]]
+trait = "high_discretion"
+evidence = "Occupied Little Round Top with his brigade on 1863-07-02 on his own responsibility before the attack arrived."
+confidence = "partial"
+sources = [{document = "CWV", page = 285, tag = "[V]"}]

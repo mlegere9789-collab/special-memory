@@ -1,0 +1,44 @@
+id = "gb_cemetery_hill_rally"
+name = "Rally on Cemetery Hill and the Confederate pause"
+theater = "eastern"
+notes = ["Hancock arrived about 3:30-4 p.m.; his judgment that the ground be held helped commit the Union to fight there.", "Reasons recorded for Ewell's pause: tired troops, narrow streets, Hill declining to help, and Early's fear for the York Pike flank. Johnson's division arrived late."]
+
+[start_date]
+value = "1863-07-01"
+confidence = "partial"
+sources = [{document = "CWV", page = 80, tag = "untagged"}]
+
+[end_date]
+value = "1863-07-01"
+confidence = "partial"
+sources = [{document = "CWV", page = 80, tag = "untagged"}]
+
+[location]
+state = "Pennsylvania"
+near = "Gettysburg, Cemetery Hill and Culp's Hill south-east of town"
+
+[sides]
+
+[sides.union]
+
+[sides.union.commander]
+value = "Hancock, sent by Meade to take tactical command"
+confidence = "partial"
+sources = [{document = "CWV", page = 80, tag = "untagged"}]
+
+[sides.union.casualties]
+
+[sides.confederate]
+
+[sides.confederate.commander]
+value = "Ewell (II Corps)"
+confidence = "partial"
+sources = [{document = "CWV", page = 80, tag = "untagged"}]
+
+[sides.confederate.casualties]
+
+[outcome]
+value = "Hancock held Cemetery Hill and Culp's Hill with Steinwehr's division, Buford's cavalry and remnants; Ewell, ordered to take the hill if practicable, did not attack."
+confidence = "partial"
+sources = [{document = "CWV", page = 80, tag = "untagged"}, {document = "CWV", page = 81, tag = "untagged"}]
+flag = "Whether Ewell could have taken the hill is disputed (page 117, point 9); page 80 records blame placed on Lee's vague order by Coddington and on Ewell by others."

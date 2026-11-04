@@ -1,0 +1,44 @@
+id = "gb_wheatfield"
+name = "The Wheatfield"
+theater = "eastern"
+notes = ["The Irish Brigade received absolution from a chaplain before entering.", "Several brigade commanders are said to have been mortally wounded, recalled from general knowledge and marked unverified on the page, so not recorded."]
+
+[start_date]
+value = "1863-07-02"
+confidence = "partial"
+sources = [{document = "CWV", page = 69, tag = "V"}, {document = "CWV", page = 82, tag = "untagged"}]
+
+[end_date]
+value = "1863-07-02"
+confidence = "partial"
+sources = [{document = "CWV", page = 69, tag = "V"}, {document = "CWV", page = 82, tag = "untagged"}]
+
+[location]
+state = "Pennsylvania"
+near = "Gettysburg, Wheatfield between Rose Woods and the Stony Hill"
+
+[sides]
+
+[sides.union]
+
+[sides.union.commander]
+value = "Elements of III, V, II and later VI Corps under their own commanders"
+confidence = "partial"
+sources = [{document = "CWV", page = 82, tag = "untagged"}]
+
+[sides.union.casualties]
+
+[sides.confederate]
+
+[sides.confederate.commander]
+value = "Brigades of Kershaw, Anderson, Semmes and Wofford, with Benning and Law"
+confidence = "partial"
+sources = [{document = "CWV", page = 82, tag = "untagged"}]
+
+[sides.confederate.casualties]
+
+[outcome]
+value = "A 20-acre field fought over for hours with several changes of hand (six or seven by some counts); eleven brigades lost about 30% of roughly 20,444 engaged."
+confidence = "partial"
+sources = [{document = "CWV", page = 69, tag = "V"}, {document = "CWV", page = 82, tag = "untagged"}]
+flag = "Combined losses are given as over 6,000 in one line and as 4,000-6,000 by some accounts in the same passage; 30% of 20,444 is near the upper reading."

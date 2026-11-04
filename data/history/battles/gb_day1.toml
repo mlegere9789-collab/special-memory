@@ -1,0 +1,57 @@
+id = "gb_day1"
+name = "Gettysburg, July 1 (whole day)"
+theater = "eastern"
+notes = ["Aggregate record for the day; the morning and afternoon actions have their own records.", "Timeline on the pages: contact about 7:30 a.m.; Davis in the railroad cut about 11 a.m.; Rodes and Early attack about 2-2:30 p.m.; XI Corps collapse by about 4 p.m.; Union back on Cemetery Hill about 4:30 p.m.", "A claim that I Corps lost over half its strength is carried on page 80 without confirmation and is not recorded here."]
+
+[start_date]
+value = "1863-07-01"
+confidence = "partial"
+sources = [{document = "CWV", page = 69, tag = "V"}, {document = "CWV", page = 80, tag = "untagged"}]
+
+[end_date]
+value = "1863-07-01"
+confidence = "partial"
+sources = [{document = "CWV", page = 69, tag = "V"}, {document = "CWV", page = 80, tag = "untagged"}]
+
+[location]
+state = "Pennsylvania"
+near = "Gettysburg, west, north and south of the town"
+
+[sides]
+
+[sides.union]
+
+[sides.union.commander]
+value = "Reynolds, killed in the late morning; Doubleday then led I Corps; Hancock took overall tactical command on Cemetery Hill from about 3:30-4 p.m."
+confidence = "partial"
+sources = [{document = "CWV", page = 80, tag = "untagged"}]
+
+[sides.union.casualties]
+
+[sides.union.casualties.total]
+value = 9000
+high = 9000
+confidence = "partial"
+sources = [{document = "CWV", page = 69, tag = "V"}, {document = "CWV", page = 80, tag = "untagged"}]
+flag = "Stated as nearly 9,000, so 9,000 is a rounded upper bound."
+
+[sides.confederate]
+
+[sides.confederate.commander]
+value = "Henry Heth, then Rodes and Early on the field; Lee reached the field about 2:30 p.m."
+confidence = "partial"
+sources = [{document = "CWV", page = 80, tag = "untagged"}]
+
+[sides.confederate.casualties]
+
+[sides.confederate.casualties.total]
+value = 6000
+low = 6000
+confidence = "partial"
+sources = [{document = "CWV", page = 69, tag = "V"}, {document = "CWV", page = 80, tag = "untagged"}]
+flag = "Stated as slightly over 6,000, so 6,000 is a rounded lower bound."
+
+[outcome]
+value = "The Confederates drove both Union corps through the town to Cemetery Hill, which the Union then held."
+confidence = "partial"
+sources = [{document = "CWV", page = 69, tag = "V"}, {document = "CWV", page = 80, tag = "untagged"}]

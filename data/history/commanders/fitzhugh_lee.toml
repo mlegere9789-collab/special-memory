@@ -1,0 +1,33 @@
+id = "fitzhugh_lee"
+name = "Fitzhugh Lee"
+side = "confederate"
+
+[academy_class]
+value = "1856"
+confidence = "unverified"
+sources = [{document = "CWV", page = 315, tag = "untagged"}]
+
+[[career]]
+role = "Cavalry brigade commander"
+
+[career.fact]
+value = "Lee's nephew; commanded a cavalry brigade in Stuart's force at Gettysburg and on 1863-07-03 fought at East Cavalry Field against Gregg's division and Custer's brigade."
+confidence = "unverified"
+sources = [{document = "CWV", page = 77, tag = "untagged"}, {document = "CWV", page = 83, tag = "untagged"}, {document = "CWV", page = 315, tag = "untagged"}, {document = "CWV", page = 326, tag = "untagged"}]
+flag = "The brigade-level order of battle places his name in a roster headed Robertson's/Jenkins's brigade, so the brigades of Lee, Robertson and Jenkins are conflated there. His command is not resolved here."
+
+[[career]]
+role = "Commander, Cavalry Corps"
+from = "1865"
+
+[career.fact]
+value = "Cavalry corps commander in 1865 (absent at Five Forks); later governor of Virginia and a U.S. Army general in 1898."
+confidence = "unverified"
+sources = [{document = "CWV", page = 315, tag = "untagged"}]
+
+[[relationships]]
+with = "jeb_stuart"
+kind = "subordinate_of"
+evidence = "Brigade commander under Stuart in the campaign."
+confidence = "partial"
+sources = [{document = "CWV", page = 77, tag = "untagged"}, {document = "CWV", page = 83, tag = "untagged"}]

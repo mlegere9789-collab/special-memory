@@ -1,0 +1,18 @@
+id = "g_moxley_sorrel"
+name = "G. Moxley Sorrel"
+side = "confederate"
+
+[[career]]
+role = "Chief of staff, First Corps"
+
+[career.fact]
+value = "Longstreet's chief of staff; a Savannah clerk who rose to brigadier general and wrote a memoir of staff service."
+confidence = "unverified"
+sources = [{document = "CWV", page = 316, tag = "[U]"}]
+
+[[relationships]]
+with = "james_longstreet"
+kind = "subordinate_of"
+evidence = "Served as Longstreet's chief of staff."
+confidence = "unverified"
+sources = [{document = "CWV", page = 316, tag = "[U]"}]

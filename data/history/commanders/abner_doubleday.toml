@@ -1,0 +1,36 @@
+id = "abner_doubleday"
+name = "Abner Doubleday"
+side = "union"
+
+[born]
+value = "1819"
+confidence = "unverified"
+sources = [{document = "CWV", page = 272, tag = "[U]"}]
+
+[died]
+value = "1893"
+confidence = "unverified"
+sources = [{document = "CWV", page = 272, tag = "[U]"}]
+
+[academy_class]
+value = "1842"
+confidence = "unverified"
+sources = [{document = "CWV", page = 272, tag = "[U]"}]
+
+[[career]]
+role = "Fort Sumter"
+from = "1861-04"
+
+[career.fact]
+value = "Said to have fired the Union's first return shot at Fort Sumter; the baseball legend attached to him is called unfounded."
+confidence = "unverified"
+sources = [{document = "CWV", page = 272, tag = "[U]"}]
+
+[[career]]
+role = "Acting commander, I Corps"
+from = "1863-07-01"
+
+[career.fact]
+value = "Took command of the field on 1863-07-01 when Reynolds was killed, and held I Corps until Newton replaced him; also shown leading the Third Division before Rowley."
+confidence = "partial"
+sources = [{document = "CWV", page = 80, tag = "untagged"}, {document = "CWV", page = 275, tag = "[V from the opened order of battle]"}, {document = "CWV", page = 272, tag = "[U]"}]

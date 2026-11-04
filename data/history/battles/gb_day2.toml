@@ -1,0 +1,55 @@
+id = "gb_day2"
+name = "Gettysburg, July 2 (whole day)"
+theater = "eastern"
+notes = ["Aggregate record for the day; the separate actions have their own records.", "Hood moved about 4:30 p.m. on page 69; Ewell attacked after about 7 p.m.; the field was quiet about 10:30 p.m.", "Reasons given for the Confederate failure: late start, piecemeal attacks from south to north, Longstreet's reluctance, Hood's misdirected advance, no cavalry scouting, and Union interior lines."]
+
+[start_date]
+value = "1863-07-02"
+confidence = "partial"
+sources = [{document = "CWV", page = 69, tag = "V"}, {document = "CWV", page = 82, tag = "untagged"}]
+
+[end_date]
+value = "1863-07-02"
+confidence = "partial"
+sources = [{document = "CWV", page = 69, tag = "V"}, {document = "CWV", page = 82, tag = "untagged"}]
+
+[location]
+state = "Pennsylvania"
+near = "Gettysburg, Union left, Culp's Hill and Cemetery Hill"
+
+[sides]
+
+[sides.union]
+
+[sides.union.commander]
+value = "George G. Meade; he reached the field about midnight and held a council that night"
+confidence = "partial"
+sources = [{document = "CWV", page = 81, tag = "untagged"}, {document = "CWV", page = 82, tag = "untagged"}]
+
+[sides.union.casualties]
+
+[sides.union.casualties.total]
+value = 10000
+confidence = "unverified"
+sources = [{document = "CWV", page = 69, tag = "V"}, {document = "CWV", page = 82, tag = "untagged"}]
+flag = "Trudeau's estimate of about 10,000; the page says other estimates run higher."
+
+[sides.confederate]
+
+[sides.confederate.commander]
+value = "Robert E. Lee"
+confidence = "partial"
+sources = [{document = "CWV", page = 81, tag = "untagged"}]
+
+[sides.confederate.casualties]
+
+[sides.confederate.casualties.total]
+value = 6800
+confidence = "unverified"
+sources = [{document = "CWV", page = 69, tag = "V"}, {document = "CWV", page = 82, tag = "untagged"}]
+flag = "Trudeau's estimate of about 6,800; the page says other estimates run higher."
+
+[outcome]
+value = "The Union line held on the left and at both hills; the generals voted that night to stay and fight a defensive battle."
+confidence = "partial"
+sources = [{document = "CWV", page = 82, tag = "untagged"}]

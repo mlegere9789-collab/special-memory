@@ -1,0 +1,33 @@
+id = "wade_hampton_iii"
+name = "Wade Hampton III"
+side = "confederate"
+
+[[career]]
+role = "Cavalry brigade commander"
+
+[career.fact]
+value = "Raised Hampton's Legion at his own expense. His brigade fought at Brandy Station (1863-06-09), where he and Jones's and W.H.F. Lee's brigades drove the Union force off Fleetwood Hill; on 1863-07-03 he fought at East Cavalry Field and was badly wounded. Also wounded at First Manassas, Seven Pines and Brandy Station."
+confidence = "partial"
+sources = [{document = "CWV", page = 77, tag = "untagged"}, {document = "CWV", page = 78, tag = "untagged"}, {document = "CWV", page = 83, tag = "untagged"}, {document = "CWV", page = 308, tag = "[V]"}]
+
+[[career]]
+role = "Commander, Cavalry Corps"
+from = "1864-08-11"
+
+[career.fact]
+value = "Lee gave him the Cavalry Corps on 1864-08-11 after Stuart's death; he won Trevilian Station and led the Beefsteak Raid in September 1864. Lieutenant general dated 1865-02-14."
+confidence = "partial"
+sources = [{document = "CWV", page = 299, tag = "[V]"}, {document = "CWV", page = 308, tag = "[V]"}]
+
+[[traits]]
+trait = "cavalry_flair"
+evidence = "At Brandy Station his brigade took part in a ferocious series of charges that cleared Fleetwood Hill, and at East Cavalry Field it met a mounted clash with Custer's 1st Michigan."
+confidence = "partial"
+sources = [{document = "CWV", page = 78, tag = "untagged"}, {document = "CWV", page = 83, tag = "untagged"}]
+
+[[relationships]]
+with = "jeb_stuart"
+kind = "subordinate_of"
+evidence = "Brigade commander in Stuart's cavalry at Brandy Station and East Cavalry Field."
+confidence = "partial"
+sources = [{document = "CWV", page = 77, tag = "untagged"}, {document = "CWV", page = 83, tag = "untagged"}]

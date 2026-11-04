@@ -1,0 +1,23 @@
+id = "solomon_meredith"
+name = "Solomon Meredith"
+side = "union"
+
+[[career]]
+role = "Iron Brigade commander"
+from = "1862-11"
+to = "1863-07-01"
+
+[career.fact]
+value = "Commanded the Iron Brigade from November 1862 until he was wounded at Gettysburg on 1863-07-01; William W. Robinson followed."
+confidence = "partial"
+sources = [{document = "CWV", page = 285, tag = "[V]"}, {document = "CWV", page = 286, tag = "[V]"}]
+
+[[career]]
+role = "Gettysburg opening"
+from = "1863-07-01"
+
+[career.fact]
+value = "Meredith's brigade went in with Wadsworth's division and, with Cutler's brigade, helped drive Archer's brigade in the McPherson Woods and capture James Archer."
+confidence = "unverified"
+sources = [{document = "CWV", page = 80, tag = "untagged"}]
+flag = "The page phrase 'Cutler's and Meredith's Iron Brigade' can be read as one brigade under both names; the Iron Brigade roster gives Meredith alone; not resolved here."

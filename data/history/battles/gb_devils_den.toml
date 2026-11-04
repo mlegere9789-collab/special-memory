@@ -1,0 +1,44 @@
+id = "gb_devils_den"
+name = "Devil's Den and the Slaughter Pen"
+theater = "eastern"
+notes = ["Berdan's sharpshooters and Confederate sharpshooters took a toll; who shot Vincent and Weed is disputed on the page.", "A battery under Smith supported the Union defenders."]
+
+[start_date]
+value = "1863-07-02"
+confidence = "partial"
+sources = [{document = "CWV", page = 80, tag = "untagged"}]
+
+[end_date]
+value = "1863-07-02"
+confidence = "partial"
+sources = [{document = "CWV", page = 80, tag = "untagged"}]
+
+[location]
+state = "Pennsylvania"
+near = "Gettysburg, Devil's Den boulder field"
+terrain_notes = "Rocky boulder field above Plum Run."
+
+[sides]
+
+[sides.union]
+
+[sides.union.commander]
+value = "Ward's brigade, with the 4th Maine, 124th New York and 99th Pennsylvania"
+confidence = "partial"
+sources = [{document = "CWV", page = 82, tag = "untagged"}]
+
+[sides.union.casualties]
+
+[sides.confederate]
+
+[sides.confederate.commander]
+value = "Robertson's Texans and Georgians"
+confidence = "partial"
+sources = [{document = "CWV", page = 82, tag = "untagged"}]
+
+[sides.confederate.casualties]
+
+[outcome]
+value = "Intense fighting in the boulder field, the Triangular Field and the Plum Run valley; the page does not state which side held the ground at the end."
+confidence = "partial"
+sources = [{document = "CWV", page = 82, tag = "untagged"}]

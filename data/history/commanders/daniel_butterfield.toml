@@ -1,0 +1,31 @@
+id = "daniel_butterfield"
+name = "Daniel Butterfield"
+side = "union"
+
+[born]
+value = "1831"
+confidence = "unverified"
+sources = [{document = "CWV", page = 271, tag = "[V on badges]"}]
+
+[died]
+value = "1901"
+confidence = "unverified"
+sources = [{document = "CWV", page = 271, tag = "[V on badges]"}]
+
+[[career]]
+role = "Corps badges"
+from = "1863"
+
+[career.fact]
+value = "Designed the corps badge shapes and division colors for Hooker's Army of the Potomac, building on Kearny's red patch of 1862."
+confidence = "partial"
+sources = [{document = "CWV", page = 271, tag = "[V on badges]"}, {document = "CWV", page = 259, tag = "[V]"}, {document = "CWV", page = 267, tag = "[V]"}]
+
+[[career]]
+role = "Chief of staff"
+from = "1863"
+
+[career.fact]
+value = "Chief of staff to Hooker and later Meade; the Taps story and his Medal of Honor of 1892 are marked as memory."
+confidence = "unverified"
+sources = [{document = "CWV", page = 271, tag = "[U]"}, {document = "CWV", page = 258, tag = "untagged"}]

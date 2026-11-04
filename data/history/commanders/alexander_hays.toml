@@ -1,0 +1,24 @@
+id = "alexander_hays"
+name = "Alexander Hays"
+side = "union"
+
+[[career]]
+role = "Brigade commander, II Corps, Wilderness"
+from = "1864-05-05"
+to = "1864-05-05"
+
+[career.fact]
+value = "A brigade under Alexander Hays in Birney's 3rd Division of II Corps is shown killed on 1864-05-05 in the Wilderness."
+confidence = "unverified"
+sources = [{document = "CWV", page = 277, tag = "[V]"}]
+flag = "First name conflict: the Gettysburg II Corps list on p275 names Brig. Gen. William Hays, and p081 and p083 speak of Hays's division at the Angle; the pages do not say whether one man or two is meant."
+
+[[career]]
+role = "II Corps command at Gettysburg"
+from = "1863-07-03"
+
+[career.fact]
+value = "A Hays commanded troops on the II Corps right near the Angle and the Copse of Trees on 1863-07-03; his flanking fire helped break Pettigrew's left."
+confidence = "unverified"
+sources = [{document = "CWV", page = 83, tag = "untagged"}, {document = "CWV", page = 84, tag = "untagged"}, {document = "CWV", page = 275, tag = "[V from the opened order of battle]"}, {document = "CWV", page = 272, tag = "[U unless named in the rosters]"}]
+flag = "The page text, the roster and the Wilderness entry give differing first names and unit levels; not resolved here."

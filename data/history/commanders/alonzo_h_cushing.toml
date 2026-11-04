@@ -1,0 +1,37 @@
+id = "alonzo_h_cushing"
+name = "Alonzo H. Cushing"
+side = "union"
+
+[born]
+value = "1841"
+confidence = "partial"
+sources = [{document = "CWV", page = 280, tag = "[V]"}]
+
+[died]
+value = "1863-07-03"
+confidence = "partial"
+sources = [{document = "CWV", page = 280, tag = "[V]"}, {document = "CWV", page = 84, tag = "untagged"}]
+
+[academy_class]
+value = "June 1861"
+confidence = "partial"
+sources = [{document = "CWV", page = 280, tag = "[V]"}]
+
+[[career]]
+role = "Battery commander"
+from = "1863-07-03"
+to = "1863-07-03"
+
+[career.fact]
+value = "First lieutenant commanding Battery A, 4th U.S. Artillery; on 1863-07-03 wounded in the shoulder, then abdomen and groin, he kept directing fire with 1st Sergeant Frederick Fuger holding him up, and was killed at the Angle aged 22."
+confidence = "partial"
+sources = [{document = "CWV", page = 280, tag = "[V]"}, {document = "CWV", page = 84, tag = "untagged"}]
+
+[[career]]
+role = "Medal of Honor"
+from = "2014-11-06"
+
+[career.fact]
+value = "Medal of Honor announced 2014-08-26 and presented on 2014-11-06 to a cousin."
+confidence = "partial"
+sources = [{document = "CWV", page = 280, tag = "[V]"}]

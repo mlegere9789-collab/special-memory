@@ -1,0 +1,46 @@
+id = "alfred_pleasonton"
+name = "Alfred Pleasonton"
+side = "union"
+
+[academy_class]
+value = "1844"
+confidence = "unverified"
+sources = [{document = "CWV", page = 277, tag = "[V partly]"}]
+flag = "The page gives only 'West Point July 1, 1844' and does not say whether that is entry or graduation."
+
+[[career]]
+role = "Cavalry Corps commander"
+from = "1863-05"
+
+[career.fact]
+value = "Hooker named him temporary replacement for Stoneman after Chancellorsville; he commanded the Cavalry Corps at Brandy Station and through the Gettysburg campaign."
+confidence = "partial"
+sources = [{document = "CWV", page = 277, tag = "[V partly]"}, {document = "CWV", page = 72, tag = "untagged"}, {document = "CWV", page = 77, tag = "untagged"}]
+
+[[career]]
+role = "Brandy Station"
+from = "1863-06-09"
+
+[career.fact]
+value = "With about 11,000 cavalry plus about 3,000 infantry in two brigades he attacked Stuart at Brandy Station, retreated in the afternoon, and recorded 866 Union casualties by the cited tally."
+confidence = "unverified"
+sources = [{document = "CWV", page = 77, tag = "untagged"}, {document = "CWV", page = 78, tag = "untagged"}, {document = "CWV", page = 277, tag = "[V partly]"}]
+flag = "The date 1863-06-09 appears untagged on p077 but is marked as memory on p277; the casualty count is attributed to a secondary tally."
+
+[[career]]
+role = "Promotions before Gettysburg"
+from = "1863-06-29"
+
+[career.fact]
+value = "Before Gettysburg he promoted Custer and Merritt, and tried to promote his staff captain Elon Farnsworth, to brigadier general."
+confidence = "partial"
+sources = [{document = "CWV", page = 277, tag = "[V partly]"}]
+
+[[career]]
+role = "After Gettysburg"
+from = "1864-07"
+
+[career.fact]
+value = "Removed from the field after Gettysburg; in July 1864 took command of districts in Missouri and defeated Price at Westport. His reports are described as criticized, from memory."
+confidence = "unverified"
+sources = [{document = "CWV", page = 277, tag = "[V partly]"}, {document = "CWV", page = 278, tag = "[U]"}]

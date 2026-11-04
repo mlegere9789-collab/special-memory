@@ -1,0 +1,25 @@
+id = "patrick_h_orourke"
+name = "Patrick H. O'Rorke"
+side = "union"
+
+[academy_class]
+value = "1861, first in the June class"
+confidence = "unverified"
+sources = [{document = "CWV", page = 285, tag = "[V]"}]
+flag = "Class standings for 1861 conflict across pages: Upton is eighth of 45 graduating 1861-05-06 (p287) and Custer last of 34 graduating 1861-06-24 (p278); the pages do not say how these classes relate."
+
+[[career]]
+role = "Regimental commander, 140th New York"
+from = "1863-07-02"
+to = "1863-07-02"
+
+[career.fact]
+value = "Colonel of the 140th New York; Warren pulled the regiment to Little Round Top, where he led it over the crest and down the western slope in a counterattack and was shot in the neck at age 26."
+confidence = "partial"
+sources = [{document = "CWV", page = 285, tag = "[V]"}, {document = "CWV", page = 81, tag = "untagged"}]
+
+[[traits]]
+trait = "aggressive"
+evidence = "Led the 140th New York over the crest of Little Round Top and down the western slope in a counterattack on 1863-07-02."
+confidence = "partial"
+sources = [{document = "CWV", page = 285, tag = "[V]"}]

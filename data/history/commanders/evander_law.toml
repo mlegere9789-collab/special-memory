@@ -1,0 +1,28 @@
+id = "evander_law"
+name = "Evander Law"
+side = "confederate"
+
+[[career]]
+role = "Brigade commander, Hood's division"
+
+[career.fact]
+value = "Commanded the Alabama brigade (4th, 15th, 44th, 47th, 48th) in Hood's division."
+confidence = "unverified"
+sources = [{document = "CWV", page = 317, tag = "[V/U]"}, {document = "CWV", page = 318, tag = "untagged"}]
+flag = "The page does not name the Alabama brigade's commander; Law is supplied from memory, while another page speaks of 'Law's brigades' in the plural."
+
+[[career]]
+role = "Acting division commander"
+from = "1863-07-02"
+
+[career.fact]
+value = "Took command of Hood's division on 1863-07-02 when Hood was wounded early by a shell; his men were worn by the long march and heat."
+confidence = "partial"
+sources = [{document = "CWV", page = 81, tag = "untagged"}]
+
+[[relationships]]
+with = "john_bell_hood"
+kind = "subordinate_of"
+evidence = "Took over Hood's division when Hood was wounded."
+confidence = "partial"
+sources = [{document = "CWV", page = 81, tag = "untagged"}]

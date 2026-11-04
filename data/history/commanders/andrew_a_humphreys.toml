@@ -1,0 +1,35 @@
+id = "andrew_a_humphreys"
+name = "Andrew A. Humphreys"
+side = "union"
+
+[born]
+value = "1810"
+confidence = "unverified"
+sources = [{document = "CWV", page = 271, tag = "[U]"}]
+
+[died]
+value = "1883"
+confidence = "unverified"
+sources = [{document = "CWV", page = 271, tag = "[U]"}]
+
+[academy_class]
+value = "1831"
+confidence = "unverified"
+sources = [{document = "CWV", page = 271, tag = "[U]"}]
+
+[[career]]
+role = "Division commander, III Corps"
+from = "1863-07-02"
+
+[career.fact]
+value = "His division was posted along the Emmitsburg Road on 1863-07-02 and was battered there by Wilcox's, Perry's, Wright's and Posey's brigades before being pushed back."
+confidence = "partial"
+sources = [{document = "CWV", page = 81, tag = "untagged"}, {document = "CWV", page = 82, tag = "untagged"}]
+
+[[career]]
+role = "Staff and corps command"
+
+[career.fact]
+value = "Described as an engineer who became Meade's chief of staff, then II Corps commander in 1865 including Sailor's Creek, and later Chief of Engineers."
+confidence = "unverified"
+sources = [{document = "CWV", page = 271, tag = "[U]"}]

@@ -1,0 +1,22 @@
+id = "george_j_stannard"
+name = "George J. Stannard"
+side = "union"
+
+[[career]]
+role = "Brigade commander, Vermont brigade"
+from = "1863-07-03"
+
+[career.fact]
+value = "His Vermont brigade (13th, 14th, 16th) flanked Pickett's right on 1863-07-03 and struck Kemper's right."
+confidence = "partial"
+sources = [{document = "CWV", page = 83, tag = "untagged"}, {document = "CWV", page = 84, tag = "untagged"}]
+
+[[career]]
+role = "Corps assignment"
+from = "1863-07-01"
+
+[career.fact]
+value = "Listed with the I Corps Third Division brigade-level commanders 'in some arrangements', and named among the residue on Cemetery Hill on 1863-07-01."
+confidence = "unverified"
+sources = [{document = "CWV", page = 275, tag = "[V from the opened order of battle]"}, {document = "CWV", page = 80, tag = "untagged"}]
+flag = "Brigade and corps assignment differs by page and arrangement; not resolved here."

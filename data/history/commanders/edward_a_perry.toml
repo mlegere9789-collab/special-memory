@@ -1,0 +1,12 @@
+id = "edward_a_perry"
+name = "Edward A. Perry"
+side = "confederate"
+
+[[career]]
+role = "Florida brigade commander"
+
+[career.fact]
+value = "Perry's brigade is listed among the Anderson-division brigades (Wilcox, Perry, Wright, Posey) that struck Humphreys's division on 1863-07-02; his Florida command is stated from memory."
+confidence = "unverified"
+sources = [{document = "CWV", page = 82, tag = "untagged"}, {document = "CWV", page = 324, tag = "[V/U]"}]
+flag = "The 2nd, 5th and 8th Florida are placed in Posey's brigade, with Posey wounded and Col. Nathaniel Harris taking over, while another page lists a separate Perry brigade; the order of battle shows Florida regiments under majors and a captain inside Posey's brigade. Florida brigade command is not resolved."

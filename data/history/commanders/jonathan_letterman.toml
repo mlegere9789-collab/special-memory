@@ -1,0 +1,38 @@
+id = "jonathan_letterman"
+name = "Jonathan Letterman"
+side = "union"
+
+[born]
+value = "1824"
+confidence = "partial"
+sources = [{document = "CWV", page = 281, tag = "[V]"}]
+
+[died]
+value = "1872"
+confidence = "partial"
+sources = [{document = "CWV", page = 281, tag = "[V]"}]
+
+[[career]]
+role = "Medical director, Army of the Potomac"
+from = "1862-06"
+
+[career.fact]
+value = "Medical director of the Army of the Potomac from June 1862; set up an ambulance corps in August 1862 under medical control and forward aid stations with triage by Antietam."
+confidence = "partial"
+sources = [{document = "CWV", page = 281, tag = "[V]"}]
+
+[[career]]
+role = "Gettysburg wounded"
+from = "1863-07"
+
+[career.fact]
+value = "The page says his system handled over 14,000 Union and 6,800 Confederate wounded at Gettysburg with about 2 percent mortality against 33 percent on the Peninsula; no official report mentioned him."
+confidence = "unverified"
+sources = [{document = "CWV", page = 281, tag = "[V]"}]
+flag = "Mortality figures are the page's own statement and are not checked against a second source."
+
+[[traits]]
+trait = "logistics"
+evidence = "Placed the ambulance corps under medical rather than quartermaster control in August 1862 and set up forward aid stations with triage."
+confidence = "partial"
+sources = [{document = "CWV", page = 281, tag = "[V]"}]

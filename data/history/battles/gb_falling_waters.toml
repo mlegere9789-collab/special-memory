@@ -1,0 +1,57 @@
+id = "gb_falling_waters"
+name = "Falling Waters rearguard action"
+theater = "eastern"
+notes = ["Lee's army crossed on the night of July 13-14 by pontoon bridge at Falling Waters and by ford at Williamsport."]
+
+[start_date]
+value = "1863-07-14"
+confidence = "partial"
+sources = [{document = "CWV", page = 84, tag = "untagged"}]
+
+[end_date]
+value = "1863-07-14"
+confidence = "partial"
+sources = [{document = "CWV", page = 84, tag = "untagged"}]
+
+[location]
+state = "Maryland"
+near = "Falling Waters, on the Potomac"
+
+[sides]
+
+[sides.union]
+
+[sides.union.commander]
+value = "Kilpatrick (cavalry)"
+confidence = "partial"
+sources = [{document = "CWV", page = 84, tag = "untagged"}]
+
+[sides.union.casualties]
+
+[sides.confederate]
+
+[sides.confederate.commander]
+value = "Pettigrew's brigade, as rearguard"
+confidence = "partial"
+sources = [{document = "CWV", page = 84, tag = "untagged"}]
+
+[sides.confederate.casualties]
+
+[sides.confederate.casualties.missing_captured]
+value = 500
+low = 500
+confidence = "unverified"
+sources = [{document = "CWV", page = 84, tag = "untagged"}]
+flag = "Stated as about 500 captured."
+
+[sides.confederate.casualties.total]
+value = 500
+low = 500
+confidence = "unverified"
+sources = [{document = "CWV", page = 84, tag = "untagged"}]
+flag = "Stated as about 500 captured only; killed and wounded are not given, so the total is a floor."
+
+[outcome]
+value = "Kilpatrick struck the rearguard; Pettigrew was mortally wounded and about 500 Confederates were captured, as Lee's army finished crossing the river."
+confidence = "partial"
+sources = [{document = "CWV", page = 84, tag = "untagged"}]

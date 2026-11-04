@@ -1,0 +1,12 @@
+id = "john_q_a_nadenbousch"
+name = "John Q. A. Nadenbousch"
+side = "confederate"
+
+[[career]]
+role = "Colonel, 2nd Virginia; Stonewall Brigade"
+
+[career.fact]
+value = "Colonel of the 2nd Virginia, named as leading the Stonewall Brigade (4th, 5th, 27th and 33rd Virginia, with Col. John Funk at the 5th) at Gettysburg in Johnson's division."
+confidence = "unverified"
+sources = [{document = "CWV", page = 83, tag = "untagged"}, {document = "CWV", page = 310, tag = "[V/U]"}, {document = "CWV", page = 318, tag = "[V/U]"}, {document = "CWV", page = 326, tag = "untagged"}]
+flag = "Pages differ on the Stonewall Brigade's command: the order of battle and the brigade entry name Nadenbousch, an earlier list of Culp's Hill attackers names 'Nicholls's/Walker's' brigades without naming the Stonewall Brigade, and earlier brigade commanders are mentioned from memory. The commander is left unresolved."

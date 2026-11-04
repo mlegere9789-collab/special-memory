@@ -1,0 +1,43 @@
+id = "gb_little_round_top_south_slope"
+name = "20th Maine on the south slope of Little Round Top"
+theater = "eastern"
+notes = ["The page 116 morale note counts the 20th Maine's charge among actions with about 50% unit casualties, but no count is given for the regiment."]
+
+[start_date]
+value = "1863-07-02"
+confidence = "partial"
+sources = [{document = "CWV", page = 80, tag = "untagged"}]
+
+[end_date]
+value = "1863-07-02"
+confidence = "partial"
+sources = [{document = "CWV", page = 80, tag = "untagged"}]
+
+[location]
+state = "Pennsylvania"
+near = "Gettysburg, south slope of Little Round Top"
+
+[sides]
+
+[sides.union]
+
+[sides.union.commander]
+value = "Joshua Chamberlain (20th Maine, left of Vincent's brigade)"
+confidence = "partial"
+sources = [{document = "CWV", page = 81, tag = "untagged"}]
+
+[sides.union.casualties]
+
+[sides.confederate]
+
+[sides.confederate.commander]
+value = "Oates (15th and 47th Alabama)"
+confidence = "partial"
+sources = [{document = "CWV", page = 81, tag = "untagged"}]
+
+[sides.confederate.casualties]
+
+[outcome]
+value = "After repeated repulses and with ammunition low, a bayonet charge by the swinging left wing broke the Alabamians."
+confidence = "partial"
+sources = [{document = "CWV", page = 81, tag = "untagged"}]

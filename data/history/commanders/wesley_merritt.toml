@@ -1,0 +1,47 @@
+id = "wesley_merritt"
+name = "Wesley Merritt"
+side = "union"
+
+[died]
+value = "1910-12-03"
+confidence = "partial"
+sources = [{document = "CWV", page = 279, tag = "[V]"}]
+
+[academy_class]
+value = "1860"
+confidence = "partial"
+sources = [{document = "CWV", page = 279, tag = "[V]"}]
+
+[[career]]
+role = "Reserve Brigade commander"
+from = "1863-06-29"
+
+[career.fact]
+value = "Promoted brigadier general on 1863-06-29 for Brandy Station and Upperville, together with Farnsworth and Custer, and commanded the Reserve Brigade in the Gettysburg campaign."
+confidence = "partial"
+sources = [{document = "CWV", page = 279, tag = "[V]"}, {document = "CWV", page = 276, tag = "[V on Merritt]"}]
+
+[[career]]
+role = "1st Division commander"
+from = "1863-12-16"
+
+[career.fact]
+value = "Took over the 1st Cavalry Division after Buford's death and led it under Sheridan in the Wilderness roster."
+confidence = "partial"
+sources = [{document = "CWV", page = 279, tag = "[V]"}, {document = "CWV", page = 277, tag = "[V]"}]
+
+[[career]]
+role = "Later career"
+from = "1865-04"
+
+[career.fact]
+value = "Brevet major general in the Regulars for Five Forks and Appomattox; West Point superintendent 1882-87; first U.S. military governor of the Philippines."
+confidence = "partial"
+sources = [{document = "CWV", page = 279, tag = "[V]"}]
+
+[[relationships]]
+with = "Alfred Pleasonton"
+kind = "patronage"
+evidence = "Pleasonton promoted Custer and Merritt to brigadier general before Gettysburg."
+confidence = "partial"
+sources = [{document = "CWV", page = 277, tag = "[V partly]"}]

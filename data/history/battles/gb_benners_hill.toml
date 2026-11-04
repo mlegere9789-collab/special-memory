@@ -1,0 +1,43 @@
+id = "gb_benners_hill"
+name = "Artillery duel on Benner's Hill"
+theater = "eastern"
+notes = ["Major Joseph Latimer was fatally wounded."]
+
+[start_date]
+value = "1863-07-02"
+confidence = "partial"
+sources = [{document = "CWV", page = 80, tag = "untagged"}]
+
+[end_date]
+value = "1863-07-02"
+confidence = "partial"
+sources = [{document = "CWV", page = 80, tag = "untagged"}]
+
+[location]
+state = "Pennsylvania"
+near = "Gettysburg, Benner's Hill east of Culp's Hill"
+
+[sides]
+
+[sides.union]
+
+[sides.union.commander]
+value = "Union batteries in counter-battery fire"
+confidence = "partial"
+sources = [{document = "CWV", page = 82, tag = "untagged"}]
+
+[sides.union.casualties]
+
+[sides.confederate]
+
+[sides.confederate.commander]
+value = "Latimer's artillery battalion of Ewell's corps"
+confidence = "partial"
+sources = [{document = "CWV", page = 82, tag = "untagged"}]
+
+[sides.confederate.casualties]
+
+[outcome]
+value = "Union counter-battery fire overcame the Confederate guns about 6:30-7 p.m."
+confidence = "partial"
+sources = [{document = "CWV", page = 82, tag = "untagged"}]

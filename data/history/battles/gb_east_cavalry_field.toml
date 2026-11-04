@@ -1,0 +1,69 @@
+id = "gb_east_cavalry_field"
+name = "East Cavalry Field"
+theater = "eastern"
+notes = ["Fighting opened with dismounted skirmishing and artillery before the mounted clash."]
+
+[start_date]
+value = "1863-07-03"
+confidence = "partial"
+sources = [{document = "CWV", page = 69, tag = "V"}, {document = "CWV", page = 83, tag = "untagged"}]
+
+[end_date]
+value = "1863-07-03"
+confidence = "partial"
+sources = [{document = "CWV", page = 69, tag = "V"}, {document = "CWV", page = 83, tag = "untagged"}]
+
+[location]
+state = "Pennsylvania"
+near = "Gettysburg, about 3 miles east of town"
+
+[sides]
+
+[sides.union]
+
+[sides.union.commander]
+value = "David Gregg (his division and Custer's Michigan brigade)"
+confidence = "partial"
+sources = [{document = "CWV", page = 83, tag = "untagged"}]
+
+[sides.union.engaged]
+value = 3250
+confidence = "unverified"
+sources = [{document = "CWV", page = 83, tag = "untagged"}]
+flag = "Described as roughly 3,250 troopers of Gregg's division plus Custer's brigade; the page does not say whether the brigade is inside the 3,250."
+
+[sides.union.casualties]
+
+[sides.union.casualties.total]
+value = 254
+confidence = "partial"
+sources = [{document = "CWV", page = 69, tag = "V"}, {document = "CWV", page = 83, tag = "untagged"}]
+flag = "219 of the 254 were in Custer's brigade."
+
+[sides.confederate]
+
+[sides.confederate.commander]
+value = "J.E.B. Stuart, with the brigades of Hampton, Fitz Lee, Chambliss and Jenkins (under Ferguson)"
+confidence = "partial"
+sources = [{document = "CWV", page = 83, tag = "untagged"}]
+
+[sides.confederate.engaged]
+value = 3430
+low = 3430
+high = 5000
+confidence = "unverified"
+sources = [{document = "CWV", page = 83, tag = "untagged"}]
+flag = "Estimates run from about 5,000 present to about 3,430 actually engaged; the engaged figure is recorded."
+
+[sides.confederate.casualties]
+
+[sides.confederate.casualties.total]
+value = 181
+confidence = "partial"
+sources = [{document = "CWV", page = 69, tag = "V"}, {document = "CWV", page = 83, tag = "untagged"}]
+
+[outcome]
+value = "The Union held after a major mounted clash led by the 1st Michigan, and Stuart withdrew; Hampton was badly wounded."
+confidence = "partial"
+sources = [{document = "CWV", page = 83, tag = "untagged"}]
+flag = "Stuart's intent is disputed: one source says he was ordered to protect the flank and hoped to strike the rear without evidence of coordination with the infantry assault; another suggests he misread Lee's orders (pages 83, 117)."

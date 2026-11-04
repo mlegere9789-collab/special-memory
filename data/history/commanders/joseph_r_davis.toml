@@ -1,0 +1,19 @@
+id = "joseph_r_davis"
+name = "Joseph R. Davis"
+side = "confederate"
+
+[[career]]
+role = "Brigade commander, Heth's division"
+
+[career.fact]
+value = "The president's nephew. On 1863-07-01 his brigade attacked north of the Chambersburg Pike and was trapped in the unfinished railroad cut by the 6th Wisconsin and others, with hundreds captured; it was repulsed about 11 a.m. He was wounded, and the brigade was in the advance of 1863-07-03."
+confidence = "unverified"
+sources = [{document = "CWV", page = 80, tag = "untagged"}, {document = "CWV", page = 83, tag = "untagged"}, {document = "CWV", page = 318, tag = "untagged"}, {document = "CWV", page = 326, tag = "untagged"}]
+flag = "One page names the brigade as the 2nd and 42nd Mississippi and the 55th North Carolina; the order of battle adds the 11th Mississippi. The roster is not resolved."
+
+[[relationships]]
+with = "jefferson_davis"
+kind = "patronage"
+evidence = "Described as the president's nephew and criticised over the railroad cut, raising nepotism concerns; the page does not document how his appointment came about."
+confidence = "unverified"
+sources = [{document = "CWV", page = 318, tag = "untagged"}]

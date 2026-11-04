@@ -1,0 +1,44 @@
+id = "james_s_wadsworth"
+name = "James S. Wadsworth"
+side = "union"
+
+[born]
+value = "1807"
+confidence = "partial"
+sources = [{document = "CWV", page = 273, tag = "[V]"}]
+
+[died]
+value = "1864-05-08"
+confidence = "partial"
+sources = [{document = "CWV", page = 273, tag = "[V]"}]
+
+[[career]]
+role = "Military District of Washington"
+from = "1862-03-17"
+to = "1862-09-07"
+
+[career.fact]
+value = "Commanded the Military District of Washington from 1862-03-17 to 1862-09-07; lost the 1862 New York governor race to Horatio Seymour."
+confidence = "partial"
+sources = [{document = "CWV", page = 273, tag = "[V]"}]
+
+[[career]]
+role = "Division commander, I Corps"
+from = "1862-12-27"
+to = "1863-06-15"
+
+[career.fact]
+value = "Led the 1st Division of I Corps; his division arrived with Reynolds at Gettysburg on 1863-07-01."
+confidence = "unverified"
+sources = [{document = "CWV", page = 273, tag = "[V]"}, {document = "CWV", page = 80, tag = "untagged"}]
+flag = "The page dates his command from 1862-12-27 to 1863-06-15 while also placing him at Gettysburg on 1863-07-01; the dates are not reconciled here."
+
+[[career]]
+role = "Mortally wounded in the Wilderness"
+from = "1864-05-06"
+to = "1864-05-08"
+
+[career.fact]
+value = "Mortally wounded in Longstreet's flank attack on 1864-05-06 and died on 1864-05-08."
+confidence = "partial"
+sources = [{document = "CWV", page = 273, tag = "[V]"}, {document = "CWV", page = 277, tag = "[V]"}]

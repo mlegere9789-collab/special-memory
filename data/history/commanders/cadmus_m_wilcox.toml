@@ -1,0 +1,16 @@
+id = "cadmus_m_wilcox"
+name = "Cadmus Marcellus Wilcox"
+side = "confederate"
+
+[academy_class]
+value = "1846"
+confidence = "unverified"
+sources = [{document = "CWV", page = 310, tag = "[U]"}]
+
+[[career]]
+role = "Brigade commander, Anderson's division"
+
+[career.fact]
+value = "His Alabama brigade delayed Sedgwick at Salem Church on 1863-05-03, and on 1863-07-02 attacked the Emmitsburg Road line and met the 1st Minnesota's charge about 6 p.m. The 8th Alabama was under Lt. Col. Hilary Herbert. He later led a division in Hill's corps."
+confidence = "partial"
+sources = [{document = "CWV", page = 76, tag = "untagged"}, {document = "CWV", page = 82, tag = "untagged"}, {document = "CWV", page = 310, tag = "[U]"}, {document = "CWV", page = 326, tag = "untagged"}]

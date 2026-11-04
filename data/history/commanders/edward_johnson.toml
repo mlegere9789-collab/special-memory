@@ -1,0 +1,28 @@
+id = "edward_johnson"
+name = "Edward \"Allegheny\" Johnson"
+side = "confederate"
+
+[[career]]
+role = "Division commander, Second Corps"
+
+[career.fact]
+value = "Led a division of Ewell's Second Corps. On 1863-06-15 it struck the retreating Winchester column at Stephenson's Depot; it reached Gettysburg late on 1863-07-01, attacked Culp's Hill on the evening of 1863-07-02, and renewed the attack about 4:30 a.m. on 1863-07-03, withdrawing by about 11 a.m."
+confidence = "unverified"
+sources = [{document = "CWV", page = 77, tag = "untagged"}, {document = "CWV", page = 78, tag = "untagged"}, {document = "CWV", page = 80, tag = "untagged"}, {document = "CWV", page = 82, tag = "untagged"}, {document = "CWV", page = 83, tag = "untagged"}, {document = "CWV", page = 310, tag = "[V/U]"}]
+flag = "The pages disagree on the division's brigades. One page lists Steuart's, Jones's and Nicholls's/Walker's brigades; another names Daniel's, Steuart's and the Stonewall Brigade; another lists Steuart's, the Stonewall Brigade, Jones's brigade and Louisiana regiments; the brigade-level order of battle shows Daniel's brigade under Rodes. No roster is chosen."
+
+[[career]]
+role = "Division commander, Army of Tennessee"
+from = "1864-05-12"
+
+[career.fact]
+value = "Captured at the Mule Shoe at Spotsylvania on 1864-05-12 (from memory); later commanded a division in Hood's army at Franklin (marked verified on the page)."
+confidence = "unverified"
+sources = [{document = "CWV", page = 310, tag = "[V/U]"}, {document = "CWV", page = 311, tag = "[V/U]"}]
+
+[[relationships]]
+with = "richard_s_ewell"
+kind = "subordinate_of"
+evidence = "Listed as one of Ewell's three divisions (Early, Rodes, Johnson)."
+confidence = "partial"
+sources = [{document = "CWV", page = 77, tag = "untagged"}]

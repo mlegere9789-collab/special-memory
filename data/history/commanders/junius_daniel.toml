@@ -1,0 +1,12 @@
+id = "junius_daniel"
+name = "Junius Daniel"
+side = "confederate"
+
+[[career]]
+role = "Brigade commander"
+
+[career.fact]
+value = "Led a North Carolina brigade (32nd, 43rd, 45th and 53rd North Carolina) at Gettysburg; his death at Spotsylvania is mentioned from memory."
+confidence = "unverified"
+sources = [{document = "CWV", page = 83, tag = "untagged"}, {document = "CWV", page = 324, tag = "[V/U]"}, {document = "CWV", page = 326, tag = "untagged"}]
+flag = "The brigade appears in the Culp's Hill attacks beside Steuart's brigade and the Stonewall Brigade, yet the order of battle places it in Rodes's division as 'Daniel's/Doles's brigade'; the same entry lists Georgia regiments (4th, 12th, 21st, 44th) with 'plus NC regiments', so the Georgia and North Carolina rosters are conflated. No roster or division is chosen."

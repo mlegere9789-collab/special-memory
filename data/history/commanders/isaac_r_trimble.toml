@@ -1,0 +1,12 @@
+id = "isaac_r_trimble"
+name = "Isaac R. Trimble"
+side = "confederate"
+
+[[career]]
+role = "Acting division commander, Third Corps"
+
+[career.fact]
+value = "Led Pender's division after Pender fell and was wounded and captured; described from memory as a Maryland engineer."
+confidence = "unverified"
+sources = [{document = "CWV", page = 83, tag = "untagged"}, {document = "CWV", page = 318, tag = "[V/U]"}, {document = "CWV", page = 326, tag = "untagged"}]
+flag = "One page gives Trimble's command as two brigades (Lane and Lowrance); the order of battle puts Perrin, Lane and Scales (plus Georgia regiments) in Pender's division. The make-up of his command is not chosen."

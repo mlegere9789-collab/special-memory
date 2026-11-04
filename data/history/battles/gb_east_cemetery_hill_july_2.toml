@@ -1,0 +1,43 @@
+id = "gb_east_cemetery_hill_july_2"
+name = "East Cemetery Hill at dusk"
+theater = "eastern"
+notes = ["The field was quiet by about 10:30 p.m. per page 69."]
+
+[start_date]
+value = "1863-07-02"
+confidence = "partial"
+sources = [{document = "CWV", page = 69, tag = "V"}, {document = "CWV", page = 82, tag = "untagged"}]
+
+[end_date]
+value = "1863-07-02"
+confidence = "partial"
+sources = [{document = "CWV", page = 69, tag = "V"}, {document = "CWV", page = 82, tag = "untagged"}]
+
+[location]
+state = "Pennsylvania"
+near = "Gettysburg, East Cemetery Hill"
+
+[sides]
+
+[sides.union]
+
+[sides.union.commander]
+value = "Carroll's brigade of II Corps counterattacked"
+confidence = "partial"
+sources = [{document = "CWV", page = 82, tag = "untagged"}]
+
+[sides.union.casualties]
+
+[sides.confederate]
+
+[sides.confederate.commander]
+value = "Early's division: Hays's Louisiana brigade and Hoke's North Carolinians under Avery"
+confidence = "partial"
+sources = [{document = "CWV", page = 82, tag = "untagged"}]
+
+[sides.confederate.casualties]
+
+[outcome]
+value = "The attackers briefly broke into the Union batteries, then were counterattacked and driven off."
+confidence = "partial"
+sources = [{document = "CWV", page = 82, tag = "untagged"}]

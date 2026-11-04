@@ -1,0 +1,12 @@
+id = "rooney_lee"
+name = "William Henry Fitzhugh \"Rooney\" Lee"
+side = "confederate"
+
+[[career]]
+role = "Cavalry commander"
+
+[career.fact]
+value = "Robert E. Lee's second son; wounded at Brandy Station, captured and exchanged. His brigade helped drive the Union force off Fleetwood Hill on 1863-06-09, and the campaign order of battle lists him with Chambliss's name beside his."
+confidence = "unverified"
+sources = [{document = "CWV", page = 77, tag = "untagged"}, {document = "CWV", page = 78, tag = "untagged"}, {document = "CWV", page = 315, tag = "untagged"}]
+flag = "One page calls him a cavalry division commander, others show a brigade, and the order of battle shows Chambliss leading the brigade at Gettysburg without saying how the hand-over came about. Level of command is not chosen."
