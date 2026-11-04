@@ -52,3 +52,4 @@ date,ticket,class,estimated_usage,actual_usage,review_defects,rework_count,notes
 2026-11-04,T-023 hit casualties bursts tick order (SPEC-005 A5),L,,228398 tokens,0,0,fresh implementer; 36 tests; about 450 code lines; BattleState::step TK-04 to TK-15; casualty hash block
 2026-11-04,T-141 terrain amendment A3 and survey source manifest (offline part),M,,160162 tokens,0,0,fresh implementer; 19 Python tests; two Rust tests extended for A3 rows; all sources consulted=false
 2026-11-04,T-082 fidelity table classifier sectors (SPEC-008),M,,153230 tokens,0,0,fresh implementer; 31 tests
+2026-11-04,T-072 officers dispatch codec inputs command hash block (SPEC-007),M,,189012 tokens,0,0,fresh implementer; tests T7-02 T7-11 T7-16; CMD1 hash block only when cmd is Some
