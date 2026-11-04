@@ -40,7 +40,7 @@ Per cluster and listener, with positions in mm, `d = isqrt(dx^2 + dy^2)` clamped
 2. **Gradient.** `g = lapse_mk * 606 / 1000 + w * shear_ppm / 10^6` (each truncating). `w > 0` or `lapse > 0` bends sound down; the opposite bends it up (CWV p457: wind shear, inversion, ground reflection).
 3. **Horizon.** If `|g| >= g_min`: `R = c * 1000 / |g|` (mm), `d_h = isqrt(2*R*hs) + isqrt(2*R*hr)` with `hs`, `hr` the source and listener heights in mm (limit of a circular ray; both signs). Else there is no refraction.
 4. **Loss per band `b`** (cdB, all integer, non-negative):
- - spherical `G(x) = max(0, 2 * cdb_of_power(x << 16) - 6000)`; if `g > 0` and `d > d_h` the spreading turns cylindrical: `G(d_h) + cdb_of_power((d << 16) / d_h) + duct_loss * (d - d_h) / 10^6`; else `G(d)`.
+ - spherical `G(x) = max(0, R((x * x) << 16) - 6000)` with `R(p)` the `10 log10` of the Q16 power `p` in cdB rounded to nearest (one rounded logarithm of the square, so exact powers of ten land on their value and the error stays below 0.6 cdB); if `g > 0` and `d > d_h` the spreading turns cylindrical: `G(d_h) + cdb_of_power((d << 16) / d_h) + duct_loss * (d - d_h) / 10^6`; else `G(d)`.
  - absorption `abs_b * d / 10^6`.
  - shadow, only if `g < 0` and `d > d_h`: `min(cap_b * min(|g|, shadow_sat_g) / shadow_sat_g, slope_b * (d - d_h) / 10^6)`. A weak gradient gives a weak shadow.
  - terrain, only with a `Relief` (items 4b and 4c).
