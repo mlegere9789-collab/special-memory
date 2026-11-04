@@ -228,7 +228,7 @@ fn corruption_reports_body_hash_mismatch_before_structure() {
     ));
     // input count huge
     let mut b = good.clone();
-    b[25 + 0..25 + 4].copy_from_slice(&u32::MAX.to_le_bytes());
+    b[25..25 + 4].copy_from_slice(&u32::MAX.to_le_bytes());
     assert!(matches!(
         ReplayReader::parse(&b),
         Err(ReplayError::BodyHashMismatch { .. })

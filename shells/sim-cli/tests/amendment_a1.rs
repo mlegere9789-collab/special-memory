@@ -178,12 +178,17 @@ fn rebuild_with(
     for i in replay.inputs() {
         w.push_input(i.tick, i.actor, i.seq, i.payload.clone());
     }
-    for (n, c) in replay.checkpoints().iter().enumerate() {
-        if keep(n, c.tick) {
-            w.push_checkpoint(c.tick, c.hash);
-        }
-    }
-    for &(t, h) in extra {
+    // The writer requires strictly increasing ticks (SPEC-002 A1), so merge extras in tick order.
+    let mut all: Vec<(u64, u64)> = replay
+        .checkpoints()
+        .iter()
+        .enumerate()
+        .filter(|&(n, c)| keep(n, c.tick))
+        .map(|(_, c)| (c.tick, c.hash))
+        .collect();
+    all.extend_from_slice(extra);
+    all.sort_by_key(|&(t, _)| t);
+    for (t, h) in all {
         w.push_checkpoint(t, h);
     }
     w.finish(replay.total_ticks(), replay.final_hash()).unwrap()
@@ -226,13 +231,15 @@ fn missing_or_extra_checkpoints_are_malformed() {
     ));
     assert_eq!(verify_file(&missing_first), 2);
     // One checkpoint too many (at a tick inside the run).
-    let extra = rebuild_with(&replay, |_, _| true, &[(301 - 1, 7)]);
+    let extra = rebuild_with(&replay, |_, _| true, &[(250, 7)]);
     assert!(extra.checkpoints().len() == 4);
     assert!(matches!(verify_replay(&extra), Verdict::Malformed(_)));
     assert_eq!(verify_file(&extra), 2);
     // A checkpoint off the schedule.
-    let shifted = rebuild_with(&replay, |n, _| n != 1, &[]);
-    let shifted = rebuild_with(&shifted, |_, _| true, &[(250, 1)]);
+    // (Same count as scheduled, ticks 100, 250, 300: strictly increasing, so the writer accepts
+    // it, but 250 is not a multiple of the interval.)
+    let shifted = rebuild_with(&replay, |n, _| n < 1, &[(250, 1), (300, 2)]);
+    assert_eq!(shifted.checkpoints().len(), 3);
     assert!(matches!(verify_replay(&shifted), Verdict::Malformed(_)));
     assert_eq!(verify_file(&shifted), 2);
 }

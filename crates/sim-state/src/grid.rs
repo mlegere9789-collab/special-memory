@@ -115,9 +115,7 @@ impl SpatialGrid {
         if cell_size.raw() <= 0 {
             return Err(GridError::NonPositiveCellSize);
         }
-        let cells = u64::from(width_cells)
-            .checked_mul(u64::from(height_cells))
-            .unwrap_or(u64::MAX);
+        let cells = u64::from(width_cells).saturating_mul(u64::from(height_cells));
         if cells > MAX_GRID_CELLS {
             return Err(GridError::TooManyCells { cells });
         }
