@@ -57,3 +57,13 @@ pub use battle_hash::battle_hash;
 pub use orders::{decode_order, encode_order, Order, OrderDecodeError};
 pub use regiment::{can_fire, Regiment, RegimentId, RegimentSpec, RegimentState};
 pub use tables::Tables;
+
+// T-021
+pub mod flight;
+mod gauss;
+pub mod range;
+mod vec3;
+pub use flight::{advance_projectile, step_projectile, Ballistics, Flight, FlightEnv, Projectile};
+pub use gauss::{angle_from_urad, gauss_unit};
+pub use range::RangeTable;
+pub use vec3::Vec3Fx;
