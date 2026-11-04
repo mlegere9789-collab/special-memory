@@ -1,0 +1,39 @@
+{
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "$id": "consents.schema.json",
+ "title": "Performer consents (SPEC-016 sections 2, 6.2 and 9)",
+ "description": "person_ref is a pseudonym; identity stays in the legal vault. Dates are YYYYMMDD, 0 for not set.",
+ "type": "object",
+ "additionalProperties": false,
+ "required": ["schema"],
+ "properties": {
+  "schema": {"const": "consents/1"},
+  "consent": {"type": "array", "items": {"$ref": "#/$defs/row"}}
+ },
+ "$defs": {
+  "row": {
+   "type": "object",
+   "additionalProperties": false,
+   "required": ["id", "person_ref", "role", "use_game", "use_marketing", "replica_allowed", "ml_training_allowed", "rate_basis", "signed", "expires", "counsel_ref"],
+   "properties": {
+    "id": {"type": "string", "minLength": 1},
+    "person_ref": {"type": "string", "pattern": "^[a-z][a-z0-9_-]*$"},
+    "role": {"type": "string", "minLength": 1},
+    "use_game": {"type": "boolean"},
+    "use_marketing": {"type": "boolean"},
+    "replica_allowed": {"type": "boolean"},
+    "ml_training_allowed": {"type": "boolean"},
+    "rate_basis": {"enum": ["guild_minimum", "counsel_day_rate"]},
+    "signed": {"type": "integer", "minimum": 0, "maximum": 21001231},
+    "expires": {"type": "integer", "minimum": 0, "maximum": 21001231},
+    "counsel_ref": {"type": "string"},
+    "confidence": {"$ref": "common.schema.json#/$defs/confidence"},
+    "placeholder": {"type": "boolean"},
+    "calibration_target": {"type": "string", "pattern": "^CT-[0-9]{3}-[0-9]+$"},
+    "sources": {"$ref": "common.schema.json#/$defs/sources"},
+    "second_source": {"type": "string"},
+    "note": {"type": "string"}
+   }
+  }
+ }
+}

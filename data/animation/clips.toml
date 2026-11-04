@@ -1,0 +1,3 @@
+# Animation clip manifest (SPEC-016 section 2); one [[clip]] table per delivered clip.
+schema = "clips/1"
+clip = []

@@ -1,0 +1,36 @@
+# Known-good recording rows for the checker tests.
+schema = "recordings/1"
+
+[[recording]]
+id = "snd_voice_company_near_cheer_01"
+category = "voice"
+source = "company"
+weapon = ""
+distance_m = 5
+wind_dm_s = 10
+temp_dc = 180
+humidity_pc = 55
+sample_rate = 48000
+bits = 24
+channels = 1
+consent = "cns-002"
+loudness_lufs_x10 = -230
+peak_dbtp_x10 = -15
+status = "accepted"
+
+[[recording]]
+id = "snd_shot_rifle58_mid_single_03"
+category = "shot"
+source = "rifle58"
+weapon = "rifle_58"
+distance_m = 200
+wind_dm_s = 20
+temp_dc = 150
+humidity_pc = 60
+sample_rate = 48000
+bits = 24
+channels = 1
+consent = ""
+loudness_lufs_x10 = -200
+peak_dbtp_x10 = -12
+status = "delivered"

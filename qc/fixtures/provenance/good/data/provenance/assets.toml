@@ -1,0 +1,27 @@
+# Known-good asset rows for the checker tests.
+schema = "assets/1"
+
+[[asset]]
+id = "ast-001"
+class = "character"
+author = "studio-a"
+vendor = "studio-a"
+licence = "assigned-ip"
+licence_ref = "contract-A-2026-01"
+human_authored = true
+ai_tool = "none"
+rights_check = 20260401
+gate = "G5"
+
+[[asset]]
+id = "ast-002"
+class = "terrain"
+author = "federal-survey"
+vendor = ""
+licence = "public-domain-us-federal"
+licence_ref = "download-record-12"
+human_authored = false
+rights_check = 20260402
+gate = "G5"
+confidence = "partial"
+sources = [{ document = "licence-file", page = 1 }]

@@ -1,0 +1,38 @@
+{
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "$id": "assets.schema.json",
+ "title": "Asset provenance (SPEC-016 sections 2 and 9)",
+ "description": "One row per delivered or bought asset; provenance fields are optional and checked when present.",
+ "type": "object",
+ "additionalProperties": false,
+ "required": ["schema"],
+ "properties": {
+  "schema": {"const": "assets/1"},
+  "asset": {"type": "array", "items": {"$ref": "#/$defs/row"}}
+ },
+ "$defs": {
+  "row": {
+   "type": "object",
+   "additionalProperties": false,
+   "required": ["id", "class", "author", "vendor", "licence", "licence_ref", "human_authored", "rights_check", "gate"],
+   "properties": {
+    "id": {"type": "string", "minLength": 1},
+    "class": {"type": "string", "pattern": "^[a-z][a-z_]*$"},
+    "author": {"type": "string", "minLength": 1},
+    "vendor": {"type": "string"},
+    "licence": {"type": "string", "minLength": 1},
+    "licence_ref": {"type": "string"},
+    "human_authored": {"type": "boolean"},
+    "ai_tool": {"type": "string", "minLength": 1},
+    "rights_check": {"type": "integer", "minimum": 0, "maximum": 21001231},
+    "gate": {"type": "string", "pattern": "^G[0-9]$"},
+    "confidence": {"$ref": "common.schema.json#/$defs/confidence"},
+    "placeholder": {"type": "boolean"},
+    "calibration_target": {"type": "string", "pattern": "^CT-[0-9]{3}-[0-9]+$"},
+    "sources": {"$ref": "common.schema.json#/$defs/sources"},
+    "second_source": {"type": "string"},
+    "note": {"type": "string"}
+   }
+  }
+ }
+}

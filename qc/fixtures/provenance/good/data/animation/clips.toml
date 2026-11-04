@@ -1,0 +1,32 @@
+# Known-good clip rows for the checker tests.
+schema = "clips/1"
+
+[[clip]]
+id = "inf_fire_cycle_stand_veteran_v01"
+category = "inf"
+performer = "performer-01"
+consent = "cns-001"
+session = "s01"
+style = "veteran"
+posture = "stand"
+fps = 60
+frames = 240
+loop = false
+contact_l = [10, 130]
+contact_r = [70, 190]
+status = "accepted"
+
+[[clip]]
+id = "mov_walk_flat_dry_v02"
+category = "mov"
+performer = "performer-02"
+consent = "cns-002"
+session = "s01"
+style = "recruit"
+posture = "stand"
+fps = 60
+frames = 120
+loop = true
+contact_l = [0, 60]
+contact_r = [30, 90]
+status = "delivered"

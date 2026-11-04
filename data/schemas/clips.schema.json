@@ -1,0 +1,41 @@
+{
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "$id": "clips.schema.json",
+ "title": "Animation clip manifest (SPEC-016 sections 2 and 6.3)",
+ "description": "One row per delivered clip; the id is the delivery name.",
+ "type": "object",
+ "additionalProperties": false,
+ "required": ["schema"],
+ "properties": {
+  "schema": {"const": "clips/1"},
+  "clip": {"type": "array", "items": {"$ref": "#/$defs/row"}}
+ },
+ "$defs": {
+  "row": {
+   "type": "object",
+   "additionalProperties": false,
+   "required": ["id", "category", "performer", "consent", "session", "style", "posture", "fps", "frames", "loop", "contact_l", "contact_r", "status"],
+   "properties": {
+    "id": {"type": "string", "pattern": "^[a-z]{3}_[a-z0-9]+(_[a-z0-9]+){2,6}_v[0-9]{2}$"},
+    "category": {"type": "string", "pattern": "^[a-z]{3}$"},
+    "performer": {"type": "string", "minLength": 1},
+    "consent": {"type": "string", "minLength": 1},
+    "session": {"type": "string", "minLength": 1},
+    "style": {"type": "string", "pattern": "^[a-z]+$"},
+    "posture": {"type": "string", "pattern": "^[a-z]+$"},
+    "fps": {"type": "integer", "minimum": 1},
+    "frames": {"type": "integer", "minimum": 1},
+    "loop": {"type": "boolean"},
+    "contact_l": {"type": "array", "items": {"type": "integer", "minimum": 0}},
+    "contact_r": {"type": "array", "items": {"type": "integer", "minimum": 0}},
+    "status": {"enum": ["planned", "delivered", "accepted", "rejected", "withdrawn"]},
+    "confidence": {"$ref": "common.schema.json#/$defs/confidence"},
+    "placeholder": {"type": "boolean"},
+    "calibration_target": {"type": "string", "pattern": "^CT-[0-9]{3}-[0-9]+$"},
+    "sources": {"$ref": "common.schema.json#/$defs/sources"},
+    "second_source": {"type": "string"},
+    "note": {"type": "string"}
+   }
+  }
+ }
+}

@@ -1,0 +1,25 @@
+{
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "$id": "skeleton.schema.json",
+ "title": "Soldier skeleton (SPEC-016 section 6.4)",
+ "description": "Joint order is the index order; the parent index is lower than the joint's own index. The counts (64 joints, 28 in tier B) are checked by tools/validators/assets.py.",
+ "type": "object",
+ "additionalProperties": false,
+ "required": ["schema", "joint"],
+ "properties": {
+  "schema": {"const": "skeleton/1"},
+  "joint": {
+   "type": "array",
+   "items": {
+    "type": "object",
+    "additionalProperties": false,
+    "required": ["name", "parent", "tier_b"],
+    "properties": {
+     "name": {"type": "string", "pattern": "^[a-z][a-z0-9_]*$"},
+     "parent": {"type": "integer", "minimum": -1},
+     "tier_b": {"type": "boolean"}
+    }
+   }
+  }
+ }
+}
