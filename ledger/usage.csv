@@ -53,3 +53,4 @@ date,ticket,class,estimated_usage,actual_usage,review_defects,rework_count,notes
 2026-11-04,T-141 terrain amendment A3 and survey source manifest (offline part),M,,160162 tokens,0,0,fresh implementer; 19 Python tests; two Rust tests extended for A3 rows; all sources consulted=false
 2026-11-04,T-082 fidelity table classifier sectors (SPEC-008),M,,153230 tokens,0,0,fresh implementer; 31 tests
 2026-11-04,T-072 officers dispatch codec inputs command hash block (SPEC-007),M,,189012 tokens,0,0,fresh implementer; tests T7-02 T7-11 T7-16; CMD1 hash block only when cmd is Some
+2026-11-04,T-134 commanders time ordering hourly schedule (SPEC-013 GB13 to GB16),M,,145122 tokens,0,0,fresh implementer; 50 tests; 6 good and 13 bad fixtures
