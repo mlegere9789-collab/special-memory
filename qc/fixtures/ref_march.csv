@@ -1,0 +1,6 @@
+case,gait,distance_mm,ideal_ticks,model_ticks
+march,walk,200000,3749,3757
+march,quick,200000,3070,3096
+march,double_quick,200000,1736,1779
+march,run,200000,1112,1848
+strip,quick,40000,1024,1034
