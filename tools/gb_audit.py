@@ -3,10 +3,11 @@
 
 Holds the time functions, the source registry loader, the citation rules GB04 and GB05, the schema metaschema check,
 the audit-report writer (ticket T-130), the corpus loader and the structural rules GB01 to GB03 and GB07 to GB09
-(ticket T-131). The remaining rules come in later tickets.
+(ticket T-131), the evidence ladder with the rules GB04 to GB06 and the known-conflict fixtures with GB17 (ticket
+T-132). The remaining rules come in later tickets.
 
 Usage: python3 tools/gb_audit.py sources [ROOT]    check the schemas and data/history/gettysburg/sources.toml
-       python3 tools/gb_audit.py check [ROOT]      load the corpus under ROOT and print every finding
+       python3 tools/gb_audit.py check [ROOT]      load the corpus under ROOT and print every finding, fixtures included
 Exit 1 on any E finding.
 """
 import json
@@ -250,6 +251,138 @@ def check_citations(registry, record, citations):
 
 def check_record_citations(registry, rec):
     return check_citations(registry, str(rec.get("id", "(no id)")), citations_of(rec))
+
+
+# ---------------------------------------------------------------- evidence ladder (T-132, section 5)
+
+def lineage_of(registry, code):
+    """Lineage of a registered source, or None."""
+    row = registry.get(code)
+    return row.get("lineage") if row else None
+
+
+def _consulted(registry, code):
+    row = registry.get(code)
+    return bool(row and row.get("consulted"))
+
+
+def _qualifies(registry, claim):
+    """A claim counts toward `verified` when its source is consulted and licence-cleared and it names a page."""
+    row = registry.get(claim.get("document"))
+    return bool(row and row.get("consulted") and isinstance(claim.get("page"), int)
+                and (row.get("licence_class") not in NEEDS_CLEARANCE or row.get("cleared_by")))
+
+
+def claim_span(claim):
+    """(low, high) of a claim: its figure and figure_high, or its time and at_late in minutes. None when it has
+    neither or the stamp is invalid."""
+    try:
+        if isinstance(claim.get("figure"), int):
+            return claim["figure"], claim.get("figure_high", claim["figure"])
+        if isinstance(claim.get("at"), str):
+            return t_min(claim["at"]), t_min(claim.get("at_late", claim["at"]))
+    except ValueError:
+        pass
+    return None
+
+
+def claims_agree(claims):
+    """Figures: every claim a single point and all equal. Times: max(at) - min(at) <= TIME_TOL_MIN, at_late counted.
+    Claims carrying neither (plain source rows) agree."""
+    spans = [claim_span(c) for c in claims]
+    if not spans:
+        return True
+    if any(c.get("figure") is not None for c in claims):
+        return all(s is not None and "at" not in c and s[0] == s[1] for s, c in zip(spans, claims)) \
+            and len({s[0] for s in spans}) == 1
+    if all(s is None for s in spans):
+        return not any("at" in c for c in claims)
+    return None not in spans and max(b for _, b in spans) - min(a for a, _ in spans) <= TIME_TOL_MIN
+
+
+def _claims_of(fact):
+    return fact["claims"] if isinstance(fact.get("claims"), list) else [c for c in fact.get("sources", []) if isinstance(c, dict)]
+
+
+def second_source_matches(fact):
+    """`second_source` equals the CODE:page of one of the fact's claims."""
+    ss = fact.get("second_source")
+    return isinstance(ss, str) and any("%s:%s" % (c.get("document"), c.get("page")) == ss for c in _claims_of(fact))
+
+
+def evidence_problems(registry, fact):
+    """Reasons a fact cannot stand at `verified` (rule GB06); empty when it can."""
+    claims, out = _claims_of(fact), []
+    if len(claims) < 2:
+        out.append("needs two claims, has %d" % len(claims))
+    good = [c for c in claims if _qualifies(registry, c)]
+    for c in claims:
+        if c not in good:
+            out.append("claim from %s page %s is not from a consulted, licence-cleared source" % (c.get("document"), c.get("page")))
+    lineages = {lineage_of(registry, c["document"]) for c in good}
+    if len(lineages) < 2:
+        out.append("needs consulted claims of two lineages, has %d" % len(lineages))
+    if not claims_agree(claims):
+        out.append("the claims disagree")
+    spans = [claim_span(c) for c in claims]
+    if isinstance(fact.get("value"), int) and any(c.get("figure") is not None for c in claims):
+        if any(s is None or s[0] != fact["value"] for s in spans):
+            out.append("value %d is not the claimed figure" % fact["value"])
+    elif isinstance(fact.get("at"), str) and spans and None not in spans:
+        try:
+            if not min(a for a, _ in spans) <= t_min(fact["at"]) <= max(b for _, b in spans):
+                out.append("at %s is outside the claims" % fact["at"])
+        except ValueError:
+            out.append("at %r is not a stamp" % fact["at"])
+    if not second_source_matches(fact):
+        out.append("second_source %r does not name one of the claims" % fact.get("second_source"))
+    else:
+        code, page = fact["second_source"].split(":", 1)
+        if not any(c.get("document") == code and str(c.get("page")) == page for c in good):
+            out.append("second_source %s is not a consulted, licence-cleared claim" % fact["second_source"])
+    return out
+
+
+def evidence_level(registry, fact):
+    """Highest rung the claims support: verified, partial (a consulted claim with a page, or disagreeing claims stored
+    as a range) or unverified (no consulted claim, or an unresolved conflict)."""
+    if not evidence_problems(registry, fact):
+        return "verified"
+    claims = _claims_of(fact)
+    ranged = any(k in fact for k in ("low", "high", "early", "late"))
+    if not claims_agree(claims) and not ranged:
+        return "unverified"
+    return "partial" if any(_consulted(registry, c.get("document")) and isinstance(c.get("page"), int) for c in claims) else "unverified"
+
+
+def demoted(registry, fact):
+    """A copy of the fact with `verified` lowered to the rung its claims support; the input is not changed."""
+    out = json.loads(json.dumps(fact))
+    if out.get("confidence") == "verified":
+        out["confidence"] = evidence_level(registry, out)
+    return out
+
+
+def _verified_nodes(node, path=""):
+    if isinstance(node, dict):
+        if node.get("confidence") == "verified" and ("sources" in node or "claims" in node):
+            yield path, node
+        for k in sorted(node):
+            yield from _verified_nodes(node[k], path + "/" + k if path else k)
+    elif isinstance(node, list):
+        for i, v in enumerate(node):
+            yield from _verified_nodes(v, "%s/%d" % (path, i))
+
+
+def _citation_findings(registry, rec):
+    """GB04, GB05 and GB06 for one record, reported on the record's file."""
+    out = []
+    for f in check_record_citations(registry, rec.doc):
+        where = f.path.split("/", 1)[1] if "/" in f.path else "(root)"
+        out.append(Finding(rec.label, f.rule, f.severity, "%s: %s" % (where, f.message)))
+    for p, n in _verified_nodes(rec.doc):
+        out += [Finding(rec.label, "GB06", "E", "%s: verified but %s" % (p or "(root)", m)) for m in evidence_problems(registry, n)]
+    return out
 
 
 # ---------------------------------------------------------------- audit report
@@ -542,7 +675,7 @@ def _gb09(recs, index):
 
 
 def check_corpus(c):
-    """Structural rules GB01 to GB03 and GB07 to GB09 over a loaded corpus. Sorted findings; an I or W would sort in too."""
+    """Rules GB01 to GB09 over a loaded corpus (GB04 to GB06 when a registry is present). Sorted findings."""
     out, seen, valid, validators = list(c.findings), {}, [], {}
     for r in c.records:
         if r.doc is None:
@@ -570,6 +703,221 @@ def check_corpus(c):
         out += [Finding(r.label, "GB07", "E", m) for m in _gb07(r.doc)]
         out += [Finding(r.label, "GB08", "E", m) for m in _gb08(r)]
     out += _gb09([r for r in valid if r.kind in ("units", "batteries")], index)
+    if c.sources:  # without a registry there is nothing to judge a citation against
+        for r in c.records:
+            if isinstance(r.doc, dict):
+                out += _citation_findings(c.sources, r)
+    return sorted(out)
+
+
+# ---------------------------------------------------------------- known-conflict fixtures (T-132, section 9)
+
+FIXTURE_FILE = "gb-known-conflicts.toml"
+CONFLICT_KINDS = ("headline", "range", "time", "sum_conflict", "pair", "control", "roster", "stint", "onset")
+ALWAYS_UNVERIFIED = ("headline", "onset")                # never verified, whatever the claims say
+UNVERIFIED_WHILE_DISAGREEING = ("range", "time", "sum_conflict")
+RULE_CODE = re.compile(r"GB(0[1-9]|1[0-9])")
+
+
+def pct(loss, base):
+    """Integer percentage, floor((loss * 100 + base / 2) / base); a recorded rate matches within 1."""
+    return (loss * 100 + base // 2) // base
+
+
+def _resolve(node, path):
+    """Node at a `/` path: a dict key, a list index, or for a list the element whose scope is the segment.
+    Returns (found, node)."""
+    for seg in path.split("/"):
+        if isinstance(node, dict) and seg in node:
+            node = node[seg]
+        elif isinstance(node, list) and seg.isdigit() and int(seg) < len(node):
+            node = node[int(seg)]
+        elif isinstance(node, list) and any(isinstance(x, dict) and x.get("scope") == seg for x in node):
+            node = next(x for x in node if isinstance(x, dict) and x.get("scope") == seg)
+        else:
+            return False, None
+    return True, node
+
+
+def _groups(row):
+    """Claims of a row grouped by the (record, path) they belong to, in sorted order."""
+    out = {}
+    for cl in row.get("claims", []):
+        out.setdefault((cl.get("record", row["record"]), cl.get("path", row["path"])), []).append(cl)
+    return sorted(out.items())
+
+
+def _bounds(claims):
+    spans = [claim_span(c) for c in claims]
+    return min(a for a, _ in spans), max(b for _, b in spans)
+
+
+def _intervals(stints):
+    """(from, to, person) of command stints; open ends are FAR."""
+    out = []
+    for st in stints:
+        if isinstance(st, dict) and st.get("kind") == "command" and check_stamp(st.get("from", "1863-07-01T00:00")) is None \
+                and check_stamp(st.get("to", "1863-07-01T00:00")) is None:
+            out.append((t_min(st["from"]) if "from" in st else -FAR, t_min(st["to"]) if "to" in st else FAR))
+    return out
+
+
+def _row_integrity(row):
+    """Problems with the row itself: shape, bounds against its claims, sums, rates and counts."""
+    out = []
+    for k in ("id", "kind", "record", "path", "rule"):
+        if not isinstance(row.get(k), str) or not row[k]:
+            out.append("%s is missing" % k)
+    if not isinstance(row.get("claims"), list):
+        out.append("claims is missing")
+    if out:
+        return out
+    if row["kind"] not in CONFLICT_KINDS:
+        out.append("unknown kind %r" % row["kind"])
+    if RULE_CODE.fullmatch(row["rule"]) is None:
+        out.append("rule %r is not a rule code" % row["rule"])
+    for i, cl in enumerate(row["claims"]):
+        if not isinstance(cl, dict) or not isinstance(cl.get("document"), str) or not isinstance(cl.get("page"), int) \
+                or claim_span(cl) is None or ("figure" in cl) == ("at" in cl):
+            out.append("claims/%d is not a figure or time claim with document and page" % i)
+    if out:
+        return out
+    prim = [c for k, c in _groups(row) if k == (row["record"], row["path"])]
+    if prim:
+        lo, hi = _bounds(prim[0])
+        for a, b, fmt in (("low", "high", lambda v: v), ("early", "late", stamp_of)):
+            for key, want in ((a, lo), (b, hi)):
+                if key in row:
+                    try:
+                        have = row[key] if a == "low" else t_min(row[key])
+                    except ValueError:
+                        have = None
+                    if have != want:
+                        out.append("%s %r is not the bound %s of the row's claims" % (key, row[key], fmt(want)))
+    for s in row.get("sums", []):
+        if (sum(s["parts"]) == s["total"]) != s["agrees"]:
+            out.append("sum of %s against %d: agrees = %s is wrong" % (s["parts"], s["total"], str(s["agrees"]).lower()))
+    for r in row.get("rates", []):
+        if pct(r["loss"], r["base"]) != r["pct"]:
+            out.append("pct(%d, %d) is %d, not %d" % (r["loss"], r["base"], pct(r["loss"], r["base"]), r["pct"]))
+    for n in row.get("counts", []):
+        if n["stated"] == n["listed"]:
+            out.append("count of %s: stated and listed are both %d" % (n["what"], n["stated"]))
+    if "ends_by" in row and not (isinstance(row["ends_by"], str) and check_stamp(row["ends_by"]) is None):
+        out.append("ends_by %r is not a stamp in the window" % (row["ends_by"],))
+    return out
+
+
+def _span_problem(claims, node):
+    """None when the node's range spans the group's claims, else the problem text."""
+    lo, hi = _bounds(claims)
+    try:
+        if "at" in claims[0]:
+            have = (t_min(node["early"]), t_min(node["late"])) if "early" in node and "late" in node else None
+            text = "early %s, late %s" % (stamp_of(lo), stamp_of(hi))
+        else:
+            have = (node["low"], node["high"]) if "low" in node and "high" in node else None
+            text = "low %d, high %d" % (lo, hi)
+    except ValueError:
+        return None  # an invalid stamp is GB08
+    if have is None or have[0] > lo or have[1] < hi:
+        return "range does not span the claims (needs %s)" % text
+    return None
+
+
+def _state(rows_row, rec_of):
+    """GB17 problems of one row against the corpus: (record label, message) pairs."""
+    row, out = rows_row, []
+    kind = row["kind"]
+
+    def say(rec, msg):
+        out.append((rec.label, "%s: %s" % (row["id"], msg)))
+
+    if kind in ALWAYS_UNVERIFIED + UNVERIFIED_WHILE_DISAGREEING:
+        for (rid, path), claims in _groups(row):
+            rec = rec_of.get(rid)
+            found, node = _resolve(rec.doc, path) if rec else (False, None)
+            if not found:
+                continue
+            disagree = not claims_agree(claims)
+            for n in node if isinstance(node, list) else [node]:
+                if not isinstance(n, dict):
+                    continue
+                if n.get("confidence") == "verified" and (kind in ALWAYS_UNVERIFIED or disagree):
+                    say(rec, "%s is verified while the volume's claims conflict" % path)
+                if kind in ("range", "time") and disagree and (rid, path) == (row["record"], row["path"]):
+                    problem = _span_problem(claims, n)
+                    if problem:
+                        say(rec, "%s: %s" % (path, problem))
+                if kind == "sum_conflict" and (rid, path) == (row["record"], row["path"]):
+                    if not (isinstance(n.get("flag"), str) and n["flag"]):
+                        say(rec, "%s: the components and the headline disagree and the fact carries no flag" % path)
+                    have = {c.get("figure") for c in n.get("claims", []) if isinstance(c, dict)}
+                    for s in row.get("sums", []):
+                        for want in (s["total"], sum(s["parts"])):
+                            if want not in have:
+                                say(rec, "%s: figure %d is not stored as a claim" % (path, want))
+    rec = rec_of.get(row["record"])
+    if kind == "range" and row.get("counts") and rec is not None and _resolve(rec.doc, row["path"])[0]:
+        node = _resolve(rec.doc, row["path"])[1]
+        if not (isinstance(node, dict) and isinstance(node.get("flag"), str) and node["flag"]):
+            say(rec, "%s: the stated and listed counts differ and the fact carries no flag" % row["path"])
+    if kind == "time" and row.get("not_before") and rec is not None:
+        if row["not_before"] not in [n.get("event") for n in rec.doc.get("not_before", []) if isinstance(n, dict)]:
+            say(rec, "not_before does not name %s" % row["not_before"])
+    if kind == "pair" and rec is not None:
+        have = [p for p in row["keep"] if _resolve(rec.doc, p)[0]]
+        for p in row["keep"]:
+            if have and p not in have:
+                say(rec, "%s is dropped while %s is kept" % (p, have[0]))
+    if kind == "stint" and rec is not None:
+        for st in rec.doc.get("commanders", []):
+            if isinstance(st, dict) and st.get("person", {}).get("id") == row["person"]:
+                if "to" not in st or (check_stamp(st["to"]) is None and t_min(st["to"]) > t_min(row["ends_by"])):
+                    say(rec, "%s's stint does not end by %s" % (row["person"], row["ends_by"]))
+    if kind == "roster":
+        for m in row.get("members", []):
+            mrec = rec_of.get(m["record"])
+            if mrec is None:
+                continue
+            if mrec.doc.get("level") != "brigade":
+                say(mrec, "%s (%s) is not a brigade record" % (m["record"], m["label"]))
+            spans = sorted(_intervals(mrec.doc.get("commanders", [])))
+            if any(spans[i][1] > spans[i + 1][0] for i in range(len(spans) - 1)):
+                say(mrec, "%s has two simultaneous command stints" % m["record"])
+    return out
+
+
+def check_fixtures(c, fixture_dir):
+    """Rule GB17: the rows of `gb-known-conflicts.toml` in `fixture_dir` against the corpus. A row binds once its
+    record exists. Without the file nothing is checked. Sorted findings."""
+    path = os.path.join(fixture_dir, FIXTURE_FILE)
+    if not os.path.isfile(path):
+        return []
+    label = _label(c.root, path) if os.path.abspath(path).startswith(c.root + os.sep) else FIXTURE_FILE
+    try:
+        with open(path, "rb") as f:
+            doc = tomllib.load(f)
+    except (OSError, ValueError) as e:
+        return [Finding(label, "GB17", "E", "fixture file unreadable: %s" % e)]
+    out = [Finding(label, "GB17", "E", "float at %s" % p) for p in find_floats(doc)]
+    rows = doc.get("conflict") if isinstance(doc.get("conflict"), list) else []
+    if not rows:
+        out.append(Finding(label, "GB17", "E", "no [[conflict]] rows"))
+    rec_of = {}
+    for r in c.records:
+        if isinstance(r.doc, dict) and isinstance(r.doc.get("id"), str):
+            rec_of.setdefault(r.doc["id"], r)
+    seen = set()
+    for i, row in enumerate(rows):
+        name = row.get("id", "row %d" % i) if isinstance(row, dict) else "row %d" % i
+        problems = _row_integrity(row) if isinstance(row, dict) else ["row is not a table"]
+        if name in seen:
+            problems.append("id is used twice")
+        seen.add(name)
+        out += [Finding(label, "GB17", "E", "%s: %s" % (name, m)) for m in problems]
+        if not problems:
+            out += [Finding(p, "GB17", "E", m) for p, m in _state(row, rec_of)]
     return sorted(out)
 
 
@@ -585,7 +933,8 @@ def main(argv):
             print("%s: %s %s %s" % (f.path, f.rule, f.severity, f.message))
         return 1 if any(f.severity == "E" for f in findings) else 0
     if len(argv) >= 2 and argv[1] == "check":
-        findings = check_corpus(load_corpus(argv[2] if len(argv) > 2 else ROOT))
+        corpus = load_corpus(argv[2] if len(argv) > 2 else ROOT)
+        findings = sorted(check_corpus(corpus) + check_fixtures(corpus, os.path.join(corpus.root, "qc", "fixtures")))
         for f in findings:
             print("%s: %s %s %s" % (f.path, f.rule, f.severity, f.message))
         return 1 if any(f.severity == "E" for f in findings) else 0

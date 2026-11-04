@@ -1,0 +1,18 @@
+# expect: GB04
+schema = "gb-unit/1"
+id = "us_probe_gb04"
+side = "union"
+level = "army"
+name = "Probe"
+
+[[commanders]]
+person = { id = "probe_person_a", name = "Probe Person" }
+kind = "command"
+confidence = "unverified"
+sources = [{ document = "CWV", page = 72 }]
+
+[strength.engaged]
+value = 250
+confidence = "unverified"
+sources = [{ document = "CWV", page = 72 }]
+claims = [{ document = "UNC", page = 5, figure = 250 }]

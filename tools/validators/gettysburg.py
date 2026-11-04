@@ -1,6 +1,6 @@
 """Validator plugin for the Gettysburg records under data/history/gettysburg (SPEC-013 section 10, rule R8 of
 validate_data.py). It loads the corpus with tools/gb_audit.py and reports every E finding as
-`<path>: GBnn <message>`; W and I findings are printed by `python3 tools/gb_audit.py check` only. A repository
+`<path>: GBnn <message>` (the corpus rules and, from qc/fixtures, the known-conflict rule GB17); W and I findings are printed by `python3 tools/gb_audit.py check` only. A repository
 without data/history/gettysburg has nothing to check."""
 import os
 import sys
@@ -19,7 +19,10 @@ def check_gettysburg(root):
     if not os.path.isdir(os.path.join(root, "data", "history", "gettysburg")):
         return 0, []
     corpus = gb_audit.load_corpus(root)
-    problems = ["%s: %s %s" % (f.path, f.rule, f.message) for f in gb_audit.check_corpus(corpus) if f.severity == "E"]
+    found = gb_audit.check_corpus(corpus)
+    fixtures = os.path.join(root, "qc", "fixtures")  # rule R6: the known-conflict fixtures (SPEC-013 section 9)
+    found = sorted(found + gb_audit.check_fixtures(corpus, fixtures))
+    problems = ["%s: %s %s" % (f.path, f.rule, f.message) for f in found if f.severity == "E"]
     return len(corpus.records), problems
 
 

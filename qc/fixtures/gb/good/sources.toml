@@ -1,0 +1,64 @@
+schema = "gb-sources/1"
+
+# Registry for the probe records: CWV and ALT are consulted with different lineages, ENC is consulted and
+# shares the CWV lineage, UNC is not consulted and PERM needs clearance that is not recorded.
+
+[[source]]
+code = "CWV"
+title = "Probe research volume"
+kind = "internal_research"
+lineage = "web_compilation"
+licence_class = "internal"
+consulted = true
+edition = "probe edition"
+access = "probe shelf"
+licence_text = "probe licence text"
+consulted_on = "2026-11-04"
+page_scheme = "PDF page number"
+
+[[source]]
+code = "ALT"
+title = "Probe independent source"
+kind = "study"
+lineage = "alt_lineage"
+licence_class = "public_domain"
+consulted = true
+edition = "probe edition"
+access = "probe shelf"
+licence_text = "probe licence text"
+consulted_on = "2026-11-04"
+page_scheme = "printed page"
+
+[[source]]
+code = "ENC"
+title = "Probe encyclopedia the volume drew on"
+kind = "compilation_web"
+lineage = "web_compilation"
+licence_class = "open_licence"
+consulted = true
+edition = "probe edition"
+access = "probe shelf"
+licence_text = "probe licence text"
+consulted_on = "2026-11-04"
+page_scheme = "printed page"
+
+[[source]]
+code = "UNC"
+title = "Probe source not consulted"
+kind = "study"
+lineage = "unc_lineage"
+licence_class = "public_domain"
+consulted = false
+
+[[source]]
+code = "PERM"
+title = "Probe source needing permission"
+kind = "park_material"
+lineage = "perm_lineage"
+licence_class = "permission_required"
+consulted = true
+edition = "probe edition"
+access = "probe shelf"
+licence_text = "probe licence text"
+consulted_on = "2026-11-04"
+page_scheme = "printed page"

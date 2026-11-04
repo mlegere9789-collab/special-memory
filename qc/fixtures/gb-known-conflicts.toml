@@ -1,0 +1,229 @@
+# Known conflicts in the research volume (SPEC-013 section 9, rule GB17). Every row is a regression fixture:
+# once the named record exists, the state described here must hold. Claims are untagged (CWV page given);
+# a claim may carry its own `record` and `path`, otherwise it belongs to the row's. Paths use `/`; a segment
+# on a list is an index or, for casualties, a scope name. Figures and stamps are integers and local-clock
+# strings; a derived figure says so in `note`.
+#
+# kind: headline (never verified), range (disagreeing claims: not verified, range spans them), time (as range,
+# with early and late), sum_conflict (components and headline disagree: flagged, both kept as claims),
+# pair (the listed paths are kept together), control (sums and percentages that must hold), roster (one
+# brigade record per designation, no two simultaneous command stints), stint (a person's stint ends by a
+# stamp), onset (onset claims kept, never verified).
+# Optional fields: low, high, early, late (the bounds of the row's own claims), not_before, keep, members,
+# sums {parts, total, agrees}, rates {loss, base, pct}, counts {what, stated, listed}, person, ends_by.
+
+[[conflict]]
+id = "C01"
+kind = "headline"
+record = "us_army_potomac"
+path = "strength/engaged"
+rule = "GB17"
+note = "Engaged 93,921 Union and 71,699 Confederate cited to ABT; older tallies differ. The army figure is never verified and the report holds the audited sum beside the headline."
+claims = [
+  { document = "CWV", page = 79, figure = 93921, tag = "untagged" },
+  { document = "CWV", page = 79, figure = 71699, tag = "untagged", record = "cs_army_northern_virginia" },
+]
+
+[[conflict]]
+id = "C02"
+kind = "range"
+record = "cs_army_northern_virginia"
+path = "casualties/battle/total"
+rule = "GB17"
+low = 23000
+high = 28063
+note = "Union 23,049 and Confederate 28,063 are the sums of their components (control); the older Confederate figure is about 23,000 and page 84 gives 23,000 to 28,000."
+claims = [
+  { document = "CWV", page = 79, figure = 28063, tag = "untagged" },
+  { document = "CWV", page = 79, figure = 23000, tag = "untagged" },
+  { document = "CWV", page = 84, figure = 23000, figure_high = 28000, tag = "untagged" },
+]
+sums = [
+  { parts = [3155, 14529, 5365], total = 23049, agrees = true },
+  { parts = [3903, 18735, 5425], total = 28063, agrees = true },
+]
+
+[[conflict]]
+id = "C03"
+kind = "sum_conflict"
+record = "cs_army_northern_virginia"
+path = "casualties/day3/total"
+rule = "GB11"
+note = "Pickett's Charge: Confederate headline 6,555 against 1,123 + 4,019 + 3,750 = 8,892. Both are stored as claims with a flag."
+claims = [
+  { document = "CWV", page = 84, figure = 6555, tag = "untagged" },
+  { document = "CWV", page = 84, figure = 8892, tag = "untagged" },
+]
+sums = [{ parts = [1123, 4019, 3750], total = 6555, agrees = false }]
+
+[[conflict]]
+id = "C04"
+kind = "time"
+record = "ev_hood_step_off"
+path = "at"
+rule = "GB17"
+early = "1863-07-02T16:00"
+late = "1863-07-02T16:30"
+note = "Hood's step-off about 16:00 and about 16:30 on the same page."
+claims = [
+  { document = "CWV", page = 81, at = "1863-07-02T16:00", tag = "untagged" },
+  { document = "CWV", page = 81, at = "1863-07-02T16:30", tag = "untagged" },
+]
+
+[[conflict]]
+id = "C05"
+kind = "time"
+record = "ev_pickett_step_off"
+path = "at"
+rule = "GB14"
+early = "1863-07-03T14:00"
+late = "1863-07-03T15:00"
+not_before = "ev_alexander_message"
+note = "Step-off roughly 2 to 3 p.m.; bombardment from about 13:00 for two hours; Alexander's message 14:45 to 15:00. The step-off is not before the message."
+claims = [
+  { document = "CWV", page = 83, at = "1863-07-03T14:00", at_late = "1863-07-03T15:00", tag = "untagged" },
+  { document = "CWV", page = 83, at = "1863-07-03T13:00", tag = "untagged", record = "ev_july_3_bombardment_begins" },
+  { document = "CWV", page = 83, at = "1863-07-03T14:45", at_late = "1863-07-03T15:00", tag = "untagged", record = "ev_alexander_message" },
+]
+
+[[conflict]]
+id = "C06"
+kind = "time"
+record = "ev_reynolds_killed"
+path = "at"
+rule = "GB17"
+early = "1863-07-01T10:20"
+late = "1863-07-01T11:30"
+note = "Reynolds killed after I Corps arrived about 10:20 and before Howard heard about 11:30; Hancock on Cemetery Hill about 15:30 to 16:00, range kept."
+claims = [
+  { document = "CWV", page = 80, at = "1863-07-01T10:20", tag = "untagged" },
+  { document = "CWV", page = 80, at = "1863-07-01T11:30", tag = "untagged" },
+  { document = "CWV", page = 80, at = "1863-07-01T15:30", at_late = "1863-07-01T16:00", tag = "untagged", record = "ev_hancock_cemetery_hill" },
+]
+
+[[conflict]]
+id = "C07"
+kind = "range"
+record = "us_wheatfield_force"
+path = "casualties/battle/total"
+rule = "GB17"
+low = 4000
+high = 6133
+note = "The text says six Union divisions or elements and lists five; eleven brigades; 20,444 engaged; losses over 6,000 against 4,000-6,000. The 6,133 is 30 percent of 20,444 as the page puts it (derived)."
+claims = [
+  { document = "CWV", page = 82, figure = 4000, figure_high = 6000, tag = "untagged" },
+  { document = "CWV", page = 82, figure = 6000, tag = "untagged" },
+  { document = "CWV", page = 82, figure = 6133, tag = "untagged" },
+  { document = "CWV", page = 82, figure = 20444, tag = "untagged", path = "strength/engaged" },
+]
+counts = [{ what = "divisions or elements", stated = 6, listed = 5 }]
+rates = [{ loss = 6133, base = 20444, pct = 30 }]
+
+[[conflict]]
+id = "C08"
+kind = "roster"
+record = "cs_pickett_charge_force"
+path = "strength/engaged"
+rule = "GB17"
+note = "Nine brigades listed as 3 + 4 + 2, plus two reserve brigades; about 12,500 men. One record per brigade; the brigade count comes from the audit."
+claims = [
+  { document = "CWV", page = 83, figure = 12500, tag = "untagged" },
+  { document = "CWV", page = 83, figure = 9, tag = "untagged", path = "brigades" },
+]
+sums = [{ parts = [3, 4, 2], total = 9, agrees = true }]
+
+[[conflict]]
+id = "C09"
+kind = "range"
+record = "cs_army_northern_virginia"
+path = "guns"
+rule = "GB12"
+low = 150
+high = 170
+note = "Bombardment 150 to 170 guns; Alexander's battalion about 50 or more. Battery guns are summed; the range stands until audited."
+claims = [
+  { document = "CWV", page = 83, figure = 150, figure_high = 170, tag = "untagged" },
+  { document = "CWV", page = 82, figure = 50, tag = "untagged", record = "cs_alexander_battalion" },
+]
+
+[[conflict]]
+id = "C10"
+kind = "pair"
+record = "cs_stuart_division"
+path = "strength/engaged"
+rule = "GB17"
+keep = ["strength/present", "strength/engaged"]
+note = "Stuart 5,000 present or 3,430 engaged; Union about 3,250; losses 254 (219 in Custer's brigade) and 181. Present and engaged are both kept."
+claims = [
+  { document = "CWV", page = 83, figure = 5000, tag = "untagged", path = "strength/present" },
+  { document = "CWV", page = 83, figure = 3430, tag = "untagged" },
+  { document = "CWV", page = 83, figure = 3250, tag = "untagged", record = "us_gregg_division" },
+  { document = "CWV", page = 83, figure = 254, tag = "untagged", record = "us_gregg_division", path = "casualties/battle/total" },
+  { document = "CWV", page = 83, figure = 181, tag = "untagged", path = "casualties/battle/total" },
+]
+
+[[conflict]]
+id = "C11"
+kind = "control"
+record = "us_iron_brigade"
+path = "casualties/battle/total"
+rule = "GB11"
+note = "Iron Brigade 1,153 of 1,885; 24th Michigan 397 of 496; 1st Minnesota 215 of 262 (page 82 says about 82 percent). The rate rule gives 61, 80 and 82."
+claims = [
+  { document = "CWV", page = 286, figure = 1153, tag = "untagged" },
+  { document = "CWV", page = 286, figure = 1885, tag = "untagged", path = "strength/engaged" },
+  { document = "CWV", page = 286, figure = 397, tag = "untagged", record = "us_24th_michigan" },
+  { document = "CWV", page = 286, figure = 496, tag = "untagged", record = "us_24th_michigan", path = "strength/engaged" },
+  { document = "CWV", page = 286, figure = 215, tag = "untagged", record = "us_1st_minnesota" },
+  { document = "CWV", page = 286, figure = 262, tag = "untagged", record = "us_1st_minnesota", path = "strength/engaged" },
+]
+rates = [
+  { loss = 1153, base = 1885, pct = 61 },
+  { loss = 397, base = 496, pct = 80 },
+  { loss = 215, base = 262, pct = 82 },
+]
+
+[[conflict]]
+id = "C12"
+kind = "roster"
+record = "cs_nicholls_walker_brigade"
+path = "designation"
+rule = "GB13"
+note = "Brigades are named by commander: Nicholls's or Walker's, Hoke's under Avery, Pettigrew's four as Fry, Marshall, Davis and Brockenbrough; the Stonewall, Florida and Georgia brigades are named in the plan. One record per designation; two simultaneous command stints fail GB13."
+claims = []
+members = [
+  { record = "cs_nicholls_walker_brigade", label = "Nicholls's or Walker's" },
+  { record = "cs_hoke_avery_brigade", label = "Hoke's, under Avery" },
+  { record = "cs_fry_brigade", label = "Fry" },
+  { record = "cs_marshall_brigade", label = "Marshall" },
+  { record = "cs_davis_brigade", label = "Davis" },
+  { record = "cs_brockenbrough_brigade", label = "Brockenbrough" },
+  { record = "cs_stonewall_brigade", label = "Stonewall" },
+  { record = "cs_florida_brigade", label = "Florida" },
+  { record = "cs_georgia_brigade", label = "Georgia" },
+]
+
+[[conflict]]
+id = "C13"
+kind = "stint"
+record = "us_v_corps"
+path = "commanders"
+rule = "GB13"
+person = "meade"
+ends_by = "1863-06-28T03:00"
+note = "V Corps is given as Meade then Sykes; Meade is in army command from 1863-06-28T03:00, so his V Corps stint ends at or before that stamp."
+claims = [{ document = "CWV", page = 79, at = "1863-06-28T03:00", tag = "untagged" }]
+
+[[conflict]]
+id = "C14"
+kind = "onset"
+record = "wx_18630704"
+path = "segment"
+rule = "GB17"
+note = "High 80s F on July 1 to 3 and a violent thunderstorm on the night of July 3 to 4 (page 79); rain began July 4 (page 84); thunderstorms July 4 (page 116). Night is read as 18:00 to 06:00 and high 80s as 85 to 89; the onset claims are kept and stay unverified."
+claims = [
+  { document = "CWV", page = 79, at = "1863-07-03T18:00", at_late = "1863-07-04T06:00", tag = "untagged" },
+  { document = "CWV", page = 84, at = "1863-07-04T00:00", at_late = "1863-07-04T23:59", tag = "untagged" },
+  { document = "CWV", page = 116, at = "1863-07-04T00:00", at_late = "1863-07-04T23:59", tag = "untagged" },
+  { document = "CWV", page = 79, figure = 85, figure_high = 89, tag = "untagged", record = "wx_18630701", path = "temp_f" },
+]
