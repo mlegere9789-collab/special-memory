@@ -197,7 +197,7 @@ fn after_discharge(f: &mut FireExt, w: &WeaponRow, training: Training, restart: 
     }
 }
 
-fn posture_of(flags: u16) -> Posture {
+pub(crate) fn posture_of(flags: u16) -> Posture {
     if flags & F_GUN != 0 {
         Posture::Gun
     } else if flags & F_PRONE != 0 {

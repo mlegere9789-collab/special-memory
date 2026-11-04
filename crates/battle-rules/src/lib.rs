@@ -92,6 +92,14 @@ pub use fire::{
 };
 pub use smoke::{SmokeGrid, SMOKE_REF_UNITS};
 
+// T-023
+mod burst;
+mod casualty;
+pub mod hit;
+pub use burst::{burst_children, FUSE_INERT, FUSE_NONE, FUSE_PELLET};
+pub use casualty::{Casualty, CasualtyKind};
+pub use hit::{Obstacle, ObstacleLayer};
+
 // T-081
 mod scenario;
 pub use scenario::{

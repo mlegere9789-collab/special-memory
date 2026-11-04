@@ -16,8 +16,7 @@ fn order_fields(order: &Order) -> (u8, i64, i64, u8) {
 }
 
 /// The hash of a battle: the world, then every regiment ascending by id, then every locomotion
-/// slot ascending, then the fire block, the smoke block and the casualty block (a reserved
-/// `u32 = 0` until the casualty rules land) of SPEC-005. FNV-1a 64 over little-endian fields.
+/// slot ascending, then the fire block, the smoke block and the casualty block of SPEC-005. FNV-1a 64 over little-endian fields.
 ///
 /// Per regiment: `id u16, team u8, training u8, state tag u8 (0 steady, 1 forming), from u8,
 /// to u8, ticks_left u32, anchor x i64, anchor y i64, heading u32, order tag u8, order x i64,
@@ -68,7 +67,7 @@ pub fn battle_hash(state: &BattleState) -> u64 {
     }
     write_fire(&mut h, state);
     write_smoke(&mut h, state);
-    h.write_u32(0); // casualty records (SPEC-005, filled by the casualty rules)
+    write_casualties(&mut h, state);
     h.finish()
 }
 
@@ -135,5 +134,21 @@ fn write_smoke(h: &mut StateHasher, state: &BattleState) {
             h.write_u32(i as u32);
             h.write_u32(d);
         }
+    }
+}
+
+/// The casualty block: `u32` count, then per record `tick u64, target_index u32, unit u32,
+/// team u8, kind u8 (0 killed, 1 wounded, 2 disabled), shooter_unit u32, ammo u8`. An empty log
+/// is a single zero.
+fn write_casualties(h: &mut StateHasher, state: &BattleState) {
+    h.write_u32(u32::try_from(state.casualties.len()).unwrap_or(u32::MAX));
+    for c in &state.casualties {
+        h.write_u64(c.tick);
+        h.write_u32(c.target_index);
+        h.write_u32(c.unit);
+        h.write_u8(c.team);
+        h.write_u8(c.kind as u8);
+        h.write_u32(c.shooter_unit);
+        h.write_u8(c.ammo);
     }
 }
