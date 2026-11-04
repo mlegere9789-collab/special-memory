@@ -343,7 +343,7 @@ impl BattleState {
 
     /// One whole tick in the order of REGISTRY section 6.2 for the steps that exist: TK-04
     /// movement, TK-05 grid rebuild and release of expired disables, TK-06 fire, TK-07 flight and
-    /// hit, TK-10 casualties, TK-12 smoke decay, TK-14 roster updates, TK-15 `advance_tick`
+    /// hit, TK-10 casualties, TK-12 smoke (decay, or with `env` `Some` the SPEC-009 update), TK-14 roster updates, TK-15 `advance_tick`
     /// (SPEC-005 amendment A5); with `env` `Some`, TK-02 first (SPEC-009). A later layer adds its step here at its place.
     pub fn step(&mut self) {
         self.step_with(false);
@@ -384,6 +384,35 @@ impl BattleState {
                 self.weather = env.weather_state();
             }
         }
+    }
+
+    /// The SPEC-009 smoke update of step TK-12: on the last tick of each smoke period the grid is
+    /// updated with the wind and rain of the weather held for the period and the retention of the
+    /// terrain class under each cell centre. Does nothing with `env` `None`.
+    pub(crate) fn update_smoke_env(&mut self) {
+        let BattleState {
+            world,
+            smoke,
+            terrain,
+            env,
+            ..
+        } = self;
+        let Some(env) = env.as_ref() else {
+            return;
+        };
+        let period = u64::from(env.table().smoke.period_ticks.max(1));
+        if world.tick % period != period - 1 {
+            return;
+        }
+        let now = env.now();
+        let table = env.table();
+        smoke.update(
+            &table.smoke,
+            now.wind_x_mm_s,
+            now.wind_y_mm_s,
+            now.rain_pm,
+            &|pos| table.retain_pm(terrain.class_at(pos)),
+        );
     }
 
     /// `(drain_pm, rest_pm)`, the heat multipliers of fatigue; both 1000 with `env` `None`.
