@@ -7,7 +7,7 @@ use crate::{BattleState, FireExt, HitOutcome, F_DISABLED, F_WOUNDED};
 /// Hit points of a wounded soldier.
 const WOUNDED_HP: u16 = 25;
 /// Hit points of a disabled soldier.
-const DISABLED_HP: u16 = 60;
+pub(crate) const DISABLED_HP: u16 = 60;
 
 /// What happened to a casualty.
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
@@ -94,6 +94,15 @@ impl BattleState {
             });
             match kind {
                 CasualtyKind::Killed => {
+                    // The rounds a killed soldier carried leave the ledger as lost.
+                    let ui = a.unit as usize;
+                    if self.regfire.get(ui).is_some_and(|r| r.weapon.is_some()) {
+                        let carried = self
+                            .fire
+                            .get(win.target.index as usize)
+                            .map_or(0, |f| f.rounds);
+                        self.regiments[ui].acct.lost += u64::from(carried);
+                    }
                     agents.despawn(win.target);
                 }
                 CasualtyKind::Wounded => {
