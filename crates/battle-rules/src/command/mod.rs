@@ -13,6 +13,9 @@ mod hash;
 mod input;
 mod leg;
 mod media;
+mod observe;
+mod picture;
+mod report;
 mod state;
 
 pub use codec::{
@@ -27,6 +30,8 @@ pub use garble::read_order;
 pub use hash::write_command_block;
 pub use input::{DispatchError, InputError};
 pub use media::{words, Arrival, Estimate, Reading};
+pub use observe::{OwnVisibility, Visibility};
+pub use picture::{ContactView, FriendView, PictureView};
 pub use state::{
     AckRecord, CommandOptions, CommandState, Contact, Fate, FriendEntry, GarbleKind, Link, Message,
     MessageId, MessageKind, MessagePayload, ModKind, Officer, OrderBody, OrderRecord, Picture,

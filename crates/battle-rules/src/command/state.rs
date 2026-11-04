@@ -424,6 +424,9 @@ impl BattleState {
         {
             self.refresh_officer_positions();
         }
-        let _ = self.step_messages(table);
+        self.step_observation(table);
+        self.step_reports(table);
+        let arrivals = self.step_messages(table);
+        self.receive_reports(table, &arrivals);
     }
 }
