@@ -75,3 +75,4 @@ date,ticket,class,estimated_usage,actual_usage,review_defects,rework_count,notes
 2026-11-04,T-113 metrics band evaluation observations (SPEC-011 A2),M,,172420 tokens,0,0,fresh implementer; 25 tests; Unstable threshold amended to n>=3
 2026-11-04,T-124 terrain barrier and foliage (SPEC-012),M,,116838 tokens,0,0,fresh implementer; 9 tests; SPEC-012 section 6 items 4b and 4c corrected; render_packet gained Option<&Relief>
 2026-11-04,T-102 battle-ai crate surface HqPort streams (SPEC-010),M,,186946 tokens,0,0,fresh implementer; 12 tests; over 400 lines (mostly tests)
+2026-11-04,T-095 targeting gate aim effects peek (SPEC-009 SPEC-004 A6 SPEC-005 A9),L,,238817 tokens,0,0,fresh implementer; 20 tests; one test input restated (min_transmit_pm = 0) because smoke now hides targets
