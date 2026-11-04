@@ -2,13 +2,24 @@
 //!
 //! A regiment's hidden cohesion is built from casualties and a few slow inputs; this module holds
 //! the data ([`MoraleTable`]) and the arithmetic that needs no battle state ([`shock_unit`],
-//! [`lerp`], [`load_gate`], [`classify_exposure`]). Everything is integer-only.
+//! [`lerp`], [`load_gate`], [`classify_exposure`]), the state of a battle's morale ([`MoraleState`])
+//! and its slow-period inputs and ceiling. Everything is integer-only.
 
+mod ceiling;
 mod helpers;
+mod inputs;
+mod state;
 mod table;
 
 pub use crate::registry::{F_LOOKBACK, F_SKULK, STREAM_MORALE_BASE};
+pub use ceiling::{
+    ceiling_target, decay_window, effective_ceiling, officer_factor_pm, relax_step, Drive,
+};
 pub use helpers::{classify_exposure, lerp, load_gate, shock_unit, Exposure};
+pub use inputs::MoraleInputs;
+pub use state::{
+    officers_total, Indicator, Leader, MoraleEvent, MoraleEventKind, MoraleState, RegimentMorale,
+};
 pub use table::{
     MoraleGlobals, MoraleKind, MoraleTable, MoraleTrainingRow, SymptomRamp, SymptomRow,
 };

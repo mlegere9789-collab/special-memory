@@ -68,6 +68,9 @@ pub struct BattleState {
     /// The command layer (SPEC-007); `None` leaves every SPEC-004 and SPEC-005 behaviour and the
     /// hash unchanged.
     pub cmd: Option<CommandState>,
+    /// Morale and cohesion (SPEC-006); `None` leaves every earlier behaviour and the hash
+    /// unchanged.
+    pub morale: Option<crate::morale::MoraleState>,
     /// Weapon and fire mode per regiment.
     pub(crate) regfire: Vec<RegFire>,
     /// Range tables built for the equipped weapon and ammunition pairs.
@@ -173,6 +176,7 @@ impl BattleState {
             weather: Weather::DRY,
             seq: 0,
             cmd: None,
+            morale: None,
             regfire: Vec::new(),
             ranges: Vec::new(),
             pending: Vec::new(),
