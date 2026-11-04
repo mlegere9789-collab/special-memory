@@ -340,6 +340,12 @@ Labels are sequential per base spec in landing order (wave, then ticket id). A l
 | A16 | sections 2 and 5: ground-relative geometry over the terrain pack (was SPEC-014 "A4", which collided with the landed A4) | SPEC-014 | none yet | blocked | blocked on D-02 |
 | A18 | section 1 data: placeholder rows fitted so that bands B1 to B11 hold (A17 stays reserved) | T-024 | T-024 | 4 | landed |
 
+### 9.6 SPEC-007 (command friction, information)
+
+| Label | Content | Source | Ticket | Wave | Status |
+|---|---|---|---|---|---|
+| A1 | sections 4, 6, 8, 9: hashed `CommandState.staff`, `OrderRecord.{ack_deadline, medium}`, ack length, `dispatch` and `order_views` forms, instant-order and downed-officer rules, `step_with_command` | T-074 | T-074 | 5 | landed |
+
 ### 9.11 SPEC-011 (historical replay and calibration)
 
 | Label | Content | Source | Ticket | Wave | Status |
