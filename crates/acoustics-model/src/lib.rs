@@ -9,8 +9,11 @@
 #![cfg_attr(not(test), deny(clippy::float_arithmetic))]
 
 pub mod intmath;
+pub mod propagation;
 mod tables;
+mod weather;
 
 pub use tables::{
     AcousticTables, BandRow, Budget, Globals, GroundRow, SourceRow, WeatherPreset, CLASS_COUNT,
 };
+pub use weather::{to_mm, Weather};
