@@ -1,0 +1,551 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "morale.schema.json",
+  "title": "Morale and cohesion table (SPEC-006 section 3)",
+  "description": "Rows of data/rules/morale.toml. Integer units only: _ppm parts per million, _pm permille, lengths in mm, durations in ticks. Thresholds must satisfy break < fall < rally < fall_exit < waver < steady; JSON Schema cannot compare two fields, so the loader (MoraleTable::from_toml_str) enforces the order.",
+  "$defs": {
+    "provenance_fields": {
+      "properties": {
+        "confidence": {
+          "$ref": "common.schema.json#/$defs/confidence"
+        },
+        "placeholder": {
+          "type": "boolean"
+        },
+        "calibration_target": {
+          "type": "string",
+          "pattern": "^CT-[0-9]{3}-[0-9]+$"
+        },
+        "sources": {
+          "$ref": "common.schema.json#/$defs/sources"
+        },
+        "second_source": {
+          "type": "string"
+        },
+        "note": {
+          "type": "string"
+        }
+      }
+    }
+  },
+  "type": "object",
+  "required": [
+    "schema",
+    "training",
+    "globals",
+    "symptom"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "schema": {
+      "const": "morale/1"
+    },
+    "training": {
+      "type": "array",
+      "minItems": 3,
+      "maxItems": 3,
+      "items": {
+        "type": "object",
+        "required": [
+          "id",
+          "base_ppm",
+          "cap_pm",
+          "up_pm",
+          "rally_pm",
+          "return_pm",
+          "nbr_pm",
+          "confidence"
+        ],
+        "allOf": [
+          {
+            "$ref": "#/$defs/provenance_fields"
+          }
+        ],
+        "unevaluatedProperties": false,
+        "properties": {
+          "id": {
+            "enum": [
+              "raw",
+              "trained",
+              "veteran"
+            ]
+          },
+          "base_ppm": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 1000000
+          },
+          "cap_pm": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 10000
+          },
+          "up_pm": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 10000
+          },
+          "rally_pm": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 10000
+          },
+          "return_pm": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 10000
+          },
+          "nbr_pm": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 10000
+          }
+        }
+      }
+    },
+    "globals": {
+      "type": "object",
+      "required": [
+        "ammo_knee_pm",
+        "ammo_pen",
+        "break",
+        "broken_ceiling",
+        "calm_pm",
+        "cause_min",
+        "charge_pen",
+        "charge_range",
+        "cover_bonus",
+        "delay",
+        "disorder_pen",
+        "down_pm",
+        "dwell",
+        "enemy_boost",
+        "enfilade_f_pm",
+        "fall",
+        "fall_exit",
+        "fatigue_knee",
+        "fatigue_pen",
+        "flank_f_pm",
+        "flank_pen",
+        "flight_distance",
+        "leader_bonus",
+        "leader_radius",
+        "min_broken",
+        "min_fall",
+        "min_rallied",
+        "nbr_fall_pm",
+        "nbr_radius",
+        "nbr_shock",
+        "nerve_spread",
+        "officerless_rally",
+        "perm_pm",
+        "pressure_radius",
+        "rally",
+        "rally_leader_pm",
+        "rear_f_pm",
+        "repeat_pen",
+        "skulk_rear",
+        "steady",
+        "supply_pen",
+        "threat_range",
+        "w_colonel_pm",
+        "w_disabled_pm",
+        "w_killed_pm",
+        "w_officer_pm",
+        "w_wounded_pm",
+        "wall_bonus",
+        "wall_reach",
+        "waver",
+        "confidence"
+      ],
+      "allOf": [
+        {
+          "$ref": "#/$defs/provenance_fields"
+        }
+      ],
+      "unevaluatedProperties": false,
+      "properties": {
+        "waver": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 1000000
+        },
+        "steady": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 1000000
+        },
+        "fall": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 1000000
+        },
+        "fall_exit": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 1000000
+        },
+        "break": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 1000000
+        },
+        "rally": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 1000000
+        },
+        "nerve_spread": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 1000000
+        },
+        "delay": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 1000000
+        },
+        "down_pm": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 10000
+        },
+        "perm_pm": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 10000
+        },
+        "w_killed_pm": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 10000
+        },
+        "w_wounded_pm": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 10000
+        },
+        "w_disabled_pm": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 10000
+        },
+        "w_officer_pm": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 10000
+        },
+        "w_colonel_pm": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 10000
+        },
+        "calm_pm": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 10000
+        },
+        "broken_ceiling": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 1000000
+        },
+        "repeat_pen": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 1000000
+        },
+        "fatigue_pen": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 1000000
+        },
+        "fatigue_knee": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 999999
+        },
+        "ammo_pen": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 1000000
+        },
+        "ammo_knee_pm": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 10000
+        },
+        "supply_pen": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 1000000
+        },
+        "flank_pen": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 1000000
+        },
+        "flank_f_pm": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 10000
+        },
+        "enfilade_f_pm": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 10000
+        },
+        "rear_f_pm": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 10000
+        },
+        "charge_pen": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 1000000
+        },
+        "disorder_pen": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 1000000
+        },
+        "cover_bonus": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 1000000
+        },
+        "wall_bonus": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 1000000
+        },
+        "leader_bonus": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 1000000
+        },
+        "nbr_shock": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 1000000
+        },
+        "nbr_fall_pm": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 10000
+        },
+        "enemy_boost": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 1000000
+        },
+        "rally_leader_pm": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 10000
+        },
+        "cause_min": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 1000000
+        },
+        "nbr_radius": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 100000000
+        },
+        "threat_range": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 100000000
+        },
+        "pressure_radius": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 100000000
+        },
+        "charge_range": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 100000000
+        },
+        "leader_radius": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 100000000
+        },
+        "wall_reach": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 100000000
+        },
+        "skulk_rear": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 100000000
+        },
+        "flight_distance": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 100000000
+        },
+        "min_fall": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 1000000
+        },
+        "min_broken": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 1000000
+        },
+        "min_rallied": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 1000000
+        },
+        "officerless_rally": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 1000000
+        },
+        "dwell": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 65535
+        }
+      }
+    },
+    "symptom": {
+      "type": "array",
+      "minItems": 5,
+      "maxItems": 5,
+      "items": {
+        "type": "object",
+        "required": [
+          "id",
+          "fire_pm",
+          "shake_pm",
+          "look_pm",
+          "skulk_ppm",
+          "confidence"
+        ],
+        "allOf": [
+          {
+            "$ref": "#/$defs/provenance_fields"
+          },
+          {
+            "if": {
+              "properties": {
+                "id": {
+                  "const": "wavering"
+                }
+              },
+              "required": [
+                "id"
+              ]
+            },
+            "then": {
+              "required": [
+                "fire_end_pm",
+                "shake_end_pm",
+                "look_end_pm",
+                "skulk_end_ppm",
+                "skulk_from_ppm"
+              ]
+            },
+            "else": {
+              "not": {
+                "anyOf": [
+                  {
+                    "required": [
+                      "fire_end_pm"
+                    ]
+                  },
+                  {
+                    "required": [
+                      "shake_end_pm"
+                    ]
+                  },
+                  {
+                    "required": [
+                      "look_end_pm"
+                    ]
+                  },
+                  {
+                    "required": [
+                      "skulk_end_ppm"
+                    ]
+                  },
+                  {
+                    "required": [
+                      "skulk_from_ppm"
+                    ]
+                  }
+                ]
+              }
+            }
+          }
+        ],
+        "unevaluatedProperties": false,
+        "properties": {
+          "id": {
+            "enum": [
+              "steady",
+              "wavering",
+              "falling_back",
+              "broken",
+              "rallied"
+            ]
+          },
+          "fire_pm": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 10000
+          },
+          "shake_pm": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 10000
+          },
+          "look_pm": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 10000
+          },
+          "skulk_ppm": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 1000000
+          },
+          "fire_end_pm": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 10000
+          },
+          "shake_end_pm": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 10000
+          },
+          "look_end_pm": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 10000
+          },
+          "skulk_end_ppm": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 1000000
+          },
+          "skulk_from_ppm": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 1000000
+          }
+        }
+      }
+    }
+  }
+}

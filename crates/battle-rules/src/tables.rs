@@ -1,6 +1,6 @@
 //! The rules tables a battle needs (SPEC-004), loaded together.
 
-use crate::{DataError, DrillTable, LocomotionTable, TerrainTable};
+use crate::{DataError, DrillTable, LocomotionTable, MoraleTable, TerrainTable};
 
 /// Every rules table the movement and drill rules read.
 #[derive(Clone, Debug, PartialEq, Eq)]
@@ -11,6 +11,8 @@ pub struct Tables {
     pub terrain: TerrainTable,
     /// Formations, training and transition durations.
     pub drill: DrillTable,
+    /// Cohesion, shock and symptom rows (SPEC-006).
+    pub morale: MoraleTable,
 }
 
 fn read(dir: &str, name: &str) -> Result<String, DataError> {
@@ -20,7 +22,7 @@ fn read(dir: &str, name: &str) -> Result<String, DataError> {
 }
 
 impl Tables {
-    /// Loads `locomotion.toml`, `terrain.toml` and `drill.toml` from `dir`.
+    /// Loads `locomotion.toml`, `terrain.toml`, `drill.toml` and `morale.toml` from `dir`.
     ///
     /// Errors: [`DataError::Parse`] when a file cannot be read, otherwise whatever the table's
     /// own loader returns.
@@ -29,6 +31,7 @@ impl Tables {
             locomotion: LocomotionTable::from_toml_str(&read(dir, "locomotion.toml")?)?,
             terrain: TerrainTable::from_toml_str(&read(dir, "terrain.toml")?)?,
             drill: DrillTable::from_toml_str(&read(dir, "drill.toml")?)?,
+            morale: MoraleTable::from_toml_str(&read(dir, "morale.toml")?)?,
         })
     }
 }
