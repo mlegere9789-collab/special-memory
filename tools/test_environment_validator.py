@@ -50,6 +50,23 @@ def run(env_text=None, weather_text=None):
         return plugin.validate(root)
 
 
+RELIEF = (
+    'schema = "relief/1"\ncell_mm = 8000\norigin_x_mm = 0\norigin_y_mm = 0\nconfidence = "unverified"\n'
+    'placeholder = true\ncalibration_target = "CT-009-3"\n[[row]]\ndm = "0 10 -5"\n[[row]]\ndm = "3 0 0"\n'
+)
+
+
+def run_relief(text):
+    """Problems the plugin reports for one relief sidecar in a throw-away root."""
+    with tempfile.TemporaryDirectory() as root:
+        shutil.copytree(os.path.join(REPO, "data", "schemas"), os.path.join(root, "data", "schemas"))
+        path = os.path.join(root, "data", "scenarios", "demo", "relief.toml")
+        os.makedirs(os.path.dirname(path))
+        with open(path, "w", encoding="utf-8") as f:
+            f.write(text)
+        return plugin.validate(root)
+
+
 def output(fn):
     buf = io.StringIO()
     with contextlib.redirect_stdout(buf):
@@ -92,6 +109,15 @@ class Data(unittest.TestCase):
         self.assertProblem(self.weather("rain_pm = 0", "rain_pm = 1001"), "schema")
         self.assertProblem(self.weather('{ document = "CWV", page = 79, note = "hot (high 80s F)" }', '{ document = "CWV", page = 80 }'), "880 key")
         self.assertProblem(self.weather('calibration_target = "CT-009-6"', 'note = "x"'), "provenance")
+
+    def test_relief_rules(self):
+        self.assertEqual(run_relief(RELIEF), [])
+        self.assertProblem(run_relief(RELIEF.replace('"3 0 0"', '"3 0"')), "rows differ")
+        self.assertProblem(run_relief(RELIEF.replace('"3 0 0"', '"3 0 20000"')), "decimetres")
+        self.assertProblem(run_relief(RELIEF.replace('"3 0 0"', '"3 0 1.5"')), "schema")
+        self.assertProblem(run_relief(RELIEF.replace("cell_mm = 8000\n", "")), "schema")
+        self.assertProblem(run_relief(RELIEF + "extra = 1\n"), "schema")
+        self.assertProblem(run_relief(RELIEF.replace('calibration_target = "CT-009-3"\n', "")), "provenance")
 
 
 class Fixtures(unittest.TestCase):
