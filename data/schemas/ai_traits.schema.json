@@ -1,0 +1,54 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "ai_traits.schema.json",
+  "title": "Battle-AI trait rows extracted from commander records (SPEC-010 section 4)",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "trait": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["commander", "trait", "source_page", "sources", "note"],
+        "allOf": [{"$ref": "#/$defs/provenance_fields"}],
+        "unevaluatedProperties": false,
+        "properties": {
+          "commander": {"$ref": "#/$defs/id"},
+          "trait": {"enum": ["aggressive", "cautious", "engineer", "cavalry_flair", "logistics", "political", "defensive_skill", "high_discretion", "low_discretion", "inspiring", "feuding"]},
+          "source_page": {"type": "integer", "minimum": 1},
+          "source_tag": {"type": "string"}
+        }
+      }
+    },
+    "relationship": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["commander", "kind", "partner", "partner_name", "source_page", "sources", "note"],
+        "allOf": [{"$ref": "#/$defs/provenance_fields"}],
+        "unevaluatedProperties": false,
+        "properties": {
+          "commander": {"$ref": "#/$defs/id"},
+          "kind": {"enum": ["feud", "rivalry"]},
+          "partner": {"$ref": "#/$defs/id"},
+          "partner_name": {"type": "string", "minLength": 1},
+          "source_page": {"type": "integer", "minimum": 1},
+          "source_tag": {"type": "string"}
+        }
+      }
+    }
+  },
+  "$defs": {
+    "id": {"type": "string", "pattern": "^[a-z0-9][a-z0-9_]*$"},
+    "provenance_fields": {
+      "type": "object",
+      "required": ["confidence"],
+      "properties": {
+        "confidence": {"$ref": "common.schema.json#/$defs/confidence"},
+        "sources": {"$ref": "common.schema.json#/$defs/sources"},
+        "second_source": {"type": "string"},
+        "note": {"type": "string"}
+      }
+    }
+  }
+}

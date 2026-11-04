@@ -1,0 +1,128 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "ai.schema.json",
+  "title": "Battle-AI tables (SPEC-010 section 4)",
+  "type": "object",
+  "required": ["base", "bounds", "weight", "difficulty", "global", "trait"],
+  "additionalProperties": false,
+  "properties": {
+    "base": {
+      "type": "object",
+      "required": ["risk_tolerance", "reserve", "assault_ratio", "withdraw_ratio", "entrench", "discretion", "reaction_ticks"],
+      "allOf": [{"$ref": "#/$defs/provenance_fields"}],
+      "unevaluatedProperties": false,
+      "properties": {
+        "risk_tolerance": {"$ref": "#/$defs/pm"},
+        "reserve": {"$ref": "#/$defs/pm"},
+        "assault_ratio": {"$ref": "#/$defs/ratio"},
+        "withdraw_ratio": {"$ref": "#/$defs/ratio"},
+        "entrench": {"$ref": "#/$defs/pm"},
+        "discretion": {"$ref": "#/$defs/pm"},
+        "reaction_ticks": {"type": "integer", "minimum": 0, "maximum": 1000}
+      }
+    },
+    "bounds": {
+      "type": "object",
+      "required": ["share_max_pm", "ratio_max_pm", "reaction_max_ticks"],
+      "allOf": [{"$ref": "#/$defs/provenance_fields"}],
+      "unevaluatedProperties": false,
+      "properties": {
+        "share_max_pm": {"type": "integer", "minimum": 1, "maximum": 10000},
+        "ratio_max_pm": {"type": "integer", "minimum": 1, "maximum": 100000},
+        "reaction_max_ticks": {"type": "integer", "minimum": 0, "maximum": 100000}
+      }
+    },
+    "weight": {
+      "type": "array", "minItems": 3, "maxItems": 3,
+      "items": {
+        "type": "object",
+        "required": ["level", "weight_pm"],
+        "allOf": [{"$ref": "#/$defs/provenance_fields"}],
+        "unevaluatedProperties": false,
+        "properties": {
+          "level": {"$ref": "common.schema.json#/$defs/confidence"},
+          "weight_pm": {"type": "integer", "minimum": 0, "maximum": 1000}
+        }
+      }
+    },
+    "difficulty": {
+      "type": "array", "minItems": 3, "maxItems": 3,
+      "items": {
+        "type": "object",
+        "required": ["id", "op_interval_ticks", "tac_interval_ticks", "op_think_ticks", "tac_think_ticks", "forecast_candidates",
+                     "forecast_samples", "forecast_budget_soldier_ticks", "estimate_noise_pm", "sync_margin_pm"],
+        "allOf": [{"$ref": "#/$defs/provenance_fields"}],
+        "unevaluatedProperties": false,
+        "properties": {
+          "id": {"enum": ["easy", "standard", "hard"]},
+          "op_interval_ticks": {"$ref": "#/$defs/ticks"},
+          "tac_interval_ticks": {"$ref": "#/$defs/ticks"},
+          "op_think_ticks": {"type": "integer", "minimum": 0, "maximum": 1000000},
+          "tac_think_ticks": {"type": "integer", "minimum": 0, "maximum": 1000000},
+          "forecast_candidates": {"type": "integer", "minimum": 1, "maximum": 16},
+          "forecast_samples": {"type": "integer", "minimum": 1, "maximum": 16},
+          "forecast_budget_soldier_ticks": {"type": "integer", "minimum": 1, "maximum": 4000000000},
+          "estimate_noise_pm": {"$ref": "#/$defs/pm"},
+          "sync_margin_pm": {"$ref": "#/$defs/pm"}
+        }
+      }
+    },
+    "global": {
+      "type": "array", "minItems": 23, "maxItems": 23,
+      "items": {
+        "type": "object",
+        "required": ["name", "value"],
+        "allOf": [{"$ref": "#/$defs/provenance_fields"}],
+        "unevaluatedProperties": false,
+        "properties": {
+          "name": {"enum": ["sector_mm", "ack_timeout_ticks", "max_resends", "min_dwell_ticks", "withdraw_confirm_ticks",
+                            "stall_window_ticks", "stall_min_mm", "waypoint_tol_mm", "form_safety_ticks", "reposition_margin",
+                            "max_repositions", "lane_interval_mm", "second_line_mm", "stand_off_mm", "unseen_margin_pm",
+                            "gun_support_mm", "gun_cease_pm", "fatigue_gate_pm", "reg_check_ticks", "canister_mm", "work_ratio",
+                            "bled_pm", "advisor_min_interval_ticks"]},
+          "value": {"type": "integer", "minimum": 0, "maximum": 100000000}
+        }
+      }
+    },
+    "trait": {
+      "type": "array", "minItems": 11, "maxItems": 11,
+      "items": {
+        "type": "object",
+        "required": ["id", "risk", "reserve", "assault", "withdraw", "entrench", "discretion", "reaction"],
+        "allOf": [{"$ref": "#/$defs/provenance_fields"}],
+        "unevaluatedProperties": false,
+        "properties": {
+          "id": {"$ref": "#/$defs/trait_id"},
+          "risk": {"$ref": "#/$defs/delta"},
+          "reserve": {"$ref": "#/$defs/delta"},
+          "assault": {"$ref": "#/$defs/delta"},
+          "withdraw": {"$ref": "#/$defs/delta"},
+          "entrench": {"$ref": "#/$defs/delta"},
+          "discretion": {"$ref": "#/$defs/delta"},
+          "reaction": {"$ref": "#/$defs/delta"},
+          "cavalry_only": {"type": "boolean"},
+          "act_from": {"type": "string", "pattern": "^[a-z0-9][a-z0-9_]*$", "description": "Commander record whose documented act fixes the sign of the deltas"}
+        }
+      }
+    }
+  },
+  "$defs": {
+    "trait_id": {"enum": ["aggressive", "cautious", "engineer", "cavalry_flair", "logistics", "political", "defensive_skill", "high_discretion", "low_discretion", "inspiring", "feuding"]},
+    "pm": {"type": "integer", "minimum": 0, "maximum": 1000},
+    "ratio": {"type": "integer", "minimum": 0, "maximum": 10000},
+    "ticks": {"type": "integer", "minimum": 1, "maximum": 1000000},
+    "delta": {"type": "integer", "minimum": -2000, "maximum": 2000},
+    "provenance_fields": {
+      "type": "object",
+      "required": ["confidence"],
+      "properties": {
+        "confidence": {"$ref": "common.schema.json#/$defs/confidence"},
+        "placeholder": {"type": "boolean"},
+        "calibration_target": {"type": "string", "pattern": "^CT-[0-9]{3}-[0-9]+$"},
+        "sources": {"$ref": "common.schema.json#/$defs/sources"},
+        "second_source": {"type": "string"},
+        "note": {"type": "string"}
+      }
+    }
+  }
+}

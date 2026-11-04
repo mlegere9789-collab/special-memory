@@ -1,0 +1,431 @@
+# Battle-AI tables (SPEC-010 section 4): personality base and deltas, difficulty rows, globals.
+# Units: ticks (_ticks), millimetres (_mm), permille (_pm). Ratios are own:enemy in permille (1500 = 1.5).
+# Every number is a placeholder with a calibration target unless it cites a page. A trait delta takes its sign
+# from the documented act in a commander record (act_from and sources); the magnitudes stay placeholders.
+
+[base]
+risk_tolerance = 500
+reserve = 200
+assault_ratio = 1500
+withdraw_ratio = 600
+entrench = 300
+discretion = 400
+reaction_ticks = 0
+confidence = "unverified"
+placeholder = true
+calibration_target = "CT-010-4"
+note = "Base personality of a commander with no documented traits."
+
+[bounds]
+share_max_pm = 1000
+ratio_max_pm = 10000
+reaction_max_ticks = 1000
+confidence = "unverified"
+placeholder = true
+calibration_target = "CT-010-4"
+note = "Clamp ranges: shares and discretion 0 to share_max_pm, the two ratios 0 to ratio_max_pm, reaction 0 to reaction_max_ticks."
+
+[[weight]]
+level = "verified"
+weight_pm = 1000
+confidence = "unverified"
+placeholder = true
+calibration_target = "CT-010-2"
+note = "Share of a trait delta applied at this confidence."
+
+[[weight]]
+level = "partial"
+weight_pm = 700
+confidence = "unverified"
+placeholder = true
+calibration_target = "CT-010-2"
+note = "Share of a trait delta applied at this confidence."
+
+[[weight]]
+level = "unverified"
+weight_pm = 400
+confidence = "unverified"
+placeholder = true
+calibration_target = "CT-010-2"
+note = "Share of a trait delta applied at this confidence."
+
+[[difficulty]]
+id = "easy"
+op_interval_ticks = 1800
+tac_interval_ticks = 200
+op_think_ticks = 1200
+tac_think_ticks = 100
+forecast_candidates = 2
+forecast_samples = 1
+forecast_budget_soldier_ticks = 2000000
+estimate_noise_pm = 300
+sync_margin_pm = 0
+confidence = "unverified"
+placeholder = true
+calibration_target = "CT-010-6"
+note = "Behaviour only; sync_margin_pm of easy reflects the piecemeal second-day attacks (CWV p082, untagged)."
+
+[[difficulty]]
+id = "standard"
+op_interval_ticks = 1200
+tac_interval_ticks = 100
+op_think_ticks = 600
+tac_think_ticks = 40
+forecast_candidates = 3
+forecast_samples = 2
+forecast_budget_soldier_ticks = 6000000
+estimate_noise_pm = 150
+sync_margin_pm = 500
+confidence = "unverified"
+placeholder = true
+calibration_target = "CT-010-6"
+note = "Behaviour only; sync_margin_pm of easy reflects the piecemeal second-day attacks (CWV p082, untagged)."
+
+[[difficulty]]
+id = "hard"
+op_interval_ticks = 900
+tac_interval_ticks = 60
+op_think_ticks = 400
+tac_think_ticks = 20
+forecast_candidates = 4
+forecast_samples = 3
+forecast_budget_soldier_ticks = 12000000
+estimate_noise_pm = 50
+sync_margin_pm = 1000
+confidence = "unverified"
+placeholder = true
+calibration_target = "CT-010-6"
+note = "Behaviour only; sync_margin_pm of easy reflects the piecemeal second-day attacks (CWV p082, untagged)."
+
+[[global]]
+name = "sector_mm"
+value = 400000
+confidence = "unverified"
+placeholder = true
+calibration_target = "CT-010-1"
+
+[[global]]
+name = "ack_timeout_ticks"
+value = 1200
+confidence = "unverified"
+placeholder = true
+calibration_target = "CT-010-1"
+
+[[global]]
+name = "max_resends"
+value = 2
+confidence = "unverified"
+placeholder = true
+calibration_target = "CT-010-1"
+
+[[global]]
+name = "min_dwell_ticks"
+value = 1200
+confidence = "unverified"
+placeholder = true
+calibration_target = "CT-010-7"
+
+[[global]]
+name = "withdraw_confirm_ticks"
+value = 300
+confidence = "unverified"
+placeholder = true
+calibration_target = "CT-010-7"
+
+[[global]]
+name = "stall_window_ticks"
+value = 400
+confidence = "unverified"
+placeholder = true
+calibration_target = "CT-010-7"
+
+[[global]]
+name = "stall_min_mm"
+value = 2000
+confidence = "unverified"
+placeholder = true
+calibration_target = "CT-010-7"
+
+[[global]]
+name = "waypoint_tol_mm"
+value = 6000
+confidence = "unverified"
+placeholder = true
+calibration_target = "CT-010-1"
+
+[[global]]
+name = "form_safety_ticks"
+value = 200
+confidence = "unverified"
+placeholder = true
+calibration_target = "CT-010-7"
+
+[[global]]
+name = "reposition_margin"
+value = 200
+confidence = "unverified"
+placeholder = true
+calibration_target = "CT-010-1"
+
+[[global]]
+name = "max_repositions"
+value = 2
+confidence = "unverified"
+placeholder = true
+calibration_target = "CT-010-1"
+
+[[global]]
+name = "lane_interval_mm"
+value = 20000
+confidence = "unverified"
+placeholder = true
+calibration_target = "CT-010-1"
+
+[[global]]
+name = "second_line_mm"
+value = 150000
+confidence = "unverified"
+placeholder = true
+calibration_target = "CT-010-1"
+
+[[global]]
+name = "stand_off_mm"
+value = 1500
+confidence = "unverified"
+placeholder = true
+calibration_target = "CT-010-1"
+
+[[global]]
+name = "unseen_margin_pm"
+value = 150
+confidence = "unverified"
+placeholder = true
+calibration_target = "CT-010-1"
+
+[[global]]
+name = "gun_support_mm"
+value = 150000
+confidence = "unverified"
+placeholder = true
+calibration_target = "CT-010-1"
+
+[[global]]
+name = "gun_cease_pm"
+value = 300
+confidence = "unverified"
+placeholder = true
+calibration_target = "CT-010-1"
+
+[[global]]
+name = "fatigue_gate_pm"
+value = 600
+confidence = "unverified"
+placeholder = true
+calibration_target = "CT-010-1"
+note = "SPEC-004 catch-up limit."
+
+[[global]]
+name = "reg_check_ticks"
+value = 10
+confidence = "unverified"
+sources = [{ document = "CWV", page = 461, tag = "[Estimate]" }]
+note = "2 Hz, the low end of 2 to 5 Hz for regiment-level updates, staggered (section 7.4)."
+
+[[global]]
+name = "canister_mm"
+value = 365760
+confidence = "partial"
+sources = [{ document = "CWV", page = 65, tag = "untagged" }]
+note = "400 yd (section 9.3); SPEC-005 B8."
+
+[[global]]
+name = "work_ratio"
+value = 2000
+confidence = "partial"
+sources = [{ document = "CWV", page = 65, tag = "untagged" }]
+note = "A defender behind a barrier with guns usually wins at 2-to-1 casualties or more (section 9.3)."
+
+[[global]]
+name = "bled_pm"
+value = 300
+confidence = "partial"
+sources = [{ document = "CWV", page = 82, tag = "untagged" }, { document = "CWV", page = 85, tag = "untagged" }]
+note = "The Wheatfield cost about 30 percent (p082); 30 to 50 percent (p085)."
+
+[[global]]
+name = "advisor_min_interval_ticks"
+value = 600
+confidence = "unverified"
+sources = [{ document = "CWV", page = 461, tag = "design proposal" }]
+note = "30 to 60 game seconds (section 7.5 item 4)."
+
+[[trait]]
+id = "aggressive"
+risk = 250
+reserve = -80
+assault = -400
+withdraw = -150
+entrench = -100
+discretion = 0
+reaction = 0
+act_from = "winfield_scott_hancock"
+confidence = "unverified"
+placeholder = true
+calibration_target = "CT-010-2"
+sources = [{ document = "CWV", page = 270, tag = "[V]" }]
+note = "Hancock won the nickname the Superb at Williamsburg in 1862 for a counterattack. Sign: attack at lower odds."
+
+[[trait]]
+id = "cautious"
+risk = -250
+reserve = 100
+assault = 500
+withdraw = 150
+entrench = 150
+discretion = 0
+reaction = 20
+act_from = "george_g_meade"
+confidence = "unverified"
+placeholder = true
+calibration_target = "CT-010-2"
+sources = [{ document = "CWV", page = 268, tag = "[U]" }]
+note = "Meade is faulted for his pursuit of Lee after Gettysburg and the aborted Mine Run operation of November 1863. Sign: attack only at high odds."
+
+[[trait]]
+id = "engineer"
+risk = 0
+reserve = 0
+assault = 0
+withdraw = 0
+entrench = 400
+discretion = 0
+reaction = 0
+act_from = "gouverneur_k_warren"
+confidence = "unverified"
+placeholder = true
+calibration_target = "CT-010-2"
+sources = [{ document = "CWV", page = 271, tag = "[V]" }]
+note = "Warren, a topographical engineer, saw on 1863-07-02 that Little Round Top was unoccupied and had it held. Sign: weight on prepared ground."
+
+[[trait]]
+id = "defensive_skill"
+risk = -50
+reserve = 0
+assault = 200
+withdraw = -100
+entrench = 200
+discretion = 0
+reaction = 0
+act_from = "george_g_meade"
+confidence = "unverified"
+placeholder = true
+calibration_target = "CT-010-2"
+sources = [{ document = "CWV", page = 268, tag = "[V]" }]
+note = "Meade won at Gettysburg with a defense in depth. Sign: prefers prepared ground and holds longer."
+
+[[trait]]
+id = "high_discretion"
+risk = 0
+reserve = 0
+assault = 0
+withdraw = 0
+entrench = 0
+discretion = 400
+reaction = 0
+act_from = "robert_e_lee"
+confidence = "unverified"
+placeholder = true
+calibration_target = "CT-010-2"
+sources = [{ document = "CWV", page = 303, tag = "[V]" }, { document = "CWV", page = 307, tag = "[V]" }]
+note = "On 1863-07-01 Lee ordered Ewell to take Cemetery Hill if practicable, leaving the decision to him. Sign: wider initiative radius."
+
+[[trait]]
+id = "low_discretion"
+risk = 0
+reserve = 0
+assault = 0
+withdraw = 0
+entrench = 0
+discretion = -300
+reaction = 20
+act_from = "richard_s_ewell"
+confidence = "unverified"
+placeholder = true
+calibration_target = "CT-010-2"
+sources = [{ document = "CWV", page = 307, tag = "[V]" }]
+note = "Ewell, ordered on 1863-07-01 to take Cemetery Hill if practicable, did not attack; he does best with explicit objectives. Sign: narrower initiative radius."
+
+[[trait]]
+id = "cavalry_flair"
+risk = 150
+reserve = 0
+assault = 0
+withdraw = 0
+entrench = 0
+discretion = 0
+reaction = 0
+cavalry_only = true
+act_from = "jeb_stuart"
+confidence = "unverified"
+placeholder = true
+calibration_target = "CT-010-2"
+sources = [{ document = "CWV", page = 315, tag = "[V]" }]
+note = "Stuart rode around McClellan's army in June 1862 and led the Chambersburg raid. Sign: bolder; applies to cavalry seats only."
+
+[[trait]]
+id = "logistics"
+risk = 0
+reserve = 50
+assault = 0
+withdraw = 0
+entrench = 0
+discretion = 0
+reaction = 0
+act_from = "henry_j_hunt"
+confidence = "unverified"
+placeholder = true
+calibration_target = "CT-010-2"
+sources = [{ document = "CWV", page = 280, tag = "[V]" }, { document = "CWV", page = 83, tag = "untagged" }]
+note = "Hunt ordered batteries to cease or slow fire on 1863-07-03 to conserve ammunition. Sign: holds more in reserve."
+
+[[trait]]
+id = "political"
+risk = 0
+reserve = 0
+assault = 0
+withdraw = 0
+entrench = 0
+discretion = 0
+reaction = 0
+confidence = "unverified"
+placeholder = true
+calibration_target = "CT-010-2"
+note = "Zero row: cohesion and delay specs own this trait."
+
+[[trait]]
+id = "inspiring"
+risk = 0
+reserve = 0
+assault = 0
+withdraw = 0
+entrench = 0
+discretion = 0
+reaction = 0
+confidence = "unverified"
+placeholder = true
+calibration_target = "CT-010-2"
+note = "Zero row: cohesion and delay specs own this trait."
+
+[[trait]]
+id = "feuding"
+risk = 0
+reserve = 0
+assault = 0
+withdraw = 0
+entrench = 0
+discretion = 0
+reaction = 0
+confidence = "unverified"
+placeholder = true
+calibration_target = "CT-010-2"
+note = "Zero row: the feud rule reads the relationship rows of ai_traits.toml."
