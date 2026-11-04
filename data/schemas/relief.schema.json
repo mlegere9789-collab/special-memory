@@ -1,0 +1,41 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "relief.schema.json",
+  "title": "Relief sidecar (SPEC-009 section 5)",
+  "description": "data/scenarios/<family>/relief.toml. Ground height of each terrain-cell centre in whole decimetres, one [[row]] per grid row with the southernmost row first; every row holds the same number of heights (enforced by the loader and tools/validators/environment.py). cell_mm must equal the terrain grid's cell.",
+  "$defs": {
+    "provenance_fields": {
+      "properties": {
+        "confidence": {"$ref": "common.schema.json#/$defs/confidence"},
+        "placeholder": {"type": "boolean"},
+        "calibration_target": {"type": "string", "pattern": "^CT-[0-9]{3}-[0-9]+$"},
+        "sources": {"$ref": "common.schema.json#/$defs/sources"},
+        "second_source": {"type": "string"},
+        "note": {"type": "string"}
+      },
+      "required": ["confidence"]
+    }
+  },
+  "allOf": [{"$ref": "#/$defs/provenance_fields"}],
+  "type": "object",
+  "unevaluatedProperties": false,
+  "required": ["schema", "cell_mm", "origin_x_mm", "origin_y_mm", "row"],
+  "properties": {
+    "schema": {"const": "relief/1"},
+    "cell_mm": {"type": "integer", "minimum": 1, "maximum": 1000000},
+    "origin_x_mm": {"type": "integer", "minimum": -100000000, "maximum": 100000000},
+    "origin_y_mm": {"type": "integer", "minimum": -100000000, "maximum": 100000000},
+    "row": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["dm"],
+        "properties": {
+          "dm": {"type": "string", "pattern": "^-?[0-9]{1,5}( -?[0-9]{1,5})*$"}
+        }
+      }
+    }
+  }
+}

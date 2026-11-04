@@ -5,6 +5,8 @@ Checks, under the root it is given:
     terrain.toml and no other, ascending; heat curve strictly increasing in apparent_f10, drain_pm non-decreasing,
     rest_pm non-increasing; the smoke flow sum; every calibration target of spec 009). The schema itself is checked by
     rule R7 of validate_data.py.
+  - data/scenarios/<family>/relief.toml: the schema relief.schema.json, no float, provenance, equal row lengths,
+    heights within 10000 decimetres.
   - data/scenarios/<family>/weather.toml: the schema weather.schema.json, no float, provenance, t_min strictly
     ascending, wind speed at most 20000 mm/s, calibration targets of spec 009, and every 880 key citing CWV page 79.
 """
@@ -19,6 +21,7 @@ from referencing import Registry, Resource
 
 WIND_MAX_MM_S = 20000
 TICK_HZ = 20
+RELIEF_MAX_DM = 10000
 PROVENANCE_KEYS = ("confidence", "placeholder", "calibration_target", "sources", "second_source", "note")
 
 
@@ -105,17 +108,52 @@ def check_weather(rec, prov, rel):
     return problems + _provenance(keys, prov, rel, "key")
 
 
+def check_relief(rec, rel):
+    """Rules of one parsed relief file the schema cannot express; returns problem texts."""
+    problems = ["%s: float at %s (rules data are integers only)" % (rel, p) for p in _floats(rec)]
+    widths = {len(r.get("dm", "").split()) for r in rec.get("row", [])}
+    if len(widths) > 1:
+        problems.append("%s: rows differ in length" % rel)
+    for i, r in enumerate(rec.get("row", [])):
+        if any(abs(int(v)) > RELIEF_MAX_DM for v in r.get("dm", "").split() if re.match(r"^-?[0-9]+$", v)):
+            problems.append("%s: row %d: a height is beyond %d decimetres" % (rel, i, RELIEF_MAX_DM))
+    return problems
+
+
+def _validate_relief(root, files, reg, prov):
+    if not files:
+        return []
+    problems = []
+    with open(os.path.join(root, "data", "schemas", "relief.schema.json"), encoding="utf-8") as f:
+        validator = Draft202012Validator(json.load(f), registry=reg)
+    for path, rel in files:
+        try:
+            rec = _load(path)
+        except tomllib.TOMLDecodeError as e:
+            problems.append("%s: not valid TOML: %s" % (rel, e))
+            continue
+        for err in validator.iter_errors(rec):
+            problems.append("%s: schema: %s at /%s" % (rel, err.message[:120], "/".join(map(str, err.absolute_path))))
+        problems += check_relief(rec, rel)
+        problems += _provenance([rec], prov, rel, "file")
+    return problems
+
+
 def validate(root):
     problems = []
     env_path = os.path.join(root, "data", "rules", "environment.toml")
     base = os.path.join(root, "data", "scenarios")
     weather = []
+    relief = []
     if os.path.isdir(base):
         for family in sorted(os.listdir(base)):
             path = os.path.join(base, family, "weather.toml")
             if os.path.isfile(path):
                 weather.append((path, "data/scenarios/%s/weather.toml" % family))
-    if not os.path.exists(env_path) and not weather:
+            path = os.path.join(base, family, "relief.toml")
+            if os.path.isfile(path):
+                relief.append((path, "data/scenarios/%s/relief.toml" % family))
+    if not os.path.exists(env_path) and not weather and not relief:
         return problems
     reg = _registry(root)
     prov = Draft202012Validator({"$ref": "rules-common.schema.json#/$defs/provenance"}, registry=reg)
@@ -123,6 +161,9 @@ def validate(root):
         terrain_path = os.path.join(root, "data", "rules", "terrain.toml")
         ids = [c["id"] for c in _load(terrain_path).get("class", [])] if os.path.exists(terrain_path) else None
         problems += check_environment(_load(env_path), ids, prov)
+    problems += _validate_relief(root, relief, reg, prov)
+    if not weather:
+        return problems
     with open(os.path.join(root, "data", "schemas", "weather.schema.json"), encoding="utf-8") as f:
         validator = Draft202012Validator(json.load(f), registry=reg)
     for path, rel in weather:

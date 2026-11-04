@@ -128,3 +128,10 @@ pub use environment::{
     RetainRow, SightParams, SmokeParams, WeatherKey, WeatherNow, WeatherTable, EXP_TABLE,
     WIND_MAX_MM_S,
 };
+
+// T-094
+mod sight;
+pub use sight::{
+    aim_mm, distance_mm, eye_mm, optical_depth_micro, sight, signal_quality_pm, to_mm,
+    ElevationGrid, Sight, SightWorld,
+};

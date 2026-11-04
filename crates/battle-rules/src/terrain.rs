@@ -1,6 +1,6 @@
 //! Terrain classes and the terrain grid (SPEC-004 section 5).
 
-use crate::{fx_ratio, parse_table, DataError, Provenance, Table};
+use crate::{fx_ratio, parse_table, DataError, ElevationGrid, Provenance, Table};
 use core_math::{Fx, Vec2Fx};
 
 const SCHEMA: &str = "terrain/1";
@@ -252,5 +252,53 @@ impl TerrainGrid {
             out = try_y;
         }
         out
+    }
+}
+
+const RELIEF_SCHEMA: &str = "relief/1";
+
+impl ElevationGrid {
+    /// Parses a `relief.toml` sidecar (SPEC-009 section 5): `schema = "relief/1"`, `cell_mm`,
+    /// `origin_x_mm`, `origin_y_mm`, the provenance keys, then one `[[row]]` per grid row,
+    /// southernmost first, each with `dm`, the cell heights in whole decimetres separated by
+    /// spaces. `terrain_cell_mm` is the cell of the terrain grid; the two must be equal.
+    ///
+    /// Errors: the shared reader's [`DataError::Float`], [`DataError::UnknownKey`] and
+    /// [`DataError::Provenance`]; [`DataError::Parse`] for a wrong schema tag, a missing key, a
+    /// height that is not an integer or unequal rows; [`DataError::Range`] for a cell size that
+    /// differs from the terrain grid's or out-of-range numbers.
+    pub fn from_toml_str(text: &str, terrain_cell_mm: i64) -> Result<ElevationGrid, DataError> {
+        let mut root = parse_table(text)?;
+        let schema = root.take_str("schema")?;
+        if schema != RELIEF_SCHEMA {
+            return Err(DataError::Parse(format!(
+                "schema must be {RELIEF_SCHEMA:?}, found {schema:?}"
+            )));
+        }
+        let cell_mm = root.take_int_in("cell_mm", 1, 1_000_000)?;
+        if cell_mm != terrain_cell_mm {
+            return Err(DataError::Range(format!(
+                "relief cell_mm {cell_mm} differs from the terrain grid's {terrain_cell_mm}"
+            )));
+        }
+        let origin_x = root.take_int_in("origin_x_mm", -100_000_000, 100_000_000)?;
+        let origin_y = root.take_int_in("origin_y_mm", -100_000_000, 100_000_000)?;
+        root.take_provenance()?;
+        let mut rows: Vec<Vec<i32>> = Vec::new();
+        for mut row in root.take_rows("row")? {
+            let at = row.path().to_owned();
+            let text = row.take_str("dm")?;
+            row.finish()?;
+            let heights = text
+                .split_ascii_whitespace()
+                .map(|w| {
+                    w.parse::<i32>()
+                        .map_err(|_| DataError::Parse(format!("{at}.dm: {w:?} is not an integer")))
+                })
+                .collect::<Result<Vec<_>, _>>()?;
+            rows.push(heights);
+        }
+        root.finish()?;
+        ElevationGrid::from_rows(cell_mm, origin_x, origin_y, &rows)
     }
 }
