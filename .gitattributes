@@ -1,0 +1,7 @@
+# Check out every text file with LF endings on every platform. Tests edit data files by text pattern and golden
+# files are compared byte for byte, so CRLF conversion on Windows must never happen.
+* text=auto eol=lf
+*.png binary
+*.pdf binary
+*.hdrp binary
+*.gz binary
