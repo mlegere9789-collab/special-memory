@@ -1,0 +1,18 @@
+[package]
+name = "acoustics-model"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+publish.workspace = true
+description = "Sound propagation, acoustic shadow, aggregation and listeners (SPEC-012)"
+
+[lints]
+workspace = true
+
+[dependencies]
+core-math = { path = "../core-math" }
+sim-state = { path = "../sim-state" }
+battle-rules = { path = "../battle-rules" }
+
+[dev-dependencies]
+proptest = "1"
