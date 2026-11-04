@@ -1,0 +1,15 @@
+# expect: GB14
+schema = "gb-arrival/1"
+id = "ar_probe_gb14_early"
+formation = "us_probe_brigade"
+event = "arrive"
+
+[at]
+at = "1863-07-01T08:00"
+confidence = "unverified"
+sources = [{ document = "CWV", page = 72 }]
+
+[place]
+name = "Probe Ridge"
+confidence = "unverified"
+sources = [{ document = "CWV", page = 72 }]

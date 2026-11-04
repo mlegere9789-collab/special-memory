@@ -1,0 +1,14 @@
+schema = "gb-event/1"
+id = "ev_probe_followup"
+kind = "other"
+role = "validation"
+summary = "A probe event."
+
+[[not_before]]
+event = "ev_probe_attack"
+gap_min = 30
+
+[at]
+at = "1863-07-02T16:45"
+confidence = "unverified"
+sources = [{ document = "CWV", page = 72 }]

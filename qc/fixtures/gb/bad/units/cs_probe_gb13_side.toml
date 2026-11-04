@@ -1,0 +1,12 @@
+# expect: GB13
+schema = "gb-unit/1"
+id = "cs_probe_gb13_side"
+side = "confederate"
+level = "army"
+name = "Probe"
+
+[[commanders]]
+person = { id = "probe_person_a", name = "Probe Person" }
+kind = "command"
+confidence = "unverified"
+sources = [{ document = "CWV", page = 72 }]

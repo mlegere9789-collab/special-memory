@@ -4,7 +4,7 @@ id = "us_probe_gb09_adjacent"
 side = "union"
 level = "regiment"
 name = "Probe"
-designation = { state = "PA", ordinal = 1, arm = "infantry" }
+designation = { state = "PA", ordinal = 7, arm = "infantry" }
 
 [[assignments]]
 parent = "us_probe_division"

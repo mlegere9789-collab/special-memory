@@ -1,0 +1,15 @@
+schema = "gb-event/1"
+id = "ev_probe_wounded"
+kind = "commander_casualty"
+role = "validation"
+summary = "A probe event."
+
+[person_outcome]
+person = "probe_person_w"
+outcome = "wounded"
+remained_in_command = true
+
+[at]
+at = "1863-07-01T13:00"
+confidence = "unverified"
+sources = [{ document = "CWV", page = 72 }]

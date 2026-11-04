@@ -880,8 +880,194 @@ def check_cross(c, valid):
     return out
 
 
+# ---------------------------------------------------------------- commanders, time ordering, schedule (T-134)
+
+EVENT_RANK = {"arrive": 0, "deploy": 1, "withdraw": 2, "depart": 3}
+PARENT_LEAD_MIN = 60          # a child may arrive this long before its parent without a warning
+NIGHT_END_MIN = 6 * 60        # a weather date runs to 06:00 of the following day
+ENDS_COMMAND = ("killed", "mortally_wounded", "captured")
+
+
+def _at(stamp):
+    """Minutes for a valid in-window stamp, else None (GB08 reports the bad ones)."""
+    return t_min(stamp) if isinstance(stamp, str) and check_stamp(stamp) is None else None
+
+
+def _span(st):
+    """(from, to) of a stint with open ends as -FAR / FAR; None when it carries no date or a bound is invalid."""
+    if not isinstance(st, dict) or ("from" not in st and "to" not in st):
+        return None
+    lo, hi = (_at(st[k]) if k in st else d for k, d in (("from", -FAR), ("to", FAR)))
+    return None if lo is None or hi is None else (lo, hi)
+
+
+def _meets(a, b):
+    """True when two (from, to) spans overlap; touching at an endpoint is allowed."""
+    return a[0] < b[1] and b[0] < a[1]
+
+
+def _casualties(valid):
+    """{person: [(t, outcome, remained_in_command)]} from commander_casualty events."""
+    out = {}
+    for r in valid:
+        d = r.doc
+        if r.kind == "events" and d.get("kind") == "commander_casualty" and isinstance(d.get("at"), dict):
+            t, po = _at(d["at"].get("at")), d.get("person_outcome", {})
+            if t is not None and isinstance(po, dict):
+                out.setdefault(po.get("person"), []).append((t, po.get("outcome"), bool(po.get("remained_in_command"))))
+    return out
+
+
+def _gb13(valid):
+    """Stint overlaps, stints after a commander casualty, stints of the other side, temporary_higher over command."""
+    units = [r for r in valid if r.kind in ("units", "batteries")]
+    rows = []  # (label, index, side, person, kind, span, stint)
+    for r in units:
+        for i, st in enumerate(r.doc.get("commanders", [])):
+            rows.append((r.label, i, r.doc["side"], st["person"]["id"], st["kind"], _span(st), st))
+    out, by_person = [], {}
+    for row in rows:
+        by_person.setdefault(row[3], []).append(row)
+    for person in sorted(by_person):
+        mine = sorted(by_person[person], key=lambda x: (x[0], x[1]))
+        held = [x for x in mine if x[4] in ("command", "acting") and x[5]]
+        for a in range(len(held)):
+            for b in range(a + 1, len(held)):
+                if _meets(held[a][5], held[b][5]):
+                    out.append(Finding(held[b][0], "GB13", "E", "commanders/%d: %s overlaps commanders/%d of %s" % (
+                        held[b][1], person, held[a][1], held[a][0])))
+        for x in mine:
+            if x[4] == "temporary_higher" and x[5] and not x[6].get("note"):
+                if any(y[4] == "command" and y[5] and _meets(x[5], y[5]) for y in mine):
+                    out.append(Finding(x[0], "GB13", "W", "commanders/%d: temporary_higher over a command stint of %s needs a note" % (x[1], person)))
+        count = {}
+        for x in mine:
+            count[x[2]] = count.get(x[2], 0) + 1
+        home = sorted(count, key=lambda s: (-count[s], s))[0]
+        out += [Finding(x[0], "GB13", "E", "commanders/%d: %s commands on the %s side but belongs to the %s side" % (
+            x[1], person, x[2], home)) for x in mine if x[2] != home]
+    for r in units:
+        held = [(i, _span(st)) for i, st in enumerate(r.doc.get("commanders", [])) if st["kind"] == "command"]
+        held = [h for h in held if h[1]]
+        for a in range(len(held)):
+            for b in range(a + 1, len(held)):
+                if _meets(held[a][1], held[b][1]):
+                    out.append(Finding(r.label, "GB13", "E", "commanders/%d and commanders/%d: command stints of one formation overlap" % (
+                        held[a][0], held[b][0])))
+    casual = _casualties(valid)
+    for label, i, _, person, _, span, st in rows:
+        for t, outcome, remained in casual.get(person, []):
+            if span and (outcome in ENDS_COMMAND or remained) and (span[0] > t or (span[1] > t and span[1] != FAR)):
+                warn = remained and outcome in ("wounded", "mortally_wounded")
+                out.append(Finding(label, "GB13", "W" if warn else "E", "commanders/%d: %s is %s at %s and the stint runs after it" % (
+                    i, person, outcome.replace("_", " "), stamp_of(t))))
+    return out
+
+
+def _gb14(valid, parent_of):
+    """Arrival after departure, not_before gaps, a child arriving long before its parent."""
+    out, arrivals, events = [], {}, {}
+    for r in valid:
+        t = _at(r.doc.get("at", {}).get("at")) if isinstance(r.doc.get("at"), dict) else None
+        if t is None:
+            continue
+        if r.kind == "arrivals":
+            arrivals.setdefault(r.doc["formation"], []).append((t, r.doc["event"], r.label))
+        elif r.kind == "events":
+            events[r.doc["id"]] = t
+    for f in sorted(arrivals):
+        departs = [t for t, e, _ in arrivals[f] if e == "depart"]
+        for t, e, label in sorted(arrivals[f]):
+            if e == "arrive" and any(t > d for d in departs):
+                out.append(Finding(label, "GB14", "E", "%s arrives at %s after its own departure" % (f, stamp_of(t))))
+    for r in valid:
+        if r.kind != "events" or _at(r.doc["at"]["at"]) is None:
+            continue
+        for i, nb in enumerate(r.doc.get("not_before", [])):
+            if nb["event"] not in events:
+                out.append(Finding(r.label, "GB14", "I", "not_before/%d: %s is not in the corpus" % (i, nb["event"])))
+            elif _at(r.doc["at"]["at"]) < events[nb["event"]] + nb["gap_min"]:
+                out.append(Finding(r.label, "GB14", "E", "not_before/%d: at %s is before %s plus %d minutes" % (
+                    i, r.doc["at"]["at"], nb["event"], nb["gap_min"])))
+    first = {f: min((t, label) for t, e, label in rows if e == "arrive") for f, rows in sorted(arrivals.items())
+             if any(e == "arrive" for _, e, _ in rows)}
+    for f in sorted(first):
+        p = parent_of.get(f)
+        if p in first and first[f][0] < first[p][0] - PARENT_LEAD_MIN:
+            out.append(Finding(first[f][1], "GB14", "W", "%s arrives more than %d minutes before its parent %s" % (
+                f, PARENT_LEAD_MIN, p)))
+    return out
+
+
+def _gb15(valid, parent_of):
+    """Duplicate regiment designations; a Confederate brigade holding regiments of more than one state."""
+    out, seen, states = [], {}, {}
+    regs = sorted((r for r in valid if r.kind == "units" and "designation" in r.doc), key=lambda r: r.label)
+    for r in regs:
+        d = r.doc["designation"]
+        key = (r.doc["side"], d["state"], d["ordinal"], d["arm"])
+        if key in seen:
+            out.append(Finding(r.label, "GB15", "E", "designation %s %d %s duplicates %s" % (d["state"], d["ordinal"], d["arm"], seen[key])))
+        seen.setdefault(key, r.label)
+        states.setdefault(parent_of.get(r.doc["id"]), set()).add(d["state"])
+    for r in valid:
+        if r.kind == "units" and r.doc["level"] == "brigade" and r.doc["side"] == "confederate" \
+                and len(states.get(r.doc["id"], ())) > 1:
+            out.append(Finding(r.label, "GB15", "W", "brigade holds regiments of %d states (%s)" % (
+                len(states[r.doc["id"]]), ", ".join(sorted(states[r.doc["id"]])))))
+    return out
+
+
+def _gb16(r):
+    """Weather segments of one date: ordered, not overlapping, inside the date plus the following night."""
+    day = _at(r.doc["date"] + "T00:00") if re.fullmatch(r"[0-9]{4}-[0-9]{2}-[0-9]{2}", r.doc.get("date", "")) else None
+    if day is None:
+        return []
+    out, segs = [], []
+    for i, s in enumerate(r.doc["segment"]):
+        a, b = _at(s["from"]), _at(s["to"])
+        if a is not None and b is not None and a <= b:
+            segs.append((i, a, b))
+    for i, a, b in segs:
+        if a < day or b > day + 1440 + NIGHT_END_MIN:
+            out.append(Finding(r.label, "GB16", "E", "segment/%d: %s to %s is outside the date plus the following night" % (
+                i, r.doc["segment"][i]["from"], r.doc["segment"][i]["to"])))
+    for k in range(1, len(segs)):
+        if segs[k][1] < segs[k - 1][1]:
+            out.append(Finding(r.label, "GB16", "E", "segment/%d begins before segment/%d" % (segs[k][0], segs[k - 1][0])))
+    for x in range(len(segs)):
+        for y in range(x + 1, len(segs)):
+            if _meets(segs[x][1:], segs[y][1:]):
+                out.append(Finding(r.label, "GB16", "E", "segment/%d and segment/%d overlap" % (segs[x][0], segs[y][0])))
+    return out
+
+
+def check_time(valid):
+    """Rules GB13 to GB16 over the schema-valid records of a corpus."""
+    parent_of = _parents_of_record([r for r in valid if r.kind in ("units", "batteries")])
+    out = _gb13(valid) + _gb14(valid, parent_of) + _gb15(valid, parent_of)
+    for r in valid:
+        if r.kind == "weather":
+            out += _gb16(r)
+    return out
+
+
+def hourly_schedule(c):
+    """Arrivals, deploys, withdrawals and departures as (hour, formation, event, id), sorted by hour, formation id,
+    event rank, then id. Records without a readable formation, event, id or in-window stamp are left out."""
+    rows = []
+    for r in c.records:
+        d = r.doc
+        if r.kind != "arrivals" or not isinstance(d, dict) or not isinstance(d.get("at"), dict):
+            continue
+        t = _at(d["at"].get("at"))
+        if t is not None and isinstance(d.get("formation"), str) and d.get("event") in EVENT_RANK and isinstance(d.get("id"), str):
+            rows.append((hour_of(t), d["formation"], d["event"], d["id"]))
+    return sorted(rows, key=lambda x: (x[0], x[1], EVENT_RANK[x[2]], x[3]))
+
+
 def check_corpus(c):
-    """Rules GB01 to GB12 and GB18 over a loaded corpus (GB04 to GB06 when a registry is present). Sorted findings."""
+    """Rules GB01 to GB16 and GB18 over a loaded corpus (GB04 to GB06 when a registry is present). Sorted findings."""
     out, seen, valid, validators = list(c.findings), {}, [], {}
     for r in c.records:
         if r.doc is None:
@@ -910,6 +1096,7 @@ def check_corpus(c):
         out += [Finding(r.label, "GB08", "E", m) for m in _gb08(r)]
     out += _gb09([r for r in valid if r.kind in ("units", "batteries")], index)
     out += check_cross(c, valid)
+    out += check_time(valid)
     if c.sources:  # without a registry there is nothing to judge a citation against
         for r in c.records:
             if isinstance(r.doc, dict):
@@ -1145,7 +1332,11 @@ def main(argv):
         for f in findings:
             print("%s: %s %s %s" % (f.path, f.rule, f.severity, f.message))
         return 1 if any(f.severity == "E" for f in findings) else 0
-    print("usage: gb_audit.py sources|check [ROOT]", file=sys.stderr)
+    if len(argv) >= 2 and argv[1] == "hourly":
+        for hour, formation, event, rid in hourly_schedule(load_corpus(argv[2] if len(argv) > 2 else ROOT)):
+            print("%s\t%s\t%s\t%s" % (stamp_of(hour * 60), formation, event, rid))
+        return 0
+    print("usage: gb_audit.py sources|check|hourly [ROOT]", file=sys.stderr)
     return 2
 
 

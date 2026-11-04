@@ -5,7 +5,7 @@ level = "army"
 name = "Probe Confederate Army"
 
 [[commanders]]
-person = { id = "probe_person_a", name = "Probe Person" }
+person = { id = "probe_person_c", name = "Probe Person" }
 kind = "command"
 confidence = "unverified"
 sources = [{ document = "CWV", page = 72 }]

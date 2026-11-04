@@ -1,0 +1,28 @@
+# expect: GB13
+schema = "gb-unit/1"
+id = "us_probe_gb13_formation"
+side = "union"
+level = "brigade"
+name = "Probe"
+
+[[assignments]]
+parent = "us_probe_division"
+kind = "organic"
+confidence = "unverified"
+sources = [{ document = "CWV", page = 72 }]
+
+[[commanders]]
+person = { id = "probe_person_h", name = "Probe Person" }
+kind = "command"
+confidence = "unverified"
+sources = [{ document = "CWV", page = 72 }]
+from = "1863-07-01T06:00"
+to = "1863-07-01T12:00"
+
+[[commanders]]
+person = { id = "probe_person_i", name = "Probe Person" }
+kind = "command"
+confidence = "unverified"
+sources = [{ document = "CWV", page = 72 }]
+from = "1863-07-01T11:00"
+to = "1863-07-01T18:00"

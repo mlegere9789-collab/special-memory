@@ -1,0 +1,15 @@
+# expect: GB14
+schema = "gb-event/1"
+id = "ev_probe_gb14_gap"
+kind = "other"
+role = "validation"
+summary = "A probe event."
+
+[[not_before]]
+event = "ev_probe_attack"
+gap_min = 30
+
+[at]
+at = "1863-07-02T16:10"
+confidence = "unverified"
+sources = [{ document = "CWV", page = 72 }]

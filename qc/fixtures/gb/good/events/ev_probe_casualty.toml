@@ -1,0 +1,14 @@
+schema = "gb-event/1"
+id = "ev_probe_casualty"
+kind = "commander_casualty"
+role = "validation"
+summary = "A probe event."
+
+[person_outcome]
+person = "probe_person_k"
+outcome = "killed"
+
+[at]
+at = "1863-07-01T11:00"
+confidence = "unverified"
+sources = [{ document = "CWV", page = 72 }]

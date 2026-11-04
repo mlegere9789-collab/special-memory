@@ -1,0 +1,18 @@
+# expect: GB16
+schema = "gb-weather/1"
+id = "wx_18630703"
+date = "1863-07-03"
+
+[[segment]]
+from = "1863-07-03T12:00"
+to = "1863-07-03T18:00"
+sky = "clear"
+confidence = "unverified"
+sources = [{ document = "CWV", page = 72 }]
+
+[[segment]]
+from = "1863-07-03T00:00"
+to = "1863-07-03T06:00"
+sky = "clear"
+confidence = "unverified"
+sources = [{ document = "CWV", page = 72 }]
