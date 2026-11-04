@@ -52,6 +52,167 @@ pub fn distance_sq_raw(a: Vec2Fx, b: Vec2Fx) -> u128 {
     (dx * dx).saturating_add(dy * dy)
 }
 
+/// 256-bit unsigned integer as `(high, low)`; tuple order is numeric order.
+type U256 = (u128, u128);
+
+const LOW64: u128 = (1 << 64) - 1;
+
+/// Exact product of two `u128` values.
+fn mul_wide(a: u128, b: u128) -> U256 {
+    let (a0, a1, b0, b1) = (a & LOW64, a >> 64, b & LOW64, b >> 64);
+    let (ll, lh, hl, hh) = (a0 * b0, a0 * b1, a1 * b0, a1 * b1);
+    let mid = (ll >> 64) + (lh & LOW64) + (hl & LOW64);
+    let hi = hh + (lh >> 64) + (hl >> 64) + (mid >> 64);
+    (hi, (ll & LOW64) | ((mid & LOW64) << 64))
+}
+
+/// `a + b`; callers keep the sum below 2^256.
+fn add_wide(a: U256, b: U256) -> U256 {
+    let (lo, carry) = a.1.overflowing_add(b.1);
+    (a.0 + b.0 + u128::from(carry), lo)
+}
+
+/// `a - b` for `a >= b`.
+fn sub_wide(a: U256, b: U256) -> U256 {
+    let (lo, borrow) = a.1.overflowing_sub(b.1);
+    (a.0 - b.0 - u128::from(borrow), lo)
+}
+
+/// A sign and a magnitude: `(negative, |value|)`.
+type Signed = (bool, U256);
+
+fn smul(a: i128, b: i128) -> Signed {
+    (
+        (a < 0) != (b < 0),
+        mul_wide(a.unsigned_abs(), b.unsigned_abs()),
+    )
+}
+
+/// `x + y`, with a zero result always non-negative.
+fn ssum(x: Signed, y: Signed) -> Signed {
+    if x.0 == y.0 {
+        (x.0, add_wide(x.1, y.1))
+    } else if x.1 >= y.1 {
+        (x.0 && x.1 != y.1, sub_wide(x.1, y.1))
+    } else {
+        (y.0, sub_wide(y.1, x.1))
+    }
+}
+
+/// `floor(sqrt(n))` for `n < 2^130`.
+fn isqrt_wide(n: U256) -> u128 {
+    let (mut lo, mut hi) = (0u128, 1u128 << 65);
+    while lo < hi {
+        let mid = (lo + hi).div_ceil(2);
+        if mul_wide(mid, mid) <= n {
+            lo = mid;
+        } else {
+            hi = mid - 1;
+        }
+    }
+    lo
+}
+
+/// `floor(n / m)` for `m < 2^127` and a quotient below 2^128.
+fn div_wide(n: U256, m: u128) -> u128 {
+    if n.0 == 0 {
+        return n.1 / m;
+    }
+    let (mut rem, mut q) = (0u128, 0u128);
+    for bit in (0..256).rev() {
+        let b = if bit >= 128 {
+            n.0 >> (bit - 128)
+        } else {
+            n.1 >> bit
+        } & 1;
+        rem = (rem << 1) | b;
+        q <<= 1;
+        if rem >= m {
+            rem -= m;
+            q |= 1;
+        }
+    }
+    q
+}
+
+/// `p0.x + dx * (y - p0.y) / dy` rounded down (`up == false`) or up, for `y` within the
+/// segment's vertical extent and `dy != 0`.
+fn x_at(p0: (i128, i128), d: (i128, i128), y: i128, up: bool) -> i128 {
+    let n = d.0.unsigned_abs() * (y - p0.1).unsigned_abs();
+    let den = d.1.unsigned_abs();
+    let (q, r) = (n / den, n % den);
+    let neg = (d.0 < 0) ^ (y < p0.1) ^ (d.1 < 0);
+    let off = if neg {
+        -((q + u128::from(!up && r > 0)) as i128)
+    } else {
+        (q + u128::from(up && r > 0)) as i128
+    };
+    p0.0 + off
+}
+
+/// A capsule query prepared once: exact integer geometry of `p0..p1` and `half_width`.
+struct Capsule {
+    p0: (i128, i128),
+    p1: Vec2Fx,
+    p0v: Vec2Fx,
+    d: (i128, i128),
+    h: i128,
+    h2: u128,
+    l2: U256,
+    len: u128,
+}
+
+impl Capsule {
+    fn new(p0: Vec2Fx, p1: Vec2Fx, half_width: i64) -> Capsule {
+        let a = (i128::from(p0.x.raw()), i128::from(p0.y.raw()));
+        let d = (i128::from(p1.x.raw()) - a.0, i128::from(p1.y.raw()) - a.1);
+        let l2 = add_wide(smul(d.0, d.0).1, smul(d.1, d.1).1);
+        let h = i128::from(half_width);
+        Capsule {
+            p0: a,
+            p1,
+            p0v: p0,
+            d,
+            h,
+            h2: (h * h) as u128,
+            l2,
+            len: isqrt_wide(l2),
+        }
+    }
+
+    /// `Some(s)` when `pos` is within the half-width of the segment (SPEC-002 amendment A2).
+    fn hit(&self, pos: Vec2Fx) -> Option<u128> {
+        let w = (
+            i128::from(pos.x.raw()) - self.p0.0,
+            i128::from(pos.y.raw()) - self.p0.1,
+        );
+        // Cheap exact rejection against the capsule's bounding box.
+        let (dx, dy) = self.d;
+        if w.0 < dx.min(0) - self.h
+            || w.0 > dx.max(0) + self.h
+            || w.1 < dy.min(0) - self.h
+            || w.1 > dy.max(0) + self.h
+        {
+            return None;
+        }
+        let dot = ssum(smul(w.0, dx), smul(w.1, dy));
+        if dot.0 || dot.1 == (0, 0) {
+            return (distance_sq_raw(pos, self.p0v) <= self.h2).then_some(0);
+        }
+        if dot.1 >= self.l2 {
+            return (distance_sq_raw(pos, self.p1) <= self.h2).then_some(self.len);
+        }
+        let (neg, mag) = smul(w.1, dx);
+        let cross = ssum(smul(w.0, dy), (!neg, mag));
+        if cross.1 .0 != 0 {
+            return None;
+        }
+        let lhs = mul_wide(cross.1 .1, cross.1 .1);
+        let rhs = add_wide(mul_wide(self.h2, self.l2.1), (self.h2 * self.l2.0, 0));
+        (lhs <= rhs).then(|| div_wide(dot.1, self.len).min(self.len))
+    }
+}
+
 #[derive(Clone, Copy, Debug)]
 struct Entry {
     id: AgentId,
@@ -268,6 +429,83 @@ impl SpatialGrid {
             let d = distance_sq_raw(e.pos, center);
             if d <= r2 {
                 hits.push((d, e.id.index, e.id));
+            }
+        });
+        hits.sort_unstable_by_key(|h| (h.0, h.1));
+        out.extend(hits.into_iter().map(|h| h.2));
+    }
+
+    /// Calls `f` for every entry in the cells that can hold a point of the capsule: per cell row,
+    /// the segment is clipped to the row's band widened by the half-width, and the columns that
+    /// clip spans (widened likewise) are scanned. Border cells stand for the clamped region
+    /// beyond the grid, so the outermost rows and columns reach to infinity.
+    fn for_capsule_candidates(&self, c: &Capsule, mut f: impl FnMut(&Entry)) {
+        let oy = i128::from(self.origin.y.raw());
+        let cs = i128::from(self.cell_size);
+        let (ax, ay) = c.p0;
+        let (bx, by) = (ax + c.d.0, ay + c.d.1);
+        let (ymin, ymax) = (ay.min(by), ay.max(by));
+        let (row0, row1) = (
+            self.axis_cell(ymin - c.h, self.origin.y.raw(), self.height),
+            self.axis_cell(ymax + c.h, self.origin.y.raw(), self.height),
+        );
+        let w = self.width as usize;
+        let mut touched = 0u64;
+        for cy in row0..=row1 {
+            let band_lo = if cy == 0 {
+                i128::MIN / 2
+            } else {
+                oy + cy as i128 * cs - c.h
+            };
+            let band_hi = if cy + 1 == self.height as usize {
+                i128::MAX / 2
+            } else {
+                oy + (cy as i128 + 1) * cs + c.h
+            };
+            let (ya, yb) = (band_lo.max(ymin), band_hi.min(ymax));
+            if ya > yb {
+                continue;
+            }
+            let (xlo, xhi) = if c.d.1 == 0 {
+                (ax.min(bx), ax.max(bx))
+            } else {
+                (
+                    x_at(c.p0, c.d, ya, false).min(x_at(c.p0, c.d, yb, false)),
+                    x_at(c.p0, c.d, ya, true).max(x_at(c.p0, c.d, yb, true)),
+                )
+            };
+            let c0 = self.axis_cell(xlo - c.h, self.origin.x.raw(), self.width);
+            let c1 = self.axis_cell(xhi + c.h, self.origin.x.raw(), self.width);
+            touched += (c1 - c0 + 1) as u64;
+            for cx in c0..=c1 {
+                let i = cy * w + cx;
+                let (s, e) = (self.cell_start[i] as usize, self.cell_start[i + 1] as usize);
+                for entry in &self.entries[s..e] {
+                    f(entry);
+                }
+            }
+        }
+        self.cells_touched.fetch_add(touched, Ordering::Relaxed);
+    }
+
+    /// Clears `out` and fills it with every indexed agent within `half_width` of the closed
+    /// segment `p0..p1`, sorted by `(s, slot index)` where `s` is the raw distance along the
+    /// segment of the agent's projection, clamped to the segment (SPEC-002 amendment A2). A
+    /// negative `half_width` yields no agents; `p0 == p1` is a circle. Exact integer arithmetic
+    /// over the whole `i64` coordinate range; only cells touching the capsule are visited.
+    ///
+    /// Like [`SpatialGrid::query_radius`], the result is a snapshot of the last
+    /// [`SpatialGrid::rebuild`].
+    pub fn query_segment(&self, p0: Vec2Fx, p1: Vec2Fx, half_width: Fx, out: &mut Vec<AgentId>) {
+        out.clear();
+        if half_width.raw() < 0 {
+            return;
+        }
+        let capsule = Capsule::new(p0, p1, half_width.raw());
+        let mut hits: Vec<(u128, u32, AgentId)> = Vec::new();
+        self.for_capsule_candidates(&capsule, |e| {
+            if let Some(s) = capsule.hit(e.pos) {
+                hits.push((s, e.id.index, e.id));
             }
         });
         hits.sort_unstable_by_key(|h| (h.0, h.1));

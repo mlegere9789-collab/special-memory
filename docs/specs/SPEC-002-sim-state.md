@@ -59,3 +59,20 @@ fmt, clippy `-D warnings`, `cargo test --workspace` pass; no `unsafe`; no floati
    (The earlier clamp-to-minimum behaviour is removed.) Query results are a snapshot of the last `rebuild`; this is documented on `rebuild`, `query_radius` and `nearest`,
    and `AgentStore`-aware helpers `query_radius_alive` / `nearest_alive` that also filter ids no longer alive are added.
 3. Golden files and hash layout are unchanged: no golden hash may change in this amendment.
+
+## Amendment A2 (segment query, required by SPEC-005 amendment A1)
+Adds to section 2: `SpatialGrid::query_segment(p0: Vec2Fx, p1: Vec2Fx, half_width: Fx, out: &mut Vec<AgentId>)`.
+1. **Result.** `out` is cleared, then receives every indexed agent whose position lies within `half_width` of the closed segment `p0..p1` (the capsule: distance to the nearest
+   point of the segment is `<= half_width`, compared exactly in integers). A negative `half_width` yields no agents. A zero-length segment (`p0 == p1`) is the circle of
+   radius `half_width` about `p0`. As with `query_radius`, the result is a snapshot of the last `rebuild`.
+2. **Order.** Sorted by `(s, index)`. With `d = p1 - p0` and `w = pos - p0` (raw `Fx` components, exact), `L2 = d.x^2 + d.y^2`, `len = floor(sqrt(L2))`, `dot = w.x*d.x + w.y*d.y`:
+   `s = 0` if `dot <= 0`; `s = len` if `dot >= L2`; otherwise `s = min(floor(dot / len), len)`. `s` is a raw `Fx` distance along the segment, and `index` is the slot index.
+3. **Exactness.** Integer arithmetic only. Raw coordinates may be anywhere in the `i64` range, so intermediate products are carried at 256 bits; no result depends on saturation,
+   wrapping or overflow. The perpendicular case compares `cross^2 <= half_width^2 * L2` with `cross = w.x*d.y - w.y*d.x`.
+4. **Cells.** Only cells that can contain a point of the capsule are visited (counted in `cells_touched`): for each cell row the segment is clipped to the row's band widened by
+   `half_width`, and only the columns spanned by that clip, widened by `half_width`, are scanned. Border cells stand for the clamped region beyond the grid, so the first and last
+   row and column extend to infinity. Agents outside the grid are therefore found exactly as inside it.
+5. **Tests (T5-07).** Results equal a brute-force reference, same sort, in a proptest with agents on cell borders and outside the grid; plus a zero-length segment, a segment
+   entirely outside the grid, saturating (`i64::MIN`/`i64::MAX`) coordinates, a negative half-width, and a check that a long diagonal segment touches far fewer cells than its
+   bounding box. An ignored micro benchmark prints the time for 1,000 segments of 15 m in a 20,000-agent world.
+6. Existing grid methods, golden files and hash layout are unchanged.
