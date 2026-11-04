@@ -18,6 +18,7 @@ name = "hd-sim"
 path = "src/main.rs"
 
 [dependencies]
+battle-rules = { path = "../../crates/battle-rules" }
 core-math = { path = "../../crates/core-math" }
 sim-state = { path = "../../crates/sim-state" }
 

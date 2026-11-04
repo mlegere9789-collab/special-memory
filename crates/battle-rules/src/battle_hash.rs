@@ -29,6 +29,13 @@ fn order_fields(order: &Order) -> (u8, i64, i64, u8) {
 /// Per locomotion slot: `fatigue u32, slot.u i64, slot.v i64, catchup u8`, after a `u32` count.
 pub fn battle_hash(state: &BattleState) -> u64 {
     let mut h = StateHasher::new();
+    battle_hash_into(state, &mut h);
+    h.finish()
+}
+
+/// Writes the [`battle_hash`] byte stream into `h` without finishing it, so that
+/// [`Battle::hash`](crate::Battle::hash) can append its own block to the same hasher.
+pub fn battle_hash_into(state: &BattleState, h: &mut StateHasher) {
     h.write_world(&state.world);
     h.write_u32(u32::try_from(state.regiments.len()).unwrap_or(u32::MAX));
     for r in &state.regiments {
@@ -68,16 +75,15 @@ pub fn battle_hash(state: &BattleState) -> u64 {
         h.write_i64(l.slot.v.raw());
         h.write_u8(u8::from(l.catchup));
     }
-    write_fire(&mut h, state);
-    write_smoke(&mut h, state);
-    write_casualties(&mut h, state);
+    write_fire(h, state);
+    write_smoke(h, state);
+    write_casualties(h, state);
     // Optional blocks follow in REGISTRY order (morale, command, environment); the morale block
     // goes before the command block when the morale layer lands.
     if let Some(cmd) = &state.cmd {
-        write_command_block(&mut h, cmd);
+        write_command_block(h, cmd);
     }
-    write_environment(&mut h, state);
-    h.finish()
+    write_environment(h, state);
 }
 
 /// The fire block: `u32` count of fire slots; with none (nothing equipped) that is the whole

@@ -3,9 +3,12 @@
 //! Exit codes: `0` success or match, `1` replay mismatch, `2` malformed file or usage error.
 
 use crate::bench::{micros, run_bench};
-use crate::scenario::{final_hash, run_replay, verify_replay, ToyParams, Verdict};
+use crate::bound::verify_bound;
+use crate::resolve::{default_ticks, load_scenario, report, resolve};
+use crate::scenario::{final_hash, run_replay, verify_replay, ToyParams, Verdict, SCENARIO_ID};
 use sim_state::ReplayReader;
 use std::io::Write;
+use std::path::{Path, PathBuf};
 
 const USAGE: &str = "\
 usage: hd-sim <command> [options]
@@ -13,9 +16,12 @@ usage: hd-sim <command> [options]
 commands:
   run    --agents K --ticks N --seed S --checkpoint-interval C --out FILE
          run the toy scenario and write a replay (defaults: K 1000, S 1, C 100)
-  verify FILE
+  verify FILE [--data-dir DIR]
          re-run a replay and compare every checkpoint and the final hash
-         (exit 0 match, 1 mismatch, 2 malformed file)
+         (exit 0 match, 1 mismatch, 2 malformed file); a replay bound to a data
+         scenario is checked against DIR/scenarios (default data)
+  resolve --scenario ID --seed S [--ticks N] [--out FILE] [--data-dir DIR]
+         quick-resolve a data scenario: final hash, ledger, casualties, objectives
   hash   --agents K --ticks N --seed S
          print the final state hash
   bench  --agents K --ticks N [--seed S]
@@ -128,14 +134,45 @@ fn cmd_run(args: &[String], out: &mut dyn Write) -> CliResult {
     Ok(0)
 }
 
+/// Splits `verify`'s arguments into the replay path and the data directory.
+fn verify_args(args: &[String]) -> Result<(String, PathBuf), CliError> {
+    let (mut file, mut data) = (None, None);
+    let mut it = args.iter();
+    while let Some(arg) = it.next() {
+        let value = match arg.strip_prefix("--data-dir") {
+            Some("") => it.next().cloned(),
+            Some(rest) if rest.starts_with('=') => Some(rest[1..].to_string()),
+            _ => None,
+        };
+        match value {
+            Some(v) if data.is_none() => data = Some(PathBuf::from(v)),
+            Some(_) => return err("option --data-dir given more than once"),
+            None if arg.starts_with("--") => return err(format!("unknown option {arg:?}")),
+            None if file.is_none() => file = Some(arg.clone()),
+            None => return err("verify takes exactly one FILE argument"),
+        }
+    }
+    match file {
+        Some(f) => Ok((f, data.unwrap_or_else(|| PathBuf::from(DEFAULT_DATA_DIR)))),
+        None => err("verify takes exactly one FILE argument"),
+    }
+}
+
+/// Where `verify` and `resolve` look for `rules/` and `scenarios/` unless told otherwise.
+const DEFAULT_DATA_DIR: &str = "data";
+
 fn cmd_verify(args: &[String], out: &mut dyn Write, errw: &mut dyn Write) -> CliResult {
-    let [path] = args else {
-        return err("verify takes exactly one FILE argument");
-    };
+    let (path, data) = verify_args(args)?;
+    let path = path.as_str();
     let bytes = std::fs::read(path).or_else(|e| err(format!("cannot read {path}: {e}")))?;
     let replay =
         ReplayReader::parse(&bytes).or_else(|e| err(format!("{path}: malformed replay: {e}")))?;
-    match verify_replay(&replay) {
+    let verdict = if replay.scenario_id() == SCENARIO_ID {
+        verify_replay(&replay)
+    } else {
+        verify_bound(&replay, &data)
+    };
+    match verdict {
         Verdict::Match => {
             let _ = writeln!(
                 out,
@@ -159,6 +196,24 @@ fn cmd_verify(args: &[String], out: &mut dyn Write, errw: &mut dyn Write) -> Cli
         }
         Verdict::Malformed(why) => err(format!("{path}: {why}")),
     }
+}
+
+fn cmd_resolve(args: &[String], out: &mut dyn Write) -> CliResult {
+    let flags = Flags::parse(args, &["scenario", "seed", "ticks", "out", "data-dir"])?;
+    let Some(id) = flags.raw("scenario") else {
+        return err("missing required option --scenario");
+    };
+    let seed: u64 = flags.number("seed", None)?;
+    let data = Path::new(flags.raw("data-dir").unwrap_or(DEFAULT_DATA_DIR));
+    let loaded = load_scenario(data, id).or_else(err)?;
+    let ticks: u64 = flags.number("ticks", Some(default_ticks(&loaded.scenario)))?;
+    let (replay, battle) = resolve(&loaded, seed, ticks).or_else(err)?;
+    if let Some(path) = flags.raw("out") {
+        std::fs::write(path, replay.to_bytes())
+            .or_else(|e| err(format!("cannot write {path}: {e}")))?;
+    }
+    let _ = write!(out, "{}", report(&battle, seed, ticks));
+    Ok(0)
 }
 
 fn cmd_hash(args: &[String], out: &mut dyn Write) -> CliResult {
@@ -193,6 +248,7 @@ pub fn run_cli(args: &[String], out: &mut dyn Write, errw: &mut dyn Write) -> i3
     let result = match command.as_str() {
         "run" => cmd_run(rest, out),
         "verify" => cmd_verify(rest, out, errw),
+        "resolve" => cmd_resolve(rest, out),
         "hash" => cmd_hash(rest, out),
         "bench" => cmd_bench(rest, out),
         "help" | "--help" | "-h" => {
