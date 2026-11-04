@@ -1,5 +1,7 @@
 # SPEC-003: sim-cli, a headless harness and the determinism proof
 
+> Shared namespaces (input tags and actors, random streams, flags, hash blocks, tick order, CT ids, amendment labels, ticket ids) are owned by [REGISTRY.md](REGISTRY.md); conflicts and their resolutions are in [CONFLICTS.md](CONFLICTS.md).
+
 Crate: `shells/sim-cli` (binary `hd-sim`), depends on `core-math` and `sim-state` by path. Add it to the workspace `members`.
 It runs a deliberately simple **toy scenario** so the determinism machinery is proven before any game rules exist.
 

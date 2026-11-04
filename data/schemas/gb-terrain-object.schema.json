@@ -1,0 +1,65 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "gb-terrain-object.schema.json",
+  "title": "Gettysburg terrain object",
+  "description": "A road, wall, fence, wood, orchard, field, creek, building, rock outcrop, cut, embankment, work or crest as a vector object in the frame gb_local_v1 (SPEC-013 section 3). Integer millimetres. Geometry is traced from a source map; its tolerance is stated, not implied.",
+  "type": "object",
+  "required": ["schema", "id", "name", "kind", "geometry", "position_tolerance_mm", "confidence", "sources"],
+  "additionalProperties": false,
+  "properties": {
+    "schema": {"const": "gb-terrain/1"},
+    "id": {"type": "string", "pattern": "^[a-z0-9][a-z0-9_]{1,59}$"},
+    "name": {"type": "string", "minLength": 1, "maxLength": 120},
+    "kind": {"enum": ["road", "lane", "railroad_cut", "railroad_embankment", "stone_wall", "rail_fence", "earthwork", "woods", "orchard", "field", "creek", "ford", "bridge", "building", "rock_outcrop", "spring", "crest", "town_block"]},
+    "terrain_class": {"type": "string", "pattern": "^[a-z_]+$", "description": "a name in data/rules/terrain.toml; rule GB18 checks it"},
+    "geometry": {
+      "type": "object",
+      "required": ["type", "frame", "points"],
+      "additionalProperties": false,
+      "properties": {
+        "type": {"enum": ["point", "polyline", "polygon"]},
+        "frame": {"const": "gb_local_v1"},
+        "points": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 4096,
+          "items": {
+            "type": "array",
+            "prefixItems": [
+              {"type": "integer", "minimum": -200000000, "maximum": 200000000},
+              {"type": "integer", "minimum": -200000000, "maximum": 200000000}
+            ],
+            "items": false,
+            "minItems": 2
+          }
+        }
+      }
+    },
+    "height_mm": {"$ref": "gb-regiment.schema.json#/$defs/int_fact"},
+    "width_mm": {"$ref": "gb-regiment.schema.json#/$defs/int_fact"},
+    "position_tolerance_mm": {"type": "integer", "minimum": 0, "maximum": 1000000},
+    "georeference": {"enum": ["surveyed", "traced_from_period_map", "interpolated_from_text"]},
+    "built_by": {"$ref": "common.schema.json#/$defs/side"},
+    "exists_from": {"$ref": "gb-regiment.schema.json#/$defs/stamp", "description": "set for works raised during the campaign"},
+    "exists_to": {"$ref": "gb-regiment.schema.json#/$defs/stamp"},
+    "confidence": {"$ref": "common.schema.json#/$defs/confidence"},
+    "sources": {"$ref": "common.schema.json#/$defs/sources"},
+    "second_source": {"$ref": "gb-regiment.schema.json#/$defs/second_source_ref"},
+    "flag": {"type": "string"},
+    "note": {"type": "string", "maxLength": 600}
+  },
+  "allOf": [
+    {
+      "if": {"properties": {"confidence": {"const": "verified"}}, "required": ["confidence"]},
+      "then": {"required": ["second_source", "georeference"]}
+    },
+    {
+      "if": {"properties": {"kind": {"enum": ["stone_wall", "rail_fence", "earthwork", "railroad_embankment"]}}, "required": ["kind"]},
+      "then": {"required": ["height_mm"]}
+    },
+    {
+      "if": {"properties": {"kind": {"enum": ["road", "lane", "creek"]}}, "required": ["kind"]},
+      "then": {"required": ["width_mm"]}
+    }
+  ]
+}

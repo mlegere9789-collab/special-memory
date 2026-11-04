@@ -1,6 +1,8 @@
 # TICKETS-P1: battle layer, tickets T-014 to T-024
 
-Specs: SPEC-004 (movement and formations), SPEC-005 (weapons and fire). One ticket, one session, under about 400 changed lines (code, tests, data together). Each ticket writes its tests first, ends with the Q0 commands from `CLAUDE.md`, and appends one row to `ledger/usage.csv`. A ticket that cannot fit splits at the data/code boundary; it never drops or weakens a listed test. Order below is dependency order; a ticket starts only when everything in `Needs` is merged.
+> Shared namespaces (input tags and actors, random streams, flags, hash blocks, tick order, CT ids, amendment labels, ticket ids) are owned by [REGISTRY.md](REGISTRY.md); conflicts and their resolutions are in [CONFLICTS.md](CONFLICTS.md).
+
+Specs: SPEC-004 (movement and formations), SPEC-005 (weapons and fire). One ticket, one session, under about 400 changed lines (code, tests, data together). Each ticket writes its tests first, ends with the Q0 commands from `CLAUDE.md`, and appends one row to `ledger/usage.csv`. A ticket that cannot fit splits at the data/code boundary; it never drops or weakens a listed test. Order below is dependency order; ticket ids of the other lists are in REGISTRY section 8 and the parallel schedule is ROADMAP.md; a ticket starts only when everything in `Needs` is merged.
 
 | Ticket | Title | Needs |
 |---|---|---|
@@ -23,13 +25,13 @@ Specs: SPEC-004 (movement and formations), SPEC-005 (weapons and fire). One tick
 
 ## T-015: battle-rules crate and loader
 - Spec: SPEC-004 sections 1, 2 (and the loader part of 11).
-- Work: crate skeleton and workspace entry; `fx_ratio`; `DataError`; a shared integer-only TOML reader (rejects floats and unknown keys, enforces provenance); `data/schemas/rules-common.schema.json`; extend `tools/validate_data.py` to validate `data/rules/*.toml` against its schema when present; record ADR 0004 (rules data are integer-only TOML, the `toml` and `serde` dependencies are exact-pinned, loader only).
+- Work: crate skeleton and workspace entry; `fx_ratio`; `DataError`; a shared integer-only TOML reader (rejects floats and unknown keys, enforces provenance; the `CT-<spec>-<n>` calibration-target format of REGISTRY section 7 applies from T-025 on); `data/schemas/rules-common.schema.json`; extend `tools/validate_data.py` to validate `data/rules/*.toml` against its schema when present; record ADR 0004 (rules data are integer-only TOML, the `toml` and `serde` dependencies are exact-pinned, loader only).
 - Acceptance: **T4-02**; the loader half of **T4-01** (float, unknown-key, placeholder-without-target and non-placeholder-without-sources cases return the named `DataError`) using small in-test TOML strings.
 
 ## T-016: Locomotion, terrain, fatigue
 - Spec: SPEC-004 sections 3, 4, 5.
 - Work: `data/rules/locomotion.toml`, `terrain.toml`, schemas, `LocomotionTable`, `TerrainTable`, `TerrainGrid::{from_rows, class_at}`, `fatigue_speed_pm`, the integer fatigue update function.
-- Acceptance: **T4-01** for these files (Rust loader and `validate_data.py`); **T4-05** (CT-2 targets within 20 percent, bounds, curve breakpoints, monotonicity); terrain clamp and blocking unit tests (positions outside the grid take the nearest edge cell).
+- Acceptance: **T4-01** for these files (Rust loader and `validate_data.py`); **T4-05** (CT-004-2 targets within 20 percent, bounds, curve breakpoints, monotonicity); terrain clamp and blocking unit tests (positions outside the grid take the nearest edge cell).
 
 ## T-017: Drill table, slots, assignment
 - Spec: SPEC-004 sections 6, 8.
@@ -48,7 +50,7 @@ Specs: SPEC-004 (movement and formations), SPEC-005 (weapons and fire). One tick
 
 ## T-020: Ammo, weapon and damage tables
 - Spec: SPEC-005 section 1.
-- Work: `data/rules/ammo.toml`, `weapons.toml`, `damage.toml` with every row's provenance (page and tag, or placeholder with CT-n), three schemas, `AmmoTable`, `WeaponTable`, `DamageTable`, derived constants (drag `k` at load, canister pellet mass from iron density), `energy_joules`.
+- Work: `data/rules/ammo.toml`, `weapons.toml`, `damage.toml` with every row's provenance (page and tag, or placeholder with CT-005-n), three schemas, `AmmoTable`, `WeaponTable`, `DamageTable`, derived constants (drag `k` at load, canister pellet mass from iron density), `energy_joules`.
 - Acceptance: **T5-01**, **T5-02**, **T5-03**; the cumulative-permille lookup unit tests for the damage table (no row sums above 1000).
 
 ## T-021: Flight and range tables
@@ -63,7 +65,7 @@ Specs: SPEC-004 (movement and formations), SPEC-005 (weapons and fire). One tick
 
 ## T-023: Hit, casualties, bursts, tick order
 - Spec: SPEC-005 sections 2 (bursts), 5, 6, 7.
-- Work: `ObstacleLayer`, chord resolution, posture and cover, damage rolls and pierce, burst spawning with `SplitMix64` children, casualty queue and application, release of expired disables, the full `BattleState::step` order, F0 counters, casualty log hashing.
+- Work: `ObstacleLayer`, chord resolution, posture and cover, damage rolls and pierce, burst spawning with `SplitMix64` children, casualty queue and application, release of expired disables, the full `BattleState::step` order (REGISTRY section 6; the optional layers of later specs are appended there by their own tickets, SPEC-005 amendment A5), F0 counters, casualty log hashing.
 - Acceptance: **T5-08**, **T5-09**, **T5-10**, **T5-15**, **T5-16**, **T5-18**; hash test that two builds of the same scenario with projectiles resolved in reverse order (test hook) agree.
 
 ## T-024: Calibration harness and the F0 reference

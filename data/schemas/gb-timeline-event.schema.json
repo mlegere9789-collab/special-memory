@@ -1,0 +1,68 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "gb-timeline-event.schema.json",
+  "title": "Gettysburg timeline event",
+  "description": "A fixed historical event with a time, its evidence and its ordering constraints (SPEC-013 section 3). Disputed times keep every claim; the stored 'at' is the audit's choice and 'early' to 'late' brackets all claims.",
+  "type": "object",
+  "required": ["schema", "id", "kind", "role", "at", "summary"],
+  "additionalProperties": false,
+  "properties": {
+    "schema": {"const": "gb-event/1"},
+    "id": {"type": "string", "pattern": "^ev_[a-z0-9_]{2,60}$"},
+    "kind": {"enum": ["order", "movement_begins", "attack_begins", "attack_ends", "bombardment_begins", "bombardment_ends", "commander_casualty", "council", "sighting", "withdrawal", "other"]},
+    "role": {"enum": ["trigger", "validation"], "description": "a trigger drives the simulation; a validation event is only compared with simulated results"},
+    "at": {"$ref": "gb-regiment.schema.json#/$defs/time_fact"},
+    "actors": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["kind", "id"],
+        "additionalProperties": false,
+        "properties": {"kind": {"enum": ["formation", "person"]}, "id": {"type": "string", "pattern": "^[a-z0-9][a-z0-9_]*$"}}
+      }
+    },
+    "place": {
+      "type": "object",
+      "required": ["name"],
+      "additionalProperties": false,
+      "properties": {
+        "name": {"type": "string", "minLength": 1},
+        "x_mm": {"type": "integer", "minimum": -200000000, "maximum": 200000000},
+        "y_mm": {"type": "integer", "minimum": -200000000, "maximum": 200000000},
+        "frame": {"const": "gb_local_v1"}
+      },
+      "dependentRequired": {"x_mm": ["y_mm", "frame"], "y_mm": ["x_mm", "frame"]}
+    },
+    "person_outcome": {
+      "type": "object",
+      "required": ["person", "outcome"],
+      "additionalProperties": false,
+      "properties": {
+        "person": {"type": "string", "pattern": "^[a-z0-9][a-z0-9_]*$"},
+        "outcome": {"enum": ["wounded", "mortally_wounded", "killed", "captured", "relieved"]},
+        "remained_in_command": {"type": "boolean"}
+      }
+    },
+    "not_before": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["event", "gap_min"],
+        "additionalProperties": false,
+        "properties": {
+          "event": {"type": "string", "pattern": "^ev_[a-z0-9_]{2,60}$"},
+          "gap_min": {"type": "integer", "minimum": 0, "maximum": 4320}
+        }
+      }
+    },
+    "summary": {"type": "string", "minLength": 1, "maxLength": 300},
+    "note": {"type": "string", "maxLength": 600}
+  },
+  "allOf": [
+    {
+      "if": {"properties": {"kind": {"const": "commander_casualty"}}, "required": ["kind"]},
+      "then": {"required": ["person_outcome"]},
+      "else": {"not": {"required": ["person_outcome"]}}
+    }
+  ]
+}

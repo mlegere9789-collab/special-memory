@@ -1,0 +1,41 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "gb-weather.schema.json",
+  "title": "Gettysburg weather record for one day",
+  "description": "Contiguous weather segments for one calendar day (SPEC-013 section 3). Quantities are integers in stated units; qualitative reports such as hot or humid are stored as the sky and ground classes with the numeric fields omitted until a source gives a figure.",
+  "type": "object",
+  "required": ["schema", "id", "date", "segment"],
+  "additionalProperties": false,
+  "properties": {
+    "schema": {"const": "gb-weather/1"},
+    "id": {"type": "string", "pattern": "^wx_1863[0-9]{4}$"},
+    "date": {"$ref": "common.schema.json#/$defs/iso_date"},
+    "segment": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 12,
+      "items": {
+        "type": "object",
+        "required": ["from", "to", "sky", "confidence", "sources"],
+        "additionalProperties": false,
+        "properties": {
+          "from": {"$ref": "gb-regiment.schema.json#/$defs/stamp"},
+          "to": {"$ref": "gb-regiment.schema.json#/$defs/stamp"},
+          "sky": {"enum": ["clear", "partly_cloudy", "overcast", "rain", "thunderstorm"]},
+          "ground": {"enum": ["dry", "damp", "muddy", "flooded"]},
+          "temp_f": {"$ref": "gb-regiment.schema.json#/$defs/int_fact", "description": "air temperature in whole degrees Fahrenheit as reported"},
+          "humidity_pm": {"$ref": "gb-regiment.schema.json#/$defs/int_fact", "description": "relative humidity in permille, 0 to 1000"},
+          "wind_from_deg": {"$ref": "gb-regiment.schema.json#/$defs/int_fact", "description": "bearing the wind blows from, 0 to 359"},
+          "wind_mm_s": {"$ref": "gb-regiment.schema.json#/$defs/int_fact"},
+          "visibility_m": {"$ref": "gb-regiment.schema.json#/$defs/int_fact"},
+          "rain_dmm_per_h": {"$ref": "gb-regiment.schema.json#/$defs/int_fact", "description": "rainfall in tenths of a millimetre per hour"},
+          "confidence": {"$ref": "common.schema.json#/$defs/confidence"},
+          "sources": {"$ref": "common.schema.json#/$defs/sources"},
+          "second_source": {"$ref": "gb-regiment.schema.json#/$defs/second_source_ref"},
+          "flag": {"type": "string"},
+          "note": {"type": "string", "maxLength": 600}
+        }
+      }
+    }
+  }
+}
