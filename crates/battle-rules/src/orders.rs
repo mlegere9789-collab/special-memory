@@ -51,6 +51,12 @@ pub enum OrderDecodeError {
     UnknownGait(u8),
     /// Unknown formation tag.
     UnknownFormation(u8),
+    /// Unknown dispatch medium number (SPEC-007).
+    UnknownMedium(u8),
+    /// Unknown dispatch latitude number (SPEC-007).
+    UnknownLatitude(u8),
+    /// A side, flag or script field with an undefined value (SPEC-007).
+    UnknownValue(u8),
 }
 
 impl fmt::Display for OrderDecodeError {
@@ -61,6 +67,9 @@ impl fmt::Display for OrderDecodeError {
             OrderDecodeError::UnknownTag(t) => write!(f, "unknown order tag {t}"),
             OrderDecodeError::UnknownGait(g) => write!(f, "unknown gait {g}"),
             OrderDecodeError::UnknownFormation(g) => write!(f, "unknown formation {g}"),
+            OrderDecodeError::UnknownMedium(m) => write!(f, "unknown medium {m}"),
+            OrderDecodeError::UnknownLatitude(l) => write!(f, "unknown latitude {l}"),
+            OrderDecodeError::UnknownValue(v) => write!(f, "unknown value {v}"),
         }
     }
 }
