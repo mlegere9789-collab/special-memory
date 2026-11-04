@@ -30,7 +30,8 @@ used by the reference series must never appear in code, data, strings, names or 
 cargo fmt --all
 cargo clippy --workspace --all-targets -- -D warnings
 cargo test --workspace            # add --release before merging determinism-sensitive work
-python3 tools/scan_forbidden.py && python3 tools/lint_process_text.py && python3 tools/validate_data.py
+python3 tools/scan_forbidden.py && python3 tools/lint_process_text.py && python3 tools/validate_data.py && python3 tools/check_registry.py
+python3 tools/test_validate_data.py && python3 tools/test_check_registry.py   # validator plugins live in tools/validators/
 bash tools/verify_goldens.sh      # cross-platform determinism proof (also runs in CI)
 ```
 Keep terminal output short: pipe long output through `tail -n 30`.

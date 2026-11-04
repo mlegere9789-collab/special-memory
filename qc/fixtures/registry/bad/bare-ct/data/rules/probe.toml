@@ -1,0 +1,6 @@
+schema = "probe/1"
+[[row]]
+speed_mm_s = 5
+confidence = "unverified"
+placeholder = true
+calibration_target = "CT-1"

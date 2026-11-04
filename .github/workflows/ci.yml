@@ -29,8 +29,10 @@ jobs:
         run: python3 tools/lint_process_text.py
       - name: historical data validation
         run: python3 tools/validate_data.py
+      - name: registry consistency (TR-03)
+        run: python3 tools/check_registry.py
       - name: validator self-tests
-        run: python3 tools/test_validate_data.py
+        run: python3 tools/test_validate_data.py && python3 tools/test_check_registry.py
 
   rust:
     name: rust (fmt, clippy, tests)
