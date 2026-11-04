@@ -1,0 +1,25 @@
+# expect: GB07
+schema = "gb-unit/1"
+id = "us_probe_gb07_range"
+side = "union"
+level = "brigade"
+name = "Probe"
+
+[[assignments]]
+parent = "us_probe_division"
+kind = "organic"
+confidence = "unverified"
+sources = [{ document = "CWV", page = 72 }]
+
+[[commanders]]
+person = { id = "probe_person_a", name = "Probe Person" }
+kind = "command"
+confidence = "unverified"
+sources = [{ document = "CWV", page = 72 }]
+
+[strength.engaged]
+value = 250
+confidence = "unverified"
+sources = [{ document = "CWV", page = 72 }]
+low = 260
+high = 300

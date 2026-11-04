@@ -1,0 +1,23 @@
+schema = "gb-unit/1"
+id = "us_probe_regiment_b"
+side = "union"
+level = "regiment"
+name = "Probe Regiment B"
+designation = { state = "PA", ordinal = 2, arm = "infantry" }
+
+[[assignments]]
+parent = "us_probe_brigade"
+kind = "organic"
+confidence = "unverified"
+sources = [{ document = "CWV", page = 72 }]
+
+[[commanders]]
+person = { id = "probe_person_a", name = "Probe Person" }
+kind = "command"
+confidence = "unverified"
+sources = [{ document = "CWV", page = 72 }]
+
+[strength.engaged]
+value = 300
+confidence = "unverified"
+sources = [{ document = "CWV", page = 72 }]

@@ -1,0 +1,29 @@
+schema = "gb-battery/1"
+id = "us_probe_battery"
+side = "union"
+name = "Probe Battery"
+designation = { state = "NY", label = "A" }
+
+[[assignments]]
+parent = "us_probe_corps"
+kind = "organic"
+confidence = "unverified"
+sources = [{ document = "CWV", page = 72 }]
+
+[[commanders]]
+person = { id = "probe_person_a", name = "Probe Person" }
+kind = "command"
+confidence = "unverified"
+sources = [{ document = "CWV", page = 72 }]
+
+[strength.engaged]
+value = 100
+confidence = "unverified"
+sources = [{ document = "CWV", page = 72 }]
+
+[[guns]]
+weapon = "napoleon_12"
+[guns.count]
+value = 6
+confidence = "unverified"
+sources = [{ document = "CWV", page = 72 }]
