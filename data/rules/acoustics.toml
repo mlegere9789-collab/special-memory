@@ -1,0 +1,293 @@
+# Acoustics data (SPEC-012 section 3). Integer units: mm, mm/s, centibel (_cdb, 0.01 dB), tenth of a degree C (_dc),
+# millikelvin per metre (_mk_per_m), hertz (_hz), permille (_pm), ppm. Every number but the sound-speed law is a placeholder.
+schema = "acoustics/1"
+
+# Linear sound-speed law c = c0 + c_per_k * T: 343420 mm/s at 20 C against 343 m/s in the research volume.
+[globals.air]
+c0_mm_s = 331300
+c_per_k_mm_s = 606
+confidence = "partial"
+sources = [{ document = "CWV", page = 457, note = "343 m/s; the linear law gives 343420 mm/s at 20 C" }]
+
+[globals.propagation]
+shear_ppm = 70000
+g_min = 5
+shadow_sat_g = 300
+duct_loss_cdb_per_km = 100
+barrier_cap_cdb = 2400
+profile_step_mm = 20000
+max_samples = 64
+max_range_mm = 100000000
+confidence = "unverified"
+placeholder = true
+calibration_target = "CT-012-2"
+
+[globals.listening]
+cluster_cell_mm = 100000
+hyst_cdb = 300
+drop_below_cdb = -1000
+class_faint_cdb = 0
+class_clear_cdb = 1000
+class_loud_cdb = 3000
+camera_window_ticks = 4
+hq_window_ticks = 20
+confidence = "unverified"
+placeholder = true
+calibration_target = "CT-012-5"
+
+# Bands: low, mid, high (index 0 to 2). Absorption magnitudes are textbook order of magnitude.
+
+[[band]]
+f_hz = 125
+abs_cdb_per_km = 40
+ambient_cdb = 4000
+foliage_pm = 200
+shadow_slope_cdb_per_km = 2000
+shadow_cap_cdb = 4000
+confidence = "unverified"
+placeholder = true
+calibration_target = "CT-012-3"
+
+[[band]]
+f_hz = 500
+abs_cdb_per_km = 280
+ambient_cdb = 3500
+foliage_pm = 1000
+shadow_slope_cdb_per_km = 3000
+shadow_cap_cdb = 5000
+confidence = "unverified"
+placeholder = true
+calibration_target = "CT-012-3"
+
+[[band]]
+f_hz = 2000
+abs_cdb_per_km = 900
+ambient_cdb = 3000
+foliage_pm = 2000
+shadow_slope_cdb_per_km = 4000
+shadow_cap_cdb = 6000
+confidence = "unverified"
+placeholder = true
+calibration_target = "CT-012-3"
+
+# Sources: class 0 musketry, 1 artillery, 2 burst, 3 voice. priority_cdb is 0 unless stated.
+
+[[source]]
+id = 0
+name = "musket"
+class = 0
+level_low_cdb = 10600
+level_mid_cdb = 10800
+level_high_cdb = 10200
+confidence = "unverified"
+placeholder = true
+calibration_target = "CT-012-1"
+
+[[source]]
+id = 1
+name = "carbine"
+class = 0
+level_low_cdb = 10200
+level_mid_cdb = 10400
+level_high_cdb = 9800
+confidence = "unverified"
+placeholder = true
+calibration_target = "CT-012-1"
+
+[[source]]
+id = 2
+name = "revolver"
+class = 0
+level_low_cdb = 9400
+level_mid_cdb = 9600
+level_high_cdb = 9400
+confidence = "unverified"
+placeholder = true
+calibration_target = "CT-012-1"
+
+[[source]]
+id = 3
+name = "gun_launch"
+class = 1
+level_low_cdb = 13000
+level_mid_cdb = 12800
+level_high_cdb = 11600
+confidence = "unverified"
+placeholder = true
+calibration_target = "CT-012-1"
+
+[[source]]
+id = 4
+name = "burst_shell"
+class = 2
+level_low_cdb = 12200
+level_mid_cdb = 12200
+level_high_cdb = 11800
+confidence = "unverified"
+placeholder = true
+calibration_target = "CT-012-1"
+
+[[source]]
+id = 5
+name = "burst_case"
+class = 2
+level_low_cdb = 11400
+level_mid_cdb = 11600
+level_high_cdb = 11400
+confidence = "unverified"
+placeholder = true
+calibration_target = "CT-012-1"
+
+[[source]]
+id = 6
+name = "command"
+class = 3
+level_low_cdb = 7600
+level_mid_cdb = 8400
+level_high_cdb = 8000
+priority_cdb = 1500
+confidence = "unverified"
+placeholder = true
+calibration_target = "CT-012-1"
+
+[[source]]
+id = 7
+name = "cheer"
+class = 3
+level_low_cdb = 7000
+level_mid_cdb = 7800
+level_high_cdb = 7600
+confidence = "unverified"
+placeholder = true
+calibration_target = "CT-012-1"
+
+[[source]]
+id = 8
+name = "cry"
+class = 3
+level_low_cdb = 6600
+level_mid_cdb = 7200
+level_high_cdb = 6800
+confidence = "unverified"
+placeholder = true
+calibration_target = "CT-012-1"
+
+# Ground: foliage loss per terrain class (SPEC-004 section 5); classes without a row have none.
+
+[[ground]]
+class_id = 0
+canopy_mm = 0
+foliage_cdb_per_100m = 0
+confidence = "unverified"
+placeholder = true
+calibration_target = "CT-012-4"
+
+[[ground]]
+class_id = 1
+canopy_mm = 0
+foliage_cdb_per_100m = 0
+confidence = "unverified"
+placeholder = true
+calibration_target = "CT-012-4"
+
+[[ground]]
+class_id = 2
+canopy_mm = 6000
+foliage_cdb_per_100m = 150
+confidence = "unverified"
+placeholder = true
+calibration_target = "CT-012-4"
+
+[[ground]]
+class_id = 3
+canopy_mm = 15000
+foliage_cdb_per_100m = 600
+confidence = "unverified"
+placeholder = true
+calibration_target = "CT-012-4"
+
+[[ground]]
+class_id = 4
+canopy_mm = 3000
+foliage_cdb_per_100m = 900
+confidence = "unverified"
+placeholder = true
+calibration_target = "CT-012-4"
+
+[[ground]]
+class_id = 5
+canopy_mm = 0
+foliage_cdb_per_100m = 0
+confidence = "unverified"
+placeholder = true
+calibration_target = "CT-012-4"
+
+[[ground]]
+class_id = 6
+canopy_mm = 0
+foliage_cdb_per_100m = 0
+confidence = "unverified"
+placeholder = true
+calibration_target = "CT-012-4"
+
+[[ground]]
+class_id = 7
+canopy_mm = 0
+foliage_cdb_per_100m = 0
+confidence = "unverified"
+placeholder = true
+calibration_target = "CT-012-4"
+
+# Weather presets used by scenes and bands.
+
+[[weather]]
+id = "calm"
+temp_dc = 200
+wind_x_mm_s = 0
+wind_y_mm_s = 0
+lapse_mk_per_m = 0
+confidence = "unverified"
+placeholder = true
+calibration_target = "CT-012-2"
+
+[[weather]]
+id = "calm_sunny"
+temp_dc = 200
+wind_x_mm_s = 0
+wind_y_mm_s = 0
+lapse_mk_per_m = -20
+confidence = "unverified"
+placeholder = true
+calibration_target = "CT-012-2"
+
+[[weather]]
+id = "toward_minus_x"
+temp_dc = 200
+wind_x_mm_s = -6000
+wind_y_mm_s = 0
+lapse_mk_per_m = -20
+confidence = "unverified"
+placeholder = true
+calibration_target = "CT-012-2"
+
+[[weather]]
+id = "toward_plus_x_inversion"
+temp_dc = 200
+wind_x_mm_s = 4000
+wind_y_mm_s = 0
+lapse_mk_per_m = 30
+confidence = "unverified"
+placeholder = true
+calibration_target = "CT-012-2"
+
+# Output budget: at most max_total sources per packet, and per class caps.
+
+[[budget]]
+max_total = 32
+cap_musketry = 12
+cap_artillery = 10
+cap_burst = 6
+cap_voice = 8
+confidence = "unverified"
+placeholder = true
+calibration_target = "CT-012-5"
