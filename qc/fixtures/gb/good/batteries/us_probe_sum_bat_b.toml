@@ -1,0 +1,29 @@
+schema = "gb-battery/1"
+id = "us_probe_sum_bat_b"
+side = "union"
+name = "Probe Battery"
+designation = { state = "OH", label = "B" }
+
+[[assignments]]
+parent = "us_probe_sum_group"
+kind = "organic"
+confidence = "unverified"
+sources = [{ document = "CWV", page = 72 }]
+
+[[commanders]]
+person = { id = "probe_person_a", name = "Probe Person" }
+kind = "command"
+confidence = "unverified"
+sources = [{ document = "CWV", page = 72 }]
+
+[strength.engaged]
+value = 80
+confidence = "unverified"
+sources = [{ document = "CWV", page = 72 }]
+
+[[guns]]
+weapon = "napoleon_12"
+[guns.count]
+value = 4
+confidence = "unverified"
+sources = [{ document = "CWV", page = 72 }]

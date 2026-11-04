@@ -4,7 +4,8 @@
 Holds the time functions, the source registry loader, the citation rules GB04 and GB05, the schema metaschema check,
 the audit-report writer (ticket T-130), the corpus loader and the structural rules GB01 to GB03 and GB07 to GB09
 (ticket T-131), the evidence ladder with the rules GB04 to GB06 and the known-conflict fixtures with GB17 (ticket
-T-132). The remaining rules come in later tickets.
+T-132), and the chain sums, casualty, arms and terrain checks GB10 to GB12 and GB18 (ticket T-133). The remaining
+rules come in later tickets.
 
 Usage: python3 tools/gb_audit.py sources [ROOT]    check the schemas and data/history/gettysburg/sources.toml
        python3 tools/gb_audit.py check [ROOT]      load the corpus under ROOT and print every finding, fixtures included
@@ -633,14 +634,20 @@ def _adjacent(level, parent_level):
     return level in RANK and RANK.get(parent_level, -9) == RANK[level] - 1
 
 
-def _gb09(recs, index):
-    """Parent present, adjacent, same side, acyclic; organic assignments do not overlap in time."""
-    parent_of, out = {}, []
+def _parents_of_record(recs):
+    """{unit id: parent id}: the first organic assignment, else the first assignment, of each record."""
+    out = {}
     for r in recs:
         asg = r.doc.get("assignments", [])
         pick = [a for a in asg if a["kind"] == "organic"] or asg
         if pick:
-            parent_of[r.doc["id"]] = pick[0]["parent"]
+            out[r.doc["id"]] = pick[0]["parent"]
+    return out
+
+
+def _gb09(recs, index):
+    """Parent present, adjacent, same side, acyclic; organic assignments do not overlap in time."""
+    parent_of, out = _parents_of_record(recs), []
     for r in recs:
         d, me, level, found = r.doc, r.doc["id"], r.doc.get("level", "battery"), []
         for i, a in enumerate(d.get("assignments", [])):
@@ -674,8 +681,207 @@ def _gb09(recs, index):
     return out
 
 
+# ---------------------------------------------------------------- sums, casualties, arms, terrain (T-133)
+
+RULES_REL = os.path.join("data", "rules")
+FRAME_MIN_MM, FRAME_MAX_MM = 0, 100_000_000   # gb_local_v1: origin at the south-west corner, 100 km on each axis (SPEC-014)
+DAY_SCOPES = ("day1", "day2", "day3")
+LOSS_PARTS = ("killed", "wounded", "missing_captured")
+
+
+def _lohi(fact):
+    """Bounds of an integer fact: low or value, high or value."""
+    return fact.get("low", fact["value"]), fact.get("high", fact["value"])
+
+
+def _exact(facts):
+    return all(x.get("confidence") == "verified" for x in facts)
+
+
+def _stored_conflict(fact, got):
+    """True when a flagged fact stores both its own figure and the sum it disagrees with as claims, so the conflict
+    is reported, not hidden (fixture C03)."""
+    figures = {c.get("figure") for c in fact.get("claims", []) if isinstance(c, dict)}
+    return isinstance(fact.get("flag"), str) and bool(fact["flag"]) and fact["value"] in figures and got in figures
+
+
+def chain_sum_problem(parent, children, hq=None, complete=True):
+    """None when the children (and the parent's headquarters `hq`) fit the parent, else the problem text.
+    Interval test: sum(lo) <= parent high and sum(hi) >= parent low. All facts verified: sum(value) == value.
+    `complete=False` says some parts are not listed, so only the first half of the interval test applies."""
+    facts = list(children) + ([hq] if hq else [])
+    plo, phi = _lohi(parent)
+    got = sum(x["value"] for x in facts)
+    if complete and _exact(facts + [parent]):
+        if got != parent["value"] and not _stored_conflict(parent, got):
+            return "parts sum to %d, not %d" % (got, parent["value"])
+        return None
+    slo, shi = sum(_lohi(x)[0] for x in facts), sum(_lohi(x)[1] for x in facts)
+    if _stored_conflict(parent, got):
+        return None
+    if slo > phi:
+        return "parts sum to at least %d, above the high of %d" % (slo, phi)
+    if complete and shi < plo:
+        return "parts sum to at most %d, below the low of %d" % (shi, plo)
+    return None
+
+
+def rate_problem(loss, base, recorded):
+    """None when a recorded percentage is within 1 of pct(loss, base), else the problem text."""
+    if base <= 0:
+        return "base %d is not positive" % base
+    want = pct(loss, base)
+    if abs(recorded - want) > 1:
+        return "recorded %d percent, but pct(%d, %d) is %d" % (recorded, loss, base, want)
+    return None
+
+
+def _loss_bounds(row):
+    """(low, high) of a casualty row's loss: its total, else the sum of its listed components; None when empty."""
+    if "total" in row:
+        return _lohi(row["total"])
+    parts = [row[k] for k in LOSS_PARTS if k in row]
+    return (sum(_lohi(x)[0] for x in parts), sum(_lohi(x)[1] for x in parts)) if parts else None
+
+
+def casualty_problems(rows, engaged):
+    """GB11 problem texts for a record's casualty rows: components against the total, day scopes against the battle
+    scope, losses above `engaged.high`. `engaged` is an integer fact or None."""
+    out = []
+    for i, row in enumerate(rows):
+        where = "casualties/%s" % row["scope"]
+        parts = [row[k] for k in LOSS_PARTS if k in row]
+        if "total" in row and parts:
+            bad = chain_sum_problem(row["total"], parts, complete=len(parts) == len(LOSS_PARTS))
+            if bad:
+                out.append("%s: components against total: %s" % (where, bad))
+        bounds = _loss_bounds(row)
+        if engaged is not None and bounds is not None and bounds[0] > _lohi(engaged)[1]:
+            out.append("%s: losses of at least %d exceed engaged high %d" % (where, bounds[0], _lohi(engaged)[1]))
+    by_scope = {row["scope"]: row for row in rows}
+    battle, days = by_scope.get("battle"), [by_scope[s] for s in DAY_SCOPES if s in by_scope]
+    for key in ("total",) + LOSS_PARTS:
+        if battle is not None and key in battle:
+            have = [d[key] for d in days if key in d]
+            if have:
+                bad = chain_sum_problem(battle[key], have, complete=len(have) == len(DAY_SCOPES))
+                if bad:
+                    out.append("casualties/battle/%s: day scopes against battle scope: %s" % (key, bad))
+    return out
+
+
+def _ids(path, table, key):
+    """Set of `key` values (as text) of the [[table]] rows of a rules file, or None when it cannot be read."""
+    try:
+        with open(path, "rb") as fh:
+            return {str(r[key]) for r in tomllib.load(fh).get(table, []) if isinstance(r, dict) and key in r}
+    except (OSError, ValueError):
+        return None
+
+
+def _rules_file(root, name):
+    own = os.path.join(root, RULES_REL, name)
+    return own if os.path.isfile(own) else os.path.join(ROOT, RULES_REL, name)
+
+
+def _gb10(recs, parent_of, by_id):
+    """Chain sums of engaged and present (with headquarters) and of battery guns against the parent's arms."""
+    kids, out = {}, []
+    for r in recs:
+        if r.doc["id"] in parent_of:
+            kids.setdefault(parent_of[r.doc["id"]], []).append(r.doc)
+    for pid in sorted(kids):
+        parent = by_id.get(pid)
+        if parent is None:
+            continue
+        # a child whose link fails GB09 (other side, not adjacent) is not summed; GB09 reports it
+        kids[pid] = [k for k in kids[pid] if k["side"] == parent["side"] and _adjacent(k.get("level", "battery"), parent.get("level", "battery"))]
+        if not kids[pid]:
+            continue
+        sums, label = [], by_id[pid]["_label"]
+        for key in ("engaged", "present"):
+            pf = parent.get("strength", {}).get(key)
+            if pf is None:
+                continue
+            missing = [k["id"] for k in kids[pid] if key not in k.get("strength", {})]
+            if missing:
+                out.append(Finding(label, "GB10", "I", "strength/%s: not summed, %s has no %s" % (key, ", ".join(sorted(missing)), key)))
+                continue
+            hq = parent["strength"].get("headquarters") if key == "engaged" else None
+            sums.append(("strength/" + key, pf, [k["strength"][key] for k in kids[pid]], hq))
+        bats = [k for k in kids[pid] if "guns" in k]
+        for w in sorted({a["weapon"] for a in parent.get("arms", [])}) if bats else []:
+            mine = [a["count"] for a in parent["arms"] if a["weapon"] == w]
+            total = {"value": sum(x["value"] for x in mine), "low": sum(_lohi(x)[0] for x in mine),
+                     "high": sum(_lohi(x)[1] for x in mine), "confidence": "verified" if _exact(mine) else "unverified"}
+            sums.append(("arms/" + w, total, [g["count"] for b in bats for g in b["guns"] if g["weapon"] == w], None))
+        for path, pf, cf, hq in sums:
+            bad = chain_sum_problem(pf, cf, hq)
+            if bad:
+                out.append(Finding(label, "GB10", "E", "%s: children of %s: %s" % (path, pid, bad)))
+    return out
+
+
+def _gb11_gb12(r, weapons):
+    """GB11 over the casualty rows, GB12 over arms and battery guns."""
+    d, out = r.doc, []
+    engaged = d.get("strength", {}).get("engaged")
+    out += [Finding(r.label, "GB11", "E", m) for m in casualty_problems(d.get("casualties", []), engaged)]
+    rows = d.get("arms", []) if r.kind == "units" else d.get("guns", [])
+    name = "arms" if r.kind == "units" else "guns"
+    for i, a in enumerate(rows):
+        if weapons is not None and a["weapon"] not in weapons:
+            out.append(Finding(r.label, "GB12", "E", "%s/%d: weapon %s is not in weapons.toml" % (name, i, a["weapon"])))
+    if engaged is not None and rows:
+        lo = sum(_lohi(a["count"])[0] for a in rows)
+        if lo > _lohi(engaged)[1]:
+            out.append(Finding(r.label, "GB12", "E", "%s: counts sum to at least %d, above engaged high %d" % (name, lo, _lohi(engaged)[1])))
+    return out
+
+
+def _gb18(r, classes):
+    """Terrain class, polygon size and frame bounds; arrival places are held to the frame bounds."""
+    d, out = r.doc, []
+    if r.kind == "terrain":
+        if classes is not None and "terrain_class" in d and d["terrain_class"] not in classes:
+            out.append("terrain_class %s is not in terrain.toml" % d["terrain_class"])
+        geo = d["geometry"]
+        if geo["type"] == "polygon" and len(geo["points"]) < 3:
+            out.append("geometry: a polygon has %d points, needs 3" % len(geo["points"]))
+        points = geo["points"]
+    else:
+        pl = d.get("place", {}) if r.kind == "arrivals" else {}
+        points = [[pl["x_mm"], pl["y_mm"]]] if "x_mm" in pl and "y_mm" in pl else []
+    for i, (x, y) in enumerate(points):
+        if not (FRAME_MIN_MM <= x <= FRAME_MAX_MM and FRAME_MIN_MM <= y <= FRAME_MAX_MM):
+            out.append("point %d (%d, %d) is outside the frame [%d, %d]" % (i, x, y, FRAME_MIN_MM, FRAME_MAX_MM))
+    return [Finding(r.label, "GB18", "E", m) for m in out]
+
+
+def check_cross(c, valid):
+    """Rules GB10 to GB12 and GB18 over the schema-valid records of a corpus."""
+    out = []
+    weapons = _ids(_rules_file(c.root, "weapons.toml"), "weapon", "id")
+    classes = _ids(_rules_file(c.root, "terrain.toml"), "class", "name")
+    if weapons is None:
+        out.append(Finding(RULES_REL.replace(os.sep, "/") + "/weapons.toml", "GB12", "E", "weapons.toml cannot be read"))
+    if classes is None:
+        out.append(Finding(RULES_REL.replace(os.sep, "/") + "/terrain.toml", "GB18", "E", "terrain.toml cannot be read"))
+    units = [r for r in valid if r.kind in ("units", "batteries")]
+    by_id = {}
+    for r in units:
+        by_id.setdefault(r.doc["id"], dict(r.doc, _label=r.label))
+    out += _gb10(units, _parents_of_record(units), by_id)
+    for r in units:
+        out += _gb11_gb12(r, weapons)
+    for r in valid:
+        if r.kind in ("terrain", "arrivals"):
+            out += _gb18(r, classes)
+    return out
+
+
 def check_corpus(c):
-    """Rules GB01 to GB09 over a loaded corpus (GB04 to GB06 when a registry is present). Sorted findings."""
+    """Rules GB01 to GB12 and GB18 over a loaded corpus (GB04 to GB06 when a registry is present). Sorted findings."""
     out, seen, valid, validators = list(c.findings), {}, [], {}
     for r in c.records:
         if r.doc is None:
@@ -703,6 +909,7 @@ def check_corpus(c):
         out += [Finding(r.label, "GB07", "E", m) for m in _gb07(r.doc)]
         out += [Finding(r.label, "GB08", "E", m) for m in _gb08(r)]
     out += _gb09([r for r in valid if r.kind in ("units", "batteries")], index)
+    out += check_cross(c, valid)
     if c.sources:  # without a registry there is nothing to judge a citation against
         for r in c.records:
             if isinstance(r.doc, dict):

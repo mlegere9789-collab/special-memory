@@ -1,0 +1,47 @@
+# expect: GB11
+schema = "gb-unit/1"
+id = "us_probe_gb11_component"
+side = "union"
+level = "regiment"
+name = "Probe"
+designation = { state = "OH", ordinal = 4, arm = "infantry" }
+
+[[assignments]]
+parent = "us_probe_brigade"
+kind = "organic"
+confidence = "unverified"
+sources = [{ document = "CWV", page = 72 }]
+
+[[commanders]]
+person = { id = "probe_person_a", name = "Probe Person" }
+kind = "command"
+confidence = "unverified"
+sources = [{ document = "CWV", page = 72 }]
+
+[strength.engaged]
+value = 5
+confidence = "unverified"
+sources = [{ document = "CWV", page = 72 }]
+
+[[casualties]]
+scope = "battle"
+
+[casualties.killed]
+value = 4
+confidence = "unverified"
+sources = [{ document = "CWV", page = 72 }]
+
+[casualties.wounded]
+value = 3
+confidence = "unverified"
+sources = [{ document = "CWV", page = 72 }]
+
+[casualties.missing_captured]
+value = 1
+confidence = "unverified"
+sources = [{ document = "CWV", page = 72 }]
+
+[casualties.total]
+value = 3
+confidence = "unverified"
+sources = [{ document = "CWV", page = 72 }]
