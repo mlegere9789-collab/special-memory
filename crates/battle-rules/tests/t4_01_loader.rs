@@ -15,7 +15,7 @@ const PLACEHOLDER_OK: &str = r#"
 speed_mm_s = 1067
 confidence = "unverified"
 placeholder = true
-calibration_target = "CT-1"
+calibration_target = "CT-004-1"
 "#;
 
 #[test]
@@ -124,7 +124,7 @@ fn verified_needs_a_second_source() {
 
 #[test]
 fn bad_confidence_and_missing_confidence_are_provenance_errors() {
-    let t = "speed_mm_s = 1\nplaceholder = true\ncalibration_target = \"CT-1\"\n";
+    let t = "speed_mm_s = 1\nplaceholder = true\ncalibration_target = \"CT-004-1\"\n";
     assert!(matches!(load_row(t), Err(DataError::Provenance(_))));
     let t = format!("{t}confidence = \"certain\"\n");
     assert!(matches!(load_row(&t), Err(DataError::Provenance(_))));

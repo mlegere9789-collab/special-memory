@@ -8,7 +8,7 @@ iron_density_kg_m3 = 7200
 gravity_um_s2 = 9806650
 confidence = "unverified"
 placeholder = true
-calibration_target = "CT-2"
+calibration_target = "CT-005-2"
 note = "air 1.225 kg/m3 at sea level, iron 7.2 g/cm3, standard gravity 9.80665 m/s2"
 
 [[ammo]]
@@ -20,7 +20,7 @@ cd_pm = 470
 muzzle_mm_s = 300000
 confidence = "unverified"
 placeholder = true
-calibration_target = "CT-1"
+calibration_target = "CT-005-1"
 sources = [{ document = "CWV", page = 459, tag = "V S21", note = "calibre .69" }]
 
 [[ammo]]
@@ -32,7 +32,7 @@ cd_pm = 300
 muzzle_mm_s = 290000
 confidence = "unverified"
 placeholder = true
-calibration_target = "CT-1"
+calibration_target = "CT-005-1"
 sources = [{ document = "CWV", page = 459, tag = "V S21", note = "calibre .58" }]
 
 [[ammo]]
@@ -44,7 +44,7 @@ cd_pm = 300
 muzzle_mm_s = 250000
 confidence = "unverified"
 placeholder = true
-calibration_target = "CT-1"
+calibration_target = "CT-005-1"
 
 [[ammo]]
 id = "revolver_44"
@@ -55,7 +55,7 @@ cd_pm = 400
 muzzle_mm_s = 230000
 confidence = "unverified"
 placeholder = true
-calibration_target = "CT-1"
+calibration_target = "CT-005-1"
 
 [[ammo]]
 id = "shot_12"
@@ -67,7 +67,7 @@ muzzle_mm_s = 452628
 restitution_pm = 400
 confidence = "partial"
 placeholder = true
-calibration_target = "CT-2"
+calibration_target = "CT-005-2"
 sources = [
   { document = "CWV", page = 459, tag = "V S19", note = "1485 ft/s muzzle velocity, 12 lb shot" },
   { document = "CWV", page = 30, note = "12-pounder" },
@@ -83,7 +83,7 @@ cd_pm = 470
 muzzle_mm_s = 400000
 confidence = "partial"
 placeholder = true
-calibration_target = "CT-2"
+calibration_target = "CT-005-2"
 sources = [{ document = "CWV", page = 459, tag = "V S19", note = "12.3 lb shell" }]
 note = "velocity is a placeholder; fragments are 60 g each"
 
@@ -107,7 +107,7 @@ cd_pm = 470
 muzzle_mm_s = 400000
 confidence = "unverified"
 placeholder = true
-calibration_target = "CT-2"
+calibration_target = "CT-005-2"
 note = "76 iron balls of 17 mm, mass derived from the iron density"
 
 [ammo.burst]
@@ -129,7 +129,7 @@ cd_pm = 470
 muzzle_mm_s = 400000
 confidence = "partial"
 placeholder = true
-calibration_target = "CT-2"
+calibration_target = "CT-005-2"
 sources = [{ document = "CWV", page = 459, tag = "V S20", note = "27 iron balls of 1.5 in" }]
 note = "pellet mass derived from the iron density; spread and speed are placeholders"
 

@@ -93,7 +93,7 @@
       "properties": {
         "confidence": {"$ref": "common.schema.json#/$defs/confidence"},
         "placeholder": {"type": "boolean"},
-        "calibration_target": {"type": "string", "pattern": "^CT-[0-9]+$"},
+        "calibration_target": {"type": "string", "pattern": "^CT-[0-9]{3}-[0-9]+$"},
         "sources": {"$ref": "common.schema.json#/$defs/sources"},
         "second_source": {"type": "string"},
         "note": {"type": "string"}

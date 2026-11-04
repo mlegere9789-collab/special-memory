@@ -72,7 +72,7 @@ fn unknown_key_is_rejected() {
 #[test]
 fn placeholder_without_target_is_rejected() {
     let err = mutate(
-        "transition_pm = 1300\nconfidence = \"unverified\"\nplaceholder = true\ncalibration_target = \"CT-5\"",
+        "transition_pm = 1300\nconfidence = \"unverified\"\nplaceholder = true\ncalibration_target = \"CT-004-5\"",
         "transition_pm = 1300\nconfidence = \"unverified\"\nplaceholder = true",
     )
     .unwrap_err();
@@ -82,7 +82,7 @@ fn placeholder_without_target_is_rejected() {
 #[test]
 fn non_placeholder_without_sources_is_rejected() {
     let err = mutate(
-        "transition_pm = 1300\nconfidence = \"unverified\"\nplaceholder = true\ncalibration_target = \"CT-5\"",
+        "transition_pm = 1300\nconfidence = \"unverified\"\nplaceholder = true\ncalibration_target = \"CT-004-5\"",
         "transition_pm = 1300\nconfidence = \"unverified\"",
     )
     .unwrap_err();

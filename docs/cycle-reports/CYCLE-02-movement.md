@@ -1,7 +1,7 @@
 # CYCLE-02 movement: steering, avoidance, anchor movement (T-019)
 
 Recorded 2026-11-04 on a Linux x86_64 cloud container, 4 vCPU, release profile for timings. Specification:
-SPEC-004 sections 7, 9, 12, 13 and Amendment A2. All data rows are still placeholders (CT-1 to CT-5).
+SPEC-004 sections 7, 9, 12, 13 and Amendment A2. All data rows are still placeholders (CT-004-1 to CT-004-5).
 
 ## T4-03 march (`march_single_at`, 200 m, 400 men in column, trained)
 

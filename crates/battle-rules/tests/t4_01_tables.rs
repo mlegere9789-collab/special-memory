@@ -113,7 +113,7 @@ fn locomotion_float_unknown_key_and_provenance_cases() {
     // Placeholder row without calibration_target.
     let e = loco(&swap(
         LOCO,
-        "placeholder = true\ncalibration_target = \"CT-2\"",
+        "placeholder = true\ncalibration_target = \"CT-004-2\"",
         "placeholder = true",
     ))
     .unwrap_err();
@@ -122,7 +122,7 @@ fn locomotion_float_unknown_key_and_provenance_cases() {
     // Non-placeholder row without sources.
     let e = loco(&swap(
         LOCO,
-        "placeholder = true\ncalibration_target = \"CT-3\"",
+        "placeholder = true\ncalibration_target = \"CT-004-3\"",
         "placeholder = false",
     ))
     .unwrap_err();
@@ -137,14 +137,14 @@ fn terrain_float_unknown_key_and_provenance_cases() {
     assert_eq!(e, DataError::UnknownKey("class[0].shade".to_string()));
     let e = terrain(&swap(
         TERRAIN,
-        "placeholder = true\ncalibration_target = \"CT-4\"",
+        "placeholder = true\ncalibration_target = \"CT-004-4\"",
         "placeholder = true",
     ))
     .unwrap_err();
     assert!(matches!(e, DataError::Provenance(_)), "{e:?}");
     let e = terrain(&swap(
         TERRAIN,
-        "placeholder = true\ncalibration_target = \"CT-4\"",
+        "placeholder = true\ncalibration_target = \"CT-004-4\"",
         "placeholder = false",
     ))
     .unwrap_err();

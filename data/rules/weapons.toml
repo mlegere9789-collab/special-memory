@@ -33,7 +33,7 @@ extended_mm = 182880
 reach_mm = 365760
 confidence = "partial"
 placeholder = true
-calibration_target = "CT-3"
+calibration_target = "CT-005-3"
 sources = [{ document = "CWV", page = 459, tag = "V S21", note = "effective 50 yd, extended 200 yd" }]
 note = "dispersion, loading and misfire figures are placeholders"
 
@@ -67,9 +67,9 @@ extended_mm = 804672
 reach_mm = 1609344
 confidence = "partial"
 placeholder = true
-calibration_target = "CT-3"
+calibration_target = "CT-005-3"
 sources = [{ document = "CWV", page = 459, tag = "V S21", note = "effective 300 yd, extended half a mile" }]
-note = "load step splits are placeholders (CT-4)"
+note = "load step splits are placeholders (CT-005-4)"
 
 [[weapon]]
 id = "carbine_52"
@@ -100,9 +100,9 @@ extended_mm = 500000
 reach_mm = 1000000
 confidence = "unverified"
 placeholder = true
-calibration_target = "CT-3"
+calibration_target = "CT-005-3"
 sources = [{ document = "CWV", page = 510, note = "4.2: breechloaders were rare" }]
-note = "load step splits are placeholders (CT-4)"
+note = "load step splits are placeholders (CT-005-4)"
 
 [[weapon]]
 id = "revolver_44"
@@ -132,8 +132,8 @@ extended_mm = 80000
 reach_mm = 160000
 confidence = "unverified"
 placeholder = true
-calibration_target = "CT-3"
-note = "load step splits are placeholders (CT-4)"
+calibration_target = "CT-005-3"
+note = "load step splits are placeholders (CT-005-4)"
 
 [[weapon]]
 id = "napoleon_12"
@@ -168,9 +168,9 @@ extended_mm = 1536192
 reach_mm = 3072384
 confidence = "partial"
 placeholder = true
-calibration_target = "CT-3"
+calibration_target = "CT-005-3"
 sources = [
   { document = "CWV", page = 453, note = "about one round a minute" },
   { document = "CWV", page = 459, tag = "V S19", note = "canister effective 350 yd, shot maximum 1680 yd, 2.0 lb charge" },
 ]
-note = "load step splits are placeholders (CT-4)"
+note = "load step splits are placeholders (CT-005-4)"

@@ -1,4 +1,4 @@
-//! T4-05: fatigue model, CT-2 targets within 20 percent, bounds, curve breakpoints,
+//! T4-05: fatigue model, CT-004-2 targets within 20 percent, bounds, curve breakpoints,
 //! monotonicity (SPEC-004 sections 3 and 4).
 
 use battle_rules::{

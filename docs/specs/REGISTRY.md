@@ -232,7 +232,7 @@ Every calibration target is written `CT-<spec>-<n>` with the three-digit spec nu
 | 015 | `CT-015-1` to `CT-015-11` | 1 to 11 | `CT-1` to `CT-11` |
 | 016 | `CT-016-1` to `CT-016-11` | 1 to 11 | `CT-1` to `CT-11` |
 
-Existing data rows migrate by file: `locomotion.toml`, `terrain.toml`, `drill.toml` rows get prefix `CT-004`; `ammo.toml`, `weapons.toml`, `damage.toml` rows get `CT-005`. The loader (`provenance.rs`), the schemas (`rules-common`, `ammo`, `damage`, `drill`, `weapons`), the validator test fixtures and ADR 0005 change in ticket T-025.
+Existing data rows migrate by file: `locomotion.toml`, `terrain.toml`, `drill.toml` rows get prefix `CT-004`; `ammo.toml`, `weapons.toml`, `damage.toml` rows get `CT-005`. The loader (`provenance.rs`), the schemas (`rules-common`, `ammo`, `damage`, `drill`, `weapons`), the validator test fixtures and ADR 0011 change in ticket T-025.
 
 ## 8. Other id families
 
@@ -352,7 +352,7 @@ Conversions (all floor division): `temp_dc = floor_div((temp_f10 - 320) * 10 + 9
 
 ## 11. Unit suffixes (additions to ADR 0004)
 
-ADR 0004 lists `_mm`, `_mm_s`, `_pm`, `_ppm`, `_ticks`. The suffixes below are in use or required by specs; ADR 0005 (T-025) records them. A key whose suffix is not listed is refused by the schemas.
+ADR 0004 lists `_mm`, `_mm_s`, `_pm`, `_ppm`, `_ticks`. The suffixes below are in use or required by specs; ADR 0011 (T-025) records them. A key whose suffix is not listed is refused by the schemas.
 
 | Suffix | Meaning | Owner |
 |---|---|---|
@@ -498,21 +498,22 @@ Edits to `lib.rs` (exports), `Cargo.toml` members, `Cargo.lock`, `qc/golden-repl
 
 | ADR | Topic | Owner | Ticket | Was |
 |---|---|---|---|---|
-| 0001 to 0004 | existing | | | |
-| 0005 | shared identifiers: `CT-<spec>-<n>`, unit suffixes of section 11, this registry as authority | registry | T-025 | |
+| 0001 to 0005 | existing (0005 is the supply-chain gates) | | | |
 | 0006 | command layer is optional state, its hash block is conditional | SPEC-007 | T-071 | was "ADR 0005" |
 | 0007 | Gettysburg history data: integer-only records, claims and lineage, local clock stamps | SPEC-013 | T-130 | was "ADR 0005" |
 | 0008 | C interface and the `unsafe` exception of `sim-capi` | SPEC-016 | T-165 | new |
 | 0009 | renderer host decision | SPEC-016 | M1 gate | was "next free number" |
-| 0010 and above | free | | | |
+| 0010 | resolution of design decisions D-01 to D-10 | | | existing |
+| 0011 | shared identifiers: `CT-<spec>-<n>`, unit suffixes of section 11, this registry as authority | registry | T-025 | was "ADR 0005" (number already taken) |
+| 0012 and above | free | | | |
 
-The acoustics unit suffixes do not need their own ADR (SPEC-012 asked for one): they are in section 11 and ADR 0005.
+The acoustics unit suffixes do not need their own ADR (SPEC-012 asked for one): they are in section 11 and ADR 0011.
 
 ## 18. Registry tickets
 
 All three start now, in wave 1, and every ticket in a later wave depends on them (ticket tables list the dependency where it is direct).
 
-**T-025: CT identifier migration.** Class S. Spec: section 7. Work: pattern `^CT-[0-9]{3}-[0-9]+$` in `rules-common.schema.json` and the four schemas that copy it, `provenance.rs` `parse_ct` and its tests, rewrite the `calibration_target` values of the six rules files by the file mapping, `tools/test_validate_data.py` fixtures, ADR 0005 (identifiers and unit suffixes). Files: `crates/battle-rules/src/provenance.rs`, `data/rules/*.toml`, `data/schemas/`, `tools/test_validate_data.py`, `docs/adr/0005-*`. Acceptance **TR-02**: a bare `CT-n` and a three-digit prefix with a letter are refused by the Rust loader and by the validator; every existing row validates in the new form; the T4 and T5 data tests pass unchanged apart from the id strings; golden hashes unchanged.
+**T-025: CT identifier migration.** Class S. Spec: section 7. Work: pattern `^CT-[0-9]{3}-[0-9]+$` in `rules-common.schema.json` and the four schemas that copy it, `provenance.rs` `parse_ct` and its tests, rewrite the `calibration_target` values of the six rules files by the file mapping, `tools/test_validate_data.py` fixtures, ADR 0005 (identifiers and unit suffixes). Files: `crates/battle-rules/src/provenance.rs`, `data/rules/*.toml`, `data/schemas/`, `tools/test_validate_data.py`, `docs/adr/0011-*`. Acceptance **TR-02**: a bare `CT-n` and a three-digit prefix with a letter are refused by the Rust loader and by the validator; every existing row validates in the new form; the T4 and T5 data tests pass unchanged apart from the id strings; golden hashes unchanged.
 
 **T-026: shared constants module.** Class S. Spec: sections 2 to 5. Work: `crates/battle-rules/src/registry.rs` holding every actor, tag, stream base, flag bit and hash magic of sections 2 to 5 as `pub const`, re-exporting the existing constants without changing their values. Later tickets use these names and add rows here. Files: `crates/battle-rules/src/registry.rs`, `lib.rs`. Acceptance **TR-01**: actors, tags, streams (as ranges of their blocks), flag bits and magics are pairwise disjoint; the existing constants equal their previous values; the table in this file equals the constants (parsed from the markdown by the checker of T-027 in CI).
 

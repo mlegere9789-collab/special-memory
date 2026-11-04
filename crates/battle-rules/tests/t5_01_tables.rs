@@ -275,14 +275,14 @@ fn unknown_keys_are_refused_in_every_table() {
 
 #[test]
 fn provenance_violations_are_refused_in_every_table() {
-    let no_target = |text: &str| mutate(text, "calibration_target = \"CT-1\"\n", "");
+    let no_target = |text: &str| mutate(text, "calibration_target = \"CT-005-1\"\n", "");
     assert!(matches!(
         AmmoTable::from_toml_str(&no_target(AMMO)),
         Err(DataError::Provenance(_))
     ));
-    let e = WeaponTable::from_toml_str(&mutate(WEAPONS, "calibration_target = \"CT-3\"\n", ""));
+    let e = WeaponTable::from_toml_str(&mutate(WEAPONS, "calibration_target = \"CT-005-3\"\n", ""));
     assert!(matches!(e, Err(DataError::Provenance(_))));
-    let e = DamageTable::from_toml_str(&mutate(DAMAGE, "calibration_target = \"CT-5\"\n", ""));
+    let e = DamageTable::from_toml_str(&mutate(DAMAGE, "calibration_target = \"CT-005-5\"\n", ""));
     assert!(matches!(e, Err(DataError::Provenance(_))));
     // A sourced row with no placeholder flag and no sources, and a verified row without a second source.
     let e = AmmoTable::from_toml_str(&mutate(

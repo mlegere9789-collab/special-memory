@@ -4,7 +4,7 @@
 
 **Decision.** Rules data (`data/rules/*.toml`) are integer-only TOML. Every number is an integer in a named unit (`_mm`, `_mm_s`, `_pm`, `_ppm`, `_ticks`);
 a TOML float is refused by the loader and by `tools/validate_data.py`. Integers become `Fx` only through `fx_ratio`. Unknown keys are refused. Every row carries
-provenance: a placeholder names a calibration target (`CT-n`), any other row lists sources, and `verified` needs a `second_source`.
+provenance: a placeholder names a calibration target (`CT-<spec>-<n>`, ADR 0011), any other row lists sources, and `verified` needs a `second_source`.
 
 The `crates/battle-rules` loader depends on `toml` and `serde`, each pinned with an exact version (`=1.2.0` and `=1.0.229`) and resolved through the committed
 `Cargo.lock`, which CI builds with `--locked`. The `toml` parser feeds a serde visitor that keeps no floating-point payload, so no float value reaches a loader

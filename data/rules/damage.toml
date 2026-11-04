@@ -10,7 +10,7 @@ muzzle_height_mm = 1450
 cover_pm = 500
 confidence = "unverified"
 placeholder = true
-calibration_target = "CT-5"
+calibration_target = "CT-005-5"
 
 [[posture]]
 id = "kneeling"
@@ -20,7 +20,7 @@ muzzle_height_mm = 1000
 cover_pm = 800
 confidence = "unverified"
 placeholder = true
-calibration_target = "CT-5"
+calibration_target = "CT-005-5"
 
 [[posture]]
 id = "prone"
@@ -30,7 +30,7 @@ muzzle_height_mm = 300
 cover_pm = 1000
 confidence = "unverified"
 placeholder = true
-calibration_target = "CT-5"
+calibration_target = "CT-005-5"
 
 [[posture]]
 id = "gun"
@@ -40,7 +40,7 @@ muzzle_height_mm = 1000
 cover_pm = 500
 confidence = "unverified"
 placeholder = true
-calibration_target = "CT-5"
+calibration_target = "CT-005-5"
 note = "muzzle height and cover of a gun are placeholders"
 
 [regions]
@@ -48,7 +48,7 @@ legs_below_pm = 500
 torso_below_pm = 850
 confidence = "unverified"
 placeholder = true
-calibration_target = "CT-5"
+calibration_target = "CT-005-5"
 
 [energy_bands]
 b1_min_j = 150
@@ -56,14 +56,14 @@ b2_min_j = 500
 b3_min_j = 1500
 confidence = "unverified"
 placeholder = true
-calibration_target = "CT-6"
+calibration_target = "CT-005-6"
 
 [disabled]
 base_ticks = 600
 span_ticks = 1801
 confidence = "unverified"
 placeholder = true
-calibration_target = "CT-6"
+calibration_target = "CT-005-6"
 
 [absorb]
 ball_j = 600
@@ -72,7 +72,7 @@ pellet_j = 600
 shot_j = 40000
 confidence = "unverified"
 placeholder = true
-calibration_target = "CT-6"
+calibration_target = "CT-005-6"
 
 [[outcome]]
 band = 0
@@ -82,7 +82,7 @@ wounded_pm = 50
 disabled_pm = 200
 confidence = "unverified"
 placeholder = true
-calibration_target = "CT-6"
+calibration_target = "CT-005-6"
 
 [[outcome]]
 band = 0
@@ -92,7 +92,7 @@ wounded_pm = 150
 disabled_pm = 300
 confidence = "unverified"
 placeholder = true
-calibration_target = "CT-6"
+calibration_target = "CT-005-6"
 
 [[outcome]]
 band = 0
@@ -102,7 +102,7 @@ wounded_pm = 350
 disabled_pm = 300
 confidence = "unverified"
 placeholder = true
-calibration_target = "CT-6"
+calibration_target = "CT-005-6"
 
 [[outcome]]
 band = 1
@@ -112,7 +112,7 @@ wounded_pm = 500
 disabled_pm = 300
 confidence = "unverified"
 placeholder = true
-calibration_target = "CT-6"
+calibration_target = "CT-005-6"
 
 [[outcome]]
 band = 1
@@ -122,7 +122,7 @@ wounded_pm = 600
 disabled_pm = 200
 confidence = "unverified"
 placeholder = true
-calibration_target = "CT-6"
+calibration_target = "CT-005-6"
 
 [[outcome]]
 band = 1
@@ -132,7 +132,7 @@ wounded_pm = 350
 disabled_pm = 100
 confidence = "unverified"
 placeholder = true
-calibration_target = "CT-6"
+calibration_target = "CT-005-6"
 
 [[outcome]]
 band = 2
@@ -142,7 +142,7 @@ wounded_pm = 800
 disabled_pm = 100
 confidence = "unverified"
 placeholder = true
-calibration_target = "CT-6"
+calibration_target = "CT-005-6"
 
 [[outcome]]
 band = 2
@@ -152,7 +152,7 @@ wounded_pm = 650
 disabled_pm = 40
 confidence = "unverified"
 placeholder = true
-calibration_target = "CT-6"
+calibration_target = "CT-005-6"
 
 [[outcome]]
 band = 2
@@ -162,7 +162,7 @@ wounded_pm = 180
 disabled_pm = 10
 confidence = "unverified"
 placeholder = true
-calibration_target = "CT-6"
+calibration_target = "CT-005-6"
 
 [[outcome]]
 band = 3
@@ -172,7 +172,7 @@ wounded_pm = 650
 disabled_pm = 40
 confidence = "unverified"
 placeholder = true
-calibration_target = "CT-6"
+calibration_target = "CT-005-6"
 
 [[outcome]]
 band = 3
@@ -182,7 +182,7 @@ wounded_pm = 330
 disabled_pm = 10
 confidence = "unverified"
 placeholder = true
-calibration_target = "CT-6"
+calibration_target = "CT-005-6"
 
 [[outcome]]
 band = 3
@@ -192,4 +192,4 @@ wounded_pm = 50
 disabled_pm = 0
 confidence = "unverified"
 placeholder = true
-calibration_target = "CT-6"
+calibration_target = "CT-005-6"

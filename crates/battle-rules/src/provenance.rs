@@ -34,8 +34,12 @@ pub struct Provenance {
     pub confidence: Confidence,
     /// True for an invented number awaiting calibration.
     pub placeholder: bool,
-    /// The `n` of `CT-n`; present for every placeholder.
+    /// The `n` of `CT-<spec>-<n>`, the owning spec's own local number; present for every
+    /// placeholder.
     pub calibration_target: Option<u32>,
+    /// The `<spec>` of `CT-<spec>-<n>` (three digits in the id); set exactly when
+    /// `calibration_target` is.
+    pub calibration_spec: Option<u16>,
     /// Source pages; non-empty unless the row is a placeholder.
     pub sources: Vec<SourceRef>,
     /// Independent confirmation; required for `Verified`.
@@ -53,17 +57,22 @@ fn bad(row: &Table, msg: &str) -> DataError {
     DataError::Provenance(format!("{at}: {msg}"))
 }
 
-fn parse_target(s: &str) -> Option<u32> {
-    let digits = s.strip_prefix("CT-")?;
-    if digits.is_empty() || !digits.bytes().all(|b| b.is_ascii_digit()) {
+/// Parses `CT-<spec>-<n>` (REGISTRY section 7): exactly three ASCII digits of spec number, a
+/// dash, then one or more ASCII digits of local number. Returns `(spec, n)`. A bare `CT-n` and
+/// every other shape is refused.
+fn parse_target(s: &str) -> Option<(u16, u32)> {
+    let rest = s.strip_prefix("CT-")?;
+    let (spec, number) = rest.split_once('-')?;
+    let digits = |t: &str| !t.is_empty() && t.bytes().all(|b| b.is_ascii_digit());
+    if spec.len() != 3 || !digits(spec) || !digits(number) {
         return None;
     }
-    digits.parse().ok()
+    Some((spec.parse().ok()?, number.parse().ok()?))
 }
 
 impl Table {
     /// Removes the flattened provenance keys of a data row and enforces the rules: a placeholder
-    /// needs a `calibration_target` (`CT-n`); any other row needs at least one source; `verified`
+    /// needs a `calibration_target` (`CT-<spec>-<n>`); any other row needs at least one source; `verified`
     /// needs a non-empty `second_source`. Unknown keys inside a source are refused here.
     pub fn take_provenance(&mut self) -> Result<Provenance, DataError> {
         let confidence = match self.take_str_opt("confidence")?.as_deref() {
@@ -75,11 +84,15 @@ impl Table {
         };
         let placeholder = self.take_bool_opt("placeholder")?.unwrap_or(false);
         let target_text = self.take_str_opt("calibration_target")?;
-        let calibration_target = match target_text.as_deref().map(parse_target) {
-            Some(Some(n)) => Some(n),
-            Some(None) => return Err(bad(self, "calibration_target must look like CT-3")),
-            None => None,
-        };
+        let (calibration_spec, calibration_target) =
+            match target_text.as_deref().map(parse_target) {
+                Some(Some((spec, n))) => (Some(spec), Some(n)),
+                Some(None) => return Err(bad(
+                    self,
+                    "calibration_target must look like CT-004-3 (CT-<spec>-<n>, three-digit spec)",
+                )),
+                None => (None, None),
+            };
         let mut sources = Vec::new();
         for mut s in self.take_rows_opt("sources")?.unwrap_or_default() {
             let document = s.take_str("document")?;
@@ -112,6 +125,7 @@ impl Table {
             confidence,
             placeholder,
             calibration_target,
+            calibration_spec,
             sources,
             second_source,
             note,

@@ -15,7 +15,7 @@
         },
         "calibration_target": {
           "type": "string",
-          "pattern": "^CT-[0-9]+$"
+          "pattern": "^CT-[0-9]{3}-[0-9]+$"
         },
         "sources": {
           "$ref": "common.schema.json#/$defs/sources"

@@ -32,7 +32,7 @@ Counts: 38 collisions resolved (part A), 8 gaps closed (part B), 10 items needin
 
 **R-13 Amendment labels.** SPEC-012 and SPEC-016 both propose "A5" to SPEC-005; SPEC-014 proposes "A2" to SPEC-004 and "A4" to SPEC-005 (A4 already landed from T-021); SPEC-005 calls the segment query "amendment A1" though it landed as SPEC-002 A2; SPEC-006, 007, 008, 009, 010 propose unlabelled amendments to SPEC-004 and SPEC-005. Resolution: sequential labels in landing order, SPEC-004 A2 to A8, SPEC-005 A5 to A16, SPEC-002 A3, SPEC-003 A2 (REGISTRY 9). Why: landed labels cannot move; the rest are ordered by wave so a ticket never writes an amendment that depends on a later one.
 
-**R-14 ADR numbers.** SPEC-007 (T-071) and SPEC-013 (T-130) both write "ADR 0005"; SPEC-012 wants an ADR for unit suffixes; SPEC-016 says "next free number". Resolution: 0005 identifiers and units (registry), 0006 command, 0007 Gettysburg data, 0008 C interface, 0009 renderer host (REGISTRY 17). Why: the unit list and the CT format are one decision, taken once.
+**R-14 ADR numbers.** SPEC-007 (T-071) and SPEC-013 (T-130) both write "ADR 0005"; SPEC-012 wants an ADR for unit suffixes; SPEC-016 says "next free number". Resolution: 0011 identifiers and units (registry; 0005 was already the supply-chain gates and 0010 the design decisions), 0006 command, 0007 Gettysburg data, 0008 C interface, 0009 renderer host (REGISTRY 17). Why: the unit list and the CT format are one decision, taken once.
 
 **R-15 Hypothesis `H6` twice.** SPEC-006 section 8 (morale cost) and SPEC-010 section 12 (AI cost). Resolution: SPEC-010 uses `H10`. Why: every other spec numbers hypotheses by its own number.
 

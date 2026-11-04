@@ -1,4 +1,4 @@
-# Terrain classes (SPEC-004 section 5). Speed, effort, line disorder and cover are permille; every number is a placeholder (CT-4).
+# Terrain classes (SPEC-004 section 5). Speed, effort, line disorder and cover are permille; every number is a placeholder (CT-004-4).
 schema = "terrain/1"
 
 [[class]]
@@ -11,7 +11,7 @@ cover_pm = 0
 blocks_movement = false
 confidence = "unverified"
 placeholder = true
-calibration_target = "CT-4"
+calibration_target = "CT-004-4"
 
 [[class]]
 id = 1
@@ -23,7 +23,7 @@ cover_pm = 0
 blocks_movement = false
 confidence = "unverified"
 placeholder = true
-calibration_target = "CT-4"
+calibration_target = "CT-004-4"
 
 [[class]]
 id = 2
@@ -35,7 +35,7 @@ cover_pm = 150
 blocks_movement = false
 confidence = "unverified"
 placeholder = true
-calibration_target = "CT-4"
+calibration_target = "CT-004-4"
 
 [[class]]
 id = 3
@@ -47,7 +47,7 @@ cover_pm = 300
 blocks_movement = false
 confidence = "unverified"
 placeholder = true
-calibration_target = "CT-4"
+calibration_target = "CT-004-4"
 sources = [{ document = "CWV", page = 511, note = "qualitative only: woods slow movement and break formations (section 4.4)" }]
 
 [[class]]
@@ -60,7 +60,7 @@ cover_pm = 450
 blocks_movement = false
 confidence = "unverified"
 placeholder = true
-calibration_target = "CT-4"
+calibration_target = "CT-004-4"
 sources = [{ document = "CWV", page = 511, note = "qualitative only: thickets are named obstacles" }]
 
 [[class]]
@@ -73,7 +73,7 @@ cover_pm = 0
 blocks_movement = false
 confidence = "unverified"
 placeholder = true
-calibration_target = "CT-4"
+calibration_target = "CT-004-4"
 sources = [{ document = "CWV", page = 65, note = "qualitative only: swamps and creek bottoms are named obstacles" }]
 
 [[class]]
@@ -86,7 +86,7 @@ cover_pm = 0
 blocks_movement = false
 confidence = "unverified"
 placeholder = true
-calibration_target = "CT-4"
+calibration_target = "CT-004-4"
 
 [[class]]
 id = 7
@@ -98,4 +98,4 @@ cover_pm = 0
 blocks_movement = true
 confidence = "unverified"
 placeholder = true
-calibration_target = "CT-4"
+calibration_target = "CT-004-4"

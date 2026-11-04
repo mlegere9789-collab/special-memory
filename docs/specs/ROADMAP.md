@@ -23,7 +23,7 @@ Gate: Q2; movement goldens `T4-12` recorded and verified on three platforms `[CI
 | Ticket | Title | Class | Touches | Needs | Notes |
 |---|---|---|---|---|---|
 | T-019 | Steering, avoidance, anchor, movement scenarios | L | `battle-rules` steering and `scenarios/march`, `shells/sim-cli` (`battle`), `qc/`, `docs/cycle-reports/CYCLE-02-movement.md` | T-018 | splits at `hd-sim battle`; `[P]` |
-| T-025 | CT identifier migration, ADR 0005 | S | `provenance.rs`, `data/rules/*.toml`, `data/schemas/`, `tools/test_validate_data.py`, `docs/adr/0005-*` | T-015 | registry |
+| T-025 | CT identifier migration, ADR 0011 | S | `provenance.rs`, `data/rules/*.toml`, `data/schemas/`, `tools/test_validate_data.py`, `docs/adr/0011-*` | T-015 | registry |
 | T-026 | Shared constants module | S | `battle-rules/src/registry.rs`, `lib.rs` | T-015 | registry |
 | T-027 | Registry checker, validator plugins | S | `tools/check_registry.py`, `tools/validate_data.py`, `tools/validators/` | none | registry |
 | T-130 | Source registry, time functions, ADR 0007 | S | `tools/gb_audit.py`, `data/history/gettysburg/sources.toml`, `docs/adr/0007-*` | none | `[H]` the Librarian rows beyond CWV stay `consulted = false` |
