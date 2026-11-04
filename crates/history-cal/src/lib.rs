@@ -8,19 +8,25 @@
 
 #![forbid(unsafe_code)]
 
+mod bands;
 mod codec;
 mod compile;
 mod driver;
 mod error;
+mod metrics;
+mod observe;
 mod policy;
 mod script;
 mod stage;
 mod units;
 
+pub use bands::{Band, BandSet, Basis, Metric, Need};
 pub use codec::{decode_trigger, encode_trigger};
 pub use compile::{compile_script, ScriptInput};
 pub use driver::{apply_variant, DriverError, MarkerHook, ReplayDriver, TriggerHook, Variant};
 pub use error::ScriptError;
+pub use metrics::{evaluate, measure, try_measure, BandResult, Capabilities, Verdict};
+pub use observe::{evaluate_observed, variants_to_run, Observation, ObservedResult};
 pub use policy::Policy;
 pub use script::{
     ObserveKind, ObserveRow, OrderKind, OrderRow, OverrideRow, OverrideTarget, OverrideVariant,

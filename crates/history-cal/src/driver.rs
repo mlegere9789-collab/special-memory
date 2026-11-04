@@ -7,7 +7,8 @@
 
 use crate::codec::decode_trigger;
 use crate::compile::ScriptInput;
-use crate::ReplayScript;
+use crate::observe::{Observation, Observers};
+use crate::{ReplayScript, ScriptError, UnitRecord};
 use battle_rules::registry::{
     ACTOR_HISTORY_SCRIPT, TAG_FACE, TAG_FORM, TAG_HOLD, TAG_MOVE, TAG_SET_FIRE_MODE, TAG_TRIGGER,
 };
@@ -124,6 +125,8 @@ pub struct ReplayDriver {
     triggers: usize,
     log: Vec<(u64, u16)>,
     hook: Box<dyn TriggerHook>,
+    clock_start_s: i64,
+    observers: Observers,
 }
 
 impl ReplayDriver {
@@ -147,12 +150,34 @@ impl ReplayDriver {
             triggers: script.triggers.len(),
             log: Vec::new(),
             hook: Box::new(MarkerHook),
+            clock_start_s: script.meta.clock_start_s,
+            observers: Observers::from_script(script),
         })
     }
 
     /// Replaces the trigger hook.
     pub fn set_hook(&mut self, hook: Box<dyn TriggerHook>) {
         self.hook = hook;
+    }
+
+    /// Clock second of tick 0.
+    pub fn clock_start_s(&self) -> i64 {
+        self.clock_start_s
+    }
+
+    /// Starts watching the script's `[[observe]]` rows over `units`, before the first step.
+    /// Casualties already in the log are scanned; a `reached` or loss-rate condition is first
+    /// evaluated after the next step.
+    ///
+    /// Errors: [`ScriptError::Reference`] for a unit or trigger a row names that does not exist.
+    pub fn observe(&mut self, units: &[UnitRecord]) -> Result<(), ScriptError> {
+        self.observers.bind(units)
+    }
+
+    /// What each observation row has seen so far, ascending row id (empty until
+    /// [`ReplayDriver::observe`]).
+    pub fn observations(&self) -> Vec<Observation> {
+        self.observers.report(&self.log)
     }
 
     /// The battle.
@@ -239,6 +264,7 @@ impl ReplayDriver {
             self.next += 1;
         }
         self.state.step();
+        self.observers.update(&self.state);
         Ok(())
     }
 
