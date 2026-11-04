@@ -1,0 +1,91 @@
+# Environment rules (SPEC-009 section 3.1): smoke grid constants, woods retention, sight constants,
+# the heat curve and the rain rates. Units are in the key names: _pm permille, _ppm parts per
+# million, _mm millimetres, _f10 tenths of a degree F, periods in ticks. One unit of smoke density
+# is 1 mg of smoke in a cell. Every number is a placeholder awaiting calibration (CT-009-1 smoke,
+# CT-009-2 retention, CT-009-3 sight, CT-009-4 heat, CT-009-5 rain); the research pages give only
+# qualitative claims: smoke blocks sight and hides movement (CWV p511 section 4.3), woods hold smoke
+# and cut visibility (CWV p077, p511 section 4.4), heat tires men (CWV p116 section 11.8, p085) and
+# wet powder misfires (CWV p510 section 4.2).
+schema = "environment/1"
+
+# Smoke retention per terrain class id (open 0, road 1, orchard 2, woods 3, thicket 4, marsh 5,
+# ford 6, deep_water 7, crop 8, rocky 9, yard 10, building 11): the share of a cell's smoke that
+# stays put each update. One row per terrain class of terrain.toml.
+retain = [
+  { class = 0, retain_pm = 0, confidence = "unverified", placeholder = true, calibration_target = "CT-009-2" },
+  { class = 1, retain_pm = 0, confidence = "unverified", placeholder = true, calibration_target = "CT-009-2" },
+  { class = 2, retain_pm = 100, confidence = "unverified", placeholder = true, calibration_target = "CT-009-2" },
+  { class = 3, retain_pm = 400, confidence = "unverified", placeholder = true, calibration_target = "CT-009-2", sources = [{ document = "CWV", page = 77, note = "terrain bullet: woods hold smoke" }, { document = "CWV", page = 511, note = "section 4.4, qualitative only" }] },
+  { class = 4, retain_pm = 500, confidence = "unverified", placeholder = true, calibration_target = "CT-009-2" },
+  { class = 5, retain_pm = 0, confidence = "unverified", placeholder = true, calibration_target = "CT-009-2" },
+  { class = 6, retain_pm = 0, confidence = "unverified", placeholder = true, calibration_target = "CT-009-2" },
+  { class = 7, retain_pm = 0, confidence = "unverified", placeholder = true, calibration_target = "CT-009-2" },
+  { class = 8, retain_pm = 0, confidence = "unverified", placeholder = true, calibration_target = "CT-009-2", note = "SPEC-004 amendment A3: open ground holds no smoke" },
+  { class = 9, retain_pm = 0, confidence = "unverified", placeholder = true, calibration_target = "CT-009-2", note = "SPEC-004 amendment A3: open ground holds no smoke" },
+  { class = 10, retain_pm = 0, confidence = "unverified", placeholder = true, calibration_target = "CT-009-2", note = "SPEC-004 amendment A3: open ground holds no smoke" },
+  { class = 11, retain_pm = 0, confidence = "unverified", placeholder = true, calibration_target = "CT-009-2", note = "SPEC-004 amendment A3: no smoke enters a building cell" },
+]
+
+# Heat curve: apparent temperature to fatigue drain and rest recovery multipliers (permille).
+heat_curve = [
+  { apparent_f10 = 700, drain_pm = 1000, rest_pm = 1000, confidence = "unverified", placeholder = true, calibration_target = "CT-009-4" },
+  { apparent_f10 = 800, drain_pm = 1100, rest_pm = 950, confidence = "unverified", placeholder = true, calibration_target = "CT-009-4" },
+  { apparent_f10 = 900, drain_pm = 1300, rest_pm = 850, confidence = "unverified", placeholder = true, calibration_target = "CT-009-4" },
+  { apparent_f10 = 1000, drain_pm = 1700, rest_pm = 700, confidence = "unverified", placeholder = true, calibration_target = "CT-009-4" },
+]
+
+[smoke]
+period_ticks = 4
+cell_mm = 8000
+height_mm = 3000
+yield_pm = 550
+misfire_pm = 250
+diffuse_ppm = 10000
+decay_ppm = 4000
+rain_decay_gain_pm = 1000
+cell_cap = 1000000
+ext_k = 20
+ref_units = 20000
+confidence = "unverified"
+placeholder = true
+calibration_target = "CT-009-1"
+sources = [{ document = "CWV", page = 511, note = "section 4.3, qualitative only" }, { document = "CWV", page = 451, note = "section 3.4, smoke coupled to gameplay" }]
+note = "The yield is a remembered figure, unsourced."
+
+[sight]
+period_ticks = 20
+step_mm = 2000
+far_step_mm = 4000
+clear_margin_mm = 100
+min_transmit_pm = 50
+retries = 4
+range_smoke_gain_pm = 1500
+peek_step_mm = 500
+peek_max_mm = 15000
+peek_back_mm = 250
+blind_report_pm = 600
+observer_samples = 8
+confidence = "unverified"
+placeholder = true
+calibration_target = "CT-009-3"
+
+[heat]
+floor_f10 = 700
+humid_floor_pm = 400
+div = 1500
+confidence = "unverified"
+placeholder = true
+calibration_target = "CT-009-4"
+sources = [{ document = "CWV", page = 116, note = "section 11.8, heat as a fatigue input" }, { document = "CWV", page = 85, note = "qualitative only" }]
+
+[rain]
+powder_rise_ppm = 600
+powder_fall_ppm = 150
+ground_rise_ppm = 400
+ground_fall_ppm = 40
+wet_extra_pm = 2000
+ground_min_pm = 500
+confidence = "unverified"
+placeholder = true
+calibration_target = "CT-009-5"
+sources = [{ document = "CWV", page = 510, note = "section 4.2, wet powder, qualitative only" }]
