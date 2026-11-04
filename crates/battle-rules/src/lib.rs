@@ -23,7 +23,7 @@ pub use reader::{parse_table, Table};
 mod fatigue;
 mod locomotion;
 mod terrain;
-pub use fatigue::{fatigue_speed_pm, fatigue_step};
+pub use fatigue::{fatigue_speed_pm, fatigue_step, fatigue_step_scaled};
 pub use locomotion::{CurvePoint, Gait, GaitRow, LocomotionGlobals, LocomotionTable, FATIGUE_MAX};
 pub use terrain::{TerrainClass, TerrainGrid, TerrainTable, DEFAULT_CELL_MM};
 
@@ -118,6 +118,7 @@ pub use sector::{HotWindow, SectorBody, SectorMap, SectorState};
 // T-091
 mod environment;
 pub use environment::{
-    exp_table, EnvTable, HeatParams, HeatPoint, RainParams, RetainRow, SightParams, SmokeParams,
-    WeatherKey, WeatherNow, WeatherTable, EXP_TABLE, WIND_MAX_MM_S,
+    apparent_f10, exp_table, EnvTable, Environment, HeatNow, HeatParams, HeatPoint, RainParams,
+    RetainRow, SightParams, SmokeParams, WeatherKey, WeatherNow, WeatherTable, EXP_TABLE,
+    WIND_MAX_MM_S,
 };

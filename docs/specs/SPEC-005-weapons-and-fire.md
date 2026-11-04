@@ -153,3 +153,8 @@ fmt, clippy `-D warnings`, `cargo test --workspace` (also `--release`) and T5-01
 
 ## Amendment A6 (from T-073 implementation, 2026-11-04)
 1. Section 8: `SmokeGrid::density_at(pos: Vec2Fx) -> u32` is the smoke density, in smoke units, of the cell that holds `pos` (the cell rule of `cell_index`: positions outside the grid take the nearest edge cell). An empty grid reads zero. It is the accessor that SPEC-007 section 5 uses to decide whether flag signals can be read; it changes no state, so no hash or golden moves.
+
+## Amendment A8 (from T-092 and T-093, SPEC-009)
+1. Section 4, firing drain: `fatigue += fire_drain_ppm * drain_pm / 1000` (floor, clamped at `FATIGUE_MAX`); `drain_pm` is the heat multiplier of SPEC-009 section 7 and is 1000 with `env = None`.
+2. Section 3 and 10, `Weather`: with `env` `Some`, step TK-02 overwrites `BattleState.weather` every `smoke.period_ticks` ticks from the weather timeline (`wind` from `WeatherNow`, `wet_pm` from powder damp, `ground_pm` from ground wetness); the misfire factor and the ground restitution read it unchanged. With `env = None` the scenario's `weather` is never touched.
+3. Section 8, smoke source and update with `env` `Some`: added by T-093.
