@@ -71,7 +71,9 @@ fn checkpoints_land_on_the_interval() {
     let ticks: Vec<u64> = replay.checkpoints().iter().map(|c| c.tick).collect();
     assert_eq!(ticks, vec![10, 20, 30, 40, 50, 60, 70, 80, 90]);
     assert_eq!(replay.total_ticks(), 95);
-    let none = run_replay(&params(40, 3), 95, 0).unwrap();
+    // SPEC-003 Amendment A1: interval 0 is malformed for a run with ticks.
+    assert!(run_replay(&params(40, 3), 95, 0).is_err());
+    let none = run_replay(&params(40, 3), 0, 0).unwrap();
     assert!(none.checkpoints().is_empty());
 }
 
@@ -101,7 +103,7 @@ proptest! {
         agents in 0u32..40,
         ticks in 0u64..40,
         seed in any::<u64>(),
-        interval in 0u32..12,
+        interval in 1u32..12,
         arena in 16u32..300,
         hz in 1u16..60,
     ) {

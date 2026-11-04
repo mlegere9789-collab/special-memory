@@ -19,7 +19,7 @@ mod store;
 mod world;
 
 pub use core_math::{Angle, Fx, RngStreams, Vec2Fx};
-pub use grid::{distance_sq_raw, SpatialGrid};
+pub use grid::{distance_sq_raw, GridError, SpatialGrid, MAX_GRID_CELLS};
 pub use replay::{
     Checkpoint, InputRecord, Replay, ReplayError, ReplayReader, ReplayWriter, REPLAY_MAGIC,
     REPLAY_VERSION,

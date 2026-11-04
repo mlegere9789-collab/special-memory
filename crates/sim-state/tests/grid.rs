@@ -34,7 +34,7 @@ fn brute(store: &AgentStore, center: Vec2Fx, radius: Fx) -> Vec<AgentId> {
 
 fn new_grid() -> SpatialGrid {
     // 8 x 6 cells of size 4.0, origin (-10, -10).
-    SpatialGrid::new(Fx::from_raw(CELL), 8, 6, v(-10 << 32, -10 << 32))
+    SpatialGrid::new(Fx::from_raw(CELL), 8, 6, v(-10 << 32, -10 << 32)).unwrap()
 }
 
 /// Coordinates that frequently land exactly on, or next to, cell borders and
@@ -194,7 +194,7 @@ fn negative_radius_is_empty() {
 #[test]
 fn cells_touched_is_bounded_by_radius() {
     let grid = {
-        let mut g = SpatialGrid::new(Fx::from_raw(CELL), 100, 100, v(0, 0));
+        let mut g = SpatialGrid::new(Fx::from_raw(CELL), 100, 100, v(0, 0)).unwrap();
         g.rebuild(&AgentStore::new());
         g
     };
@@ -221,7 +221,7 @@ fn twenty_thousand_agents() {
             ..AgentInit::default()
         });
     }
-    let mut grid = SpatialGrid::new(Fx::from_raw(8 << 32), 50, 50, v(0, 0));
+    let mut grid = SpatialGrid::new(Fx::from_raw(8 << 32), 50, 50, v(0, 0)).unwrap();
     grid.rebuild(&store);
     let mut out = Vec::new();
     for c in [v(0, 0), v(200 << 32, 200 << 32), v(399 << 32, 5 << 32)] {
@@ -243,7 +243,7 @@ fn bench_rebuild_and_query() {
             ..AgentInit::default()
         });
     }
-    let mut grid = SpatialGrid::new(Fx::from_raw(16 << 32), 64, 64, v(0, 0));
+    let mut grid = SpatialGrid::new(Fx::from_raw(16 << 32), 64, 64, v(0, 0)).unwrap();
     let t = std::time::Instant::now();
     for _ in 0..100 {
         grid.rebuild(&store);

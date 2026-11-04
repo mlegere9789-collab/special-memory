@@ -35,6 +35,10 @@ pub const DEFAULT_TICK_HZ: u16 = 20;
 pub const DEFAULT_ARENA_M: u32 = 2000;
 /// Largest accepted agent count.
 pub const MAX_AGENTS: u32 = 1_000_000;
+/// Largest accepted replay length in ticks (`run`, `verify`, `hash`, `bench`).
+pub const MAX_TOTAL_TICKS: u64 = 10_000_000;
+/// Largest accepted `agents * ticks` work product.
+pub const MAX_AGENT_TICKS: u64 = 20_000_000_000;
 /// Smallest accepted arena side in metres.
 pub const MIN_ARENA_M: u32 = 16;
 /// Largest accepted arena side in metres.
@@ -51,6 +55,24 @@ pub const MAX_SPEED_M_S: i32 = 6;
 pub const MAX_ACCEL_M_S2: i32 = 8;
 /// Chance per tick, as `numerator / denominator`, that an agent with a neighbour loses one hp.
 pub const DAMAGE_CHANCE: (u32, u32) = (1, 40);
+
+/// Resource limits applied before anything runs: `ticks <= MAX_TOTAL_TICKS`,
+/// `agents <= MAX_AGENTS` and `agents * ticks <= MAX_AGENT_TICKS`.
+pub fn check_limits(agents: u32, ticks: u64) -> Result<(), ScenarioError> {
+    let bad = |what: String| Err(ScenarioError::InvalidParams(what));
+    if agents > MAX_AGENTS {
+        return bad(format!("agents {agents} exceeds the limit {MAX_AGENTS}"));
+    }
+    if ticks > MAX_TOTAL_TICKS {
+        return bad(format!("ticks {ticks} exceeds the limit {MAX_TOTAL_TICKS}"));
+    }
+    if u64::from(agents) * ticks > MAX_AGENT_TICKS {
+        return bad(format!(
+            "agents {agents} x ticks {ticks} exceeds the work limit {MAX_AGENT_TICKS}"
+        ));
+    }
+    Ok(())
+}
 
 /// Named random streams. Separate ids keep systems from perturbing each other.
 const PLACEMENT: StreamId = StreamId::new(1);
@@ -220,8 +242,10 @@ impl Scenario {
         let cells_x = params.width_m.div_ceil(NEIGHBOUR_RADIUS_M as u32);
         let cells_y = params.height_m.div_ceil(NEIGHBOUR_RADIUS_M as u32);
         let max_speed = Fx::from_int(MAX_SPEED_M_S);
+        let grid = SpatialGrid::new(radius, cells_x, cells_y, Vec2Fx::ZERO)
+            .map_err(|e| ScenarioError::InvalidParams(e.to_string()))?;
         Ok(Scenario {
-            grid: SpatialGrid::new(radius, cells_x, cells_y, Vec2Fx::ZERO),
+            grid,
             wander: rng.stream(WANDER),
             skirmish: rng.stream(SKIRMISH),
             width,
@@ -305,12 +329,17 @@ impl Scenario {
 }
 
 /// Runs the scenario for `ticks` ticks and records a replay with a checkpoint hash every
-/// `checkpoint_interval` ticks (`0` records none).
+/// `checkpoint_interval` ticks. The limits of [`check_limits`] apply, and an interval of `0` is
+/// only accepted for a zero-tick run (a replay with ticks needs a checkpoint schedule).
 pub fn run_replay(
     params: &ToyParams,
     ticks: u64,
     checkpoint_interval: u32,
 ) -> Result<Replay, ScenarioError> {
+    check_limits(params.agents, ticks)?;
+    if checkpoint_interval == 0 && ticks > 0 {
+        return Err(ScenarioError::Replay(ReplayError::ZeroCheckpointInterval));
+    }
     let mut scenario = Scenario::new(params)?;
     let mut writer = ReplayWriter::new(
         SCENARIO_ID,
@@ -322,7 +351,7 @@ pub fn run_replay(
     writer.push_input(0, 0, 0, params.setup_payload());
     for tick in 1..=ticks {
         scenario.step();
-        if checkpoint_interval > 0 && tick % u64::from(checkpoint_interval) == 0 {
+        if tick % u64::from(checkpoint_interval) == 0 {
             writer.push_checkpoint(tick, scenario.hash());
         }
     }
@@ -331,6 +360,7 @@ pub fn run_replay(
 
 /// The state hash after `ticks` ticks.
 pub fn final_hash(params: &ToyParams, ticks: u64) -> Result<u64, ScenarioError> {
+    check_limits(params.agents, ticks)?;
     let mut scenario = Scenario::new(params)?;
     for _ in 0..ticks {
         scenario.step();
@@ -394,6 +424,12 @@ pub fn verify_replay(replay: &Replay) -> Verdict {
     };
     let interval = u64::from(replay.checkpoint_interval());
     let total = replay.total_ticks();
+    if let Err(e) = check_limits(params.agents, total) {
+        return Verdict::Malformed(e.to_string());
+    }
+    if interval == 0 && total > 0 {
+        return Verdict::Malformed("checkpoint interval 0 with a non-zero tick count".to_string());
+    }
     let expected_count = total.checked_div(interval).unwrap_or(0);
     let schedule_ok = replay.checkpoints().len() as u64 == expected_count
         && replay
