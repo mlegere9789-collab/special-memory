@@ -9,9 +9,9 @@ use crate::{
 use core_math::{StreamId, Vec2Fx};
 use sim_state::{AgentId, AgentInit, AgentStore, SpatialGrid, WorldState};
 
-/// First per-soldier random stream; soldier `slot_index` uses `STREAM_SOLDIER_BASE + slot_index`
-/// (SPEC-004 section 1, drawn on by SPEC-005).
-pub const STREAM_SOLDIER_BASE: u32 = 0x4000_0000;
+// The constant lives in the registry module (T-026); the path `battle_rules::STREAM_SOLDIER_BASE`
+// is unchanged.
+pub use crate::registry::STREAM_SOLDIER_BASE;
 
 /// The named stream of the soldier in agent slot `slot_index`.
 pub const fn soldier_stream(slot_index: u32) -> StreamId {

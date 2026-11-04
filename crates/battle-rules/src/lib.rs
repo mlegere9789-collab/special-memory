@@ -71,3 +71,6 @@ pub use vec3::Vec3Fx;
 // T-019
 mod movement;
 pub mod scenarios;
+
+// T-026
+pub mod registry;

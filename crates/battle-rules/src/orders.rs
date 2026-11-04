@@ -3,6 +3,7 @@
 //! Wire format, little-endian: `u8 tag` (1 Hold, 2 Move, 3 Form, 4 Face), `u16 regiment`, then
 //! Move: `i64 x, i64 y` (raw `Fx`), `u8 gait`; Form: `u8 formation`; Face: `u32` raw angle.
 
+use crate::registry::{TAG_FACE, TAG_FORM, TAG_HOLD, TAG_MOVE};
 use crate::{Formation, Gait, RegimentId};
 use core::fmt;
 use core_math::{Angle, Fx, Vec2Fx};
@@ -29,10 +30,10 @@ impl Order {
     /// Wire and hash tag: Hold 1, Move 2, Form 3, Face 4.
     pub const fn tag(&self) -> u8 {
         match self {
-            Order::Hold => 1,
-            Order::Move { .. } => 2,
-            Order::Form(_) => 3,
-            Order::Face(_) => 4,
+            Order::Hold => TAG_HOLD,
+            Order::Move { .. } => TAG_MOVE,
+            Order::Form(_) => TAG_FORM,
+            Order::Face(_) => TAG_FACE,
         }
     }
 }
@@ -112,8 +113,8 @@ pub fn decode_order(bytes: &[u8]) -> Result<(RegimentId, Order), OrderDecodeErro
     let [tag] = c.take::<1>()?;
     let regiment = RegimentId(u16::from_le_bytes(c.take::<2>()?));
     let order = match tag {
-        1 => Order::Hold,
-        2 => {
+        TAG_HOLD => Order::Hold,
+        TAG_MOVE => {
             let x = i64::from_le_bytes(c.take::<8>()?);
             let y = i64::from_le_bytes(c.take::<8>()?);
             let [g] = c.take::<1>()?;
@@ -125,11 +126,11 @@ pub fn decode_order(bytes: &[u8]) -> Result<(RegimentId, Order), OrderDecodeErro
                 gait,
             }
         }
-        3 => {
+        TAG_FORM => {
             let [f] = c.take::<1>()?;
             Order::Form(Formation::from_tag(f).ok_or(OrderDecodeError::UnknownFormation(f))?)
         }
-        4 => Order::Face(Angle::from_raw(u32::from_le_bytes(c.take::<4>()?))),
+        TAG_FACE => Order::Face(Angle::from_raw(u32::from_le_bytes(c.take::<4>()?))),
         other => return Err(OrderDecodeError::UnknownTag(other)),
     };
     if c.0.is_empty() {

@@ -1,23 +1,13 @@
 //! Shared conventions of SPEC-004 section 1.
 
-use core_math::{Fx, StreamId};
+use core_math::Fx;
 
 /// Simulation ticks per second (matches SPEC-003).
 pub const TICK_HZ: u32 = 20;
 
-/// Stream for scenario jitter only. Per-soldier streams `0x4000_0000 + slot_index` belong to SPEC-005.
-pub const STREAM_BATTLE_SETUP: StreamId = StreamId(0x0B01);
-
-/// `AgentStore.flags` bit: kneeling.
-pub const F_KNEEL: u16 = 1 << 0;
-/// `AgentStore.flags` bit: prone.
-pub const F_PRONE: u16 = 1 << 1;
-/// `AgentStore.flags` bit: down for a number of ticks.
-pub const F_DISABLED: u16 = 1 << 2;
-/// `AgentStore.flags` bit: out for the battle.
-pub const F_WOUNDED: u16 = 1 << 3;
-/// `AgentStore.flags` bit: a gun crew member.
-pub const F_GUN: u16 = 1 << 4;
+// The stream and flag constants are owned by the registry module (T-026); these re-exports keep
+// the paths `battle_rules::conventions::*` and `battle_rules::{F_*, STREAM_BATTLE_SETUP}` valid.
+pub use crate::registry::{F_DISABLED, F_GUN, F_KNEEL, F_PRONE, F_WOUNDED, STREAM_BATTLE_SETUP};
 
 /// The ratio `num / den` as `Fx`: raw = `(num << 32) / den` truncating toward zero, saturated to
 /// `i64`. A zero denominator follows the `core_math` `Div` rules (`MAX`, `MIN` or zero by the
