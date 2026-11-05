@@ -15,6 +15,8 @@ mod listener;
 mod packet;
 pub mod propagation;
 mod relief;
+mod report;
+pub mod scenes;
 mod tables;
 mod weather;
 
@@ -27,3 +29,4 @@ pub use weather::{to_mm, Weather};
 pub use aggregate::{Aggregator, Cluster, SoundEvent};
 pub use listener::{render_packet, Listener, ListenerKind, ListenerState};
 pub use packet::{packet_hash, BedOut, MixPacket, SourceOut};
+pub use report::{hearing_report, report_hash, HearClass, HearingReport};

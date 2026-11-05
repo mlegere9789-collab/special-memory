@@ -1,0 +1,73 @@
+# SPEC-012 section 12: the acoustics bands CB1 to CB6, CT-012-1 and CT-012-2. Integer-only. Each
+# point names a weather preset of `data/rules/acoustics.toml`, a distance `at_mm` between source
+# scene and listener, the measured `metric` and inclusive `low` and `high` limits (a missing limit
+# is open). Metrics: `delay_ms` (travel time over `at_mm`), `margin_cdb` and `class` (the hearing
+# report of the named `scene`; class 0 silent, 1 faint, 2 clear, 3 loud). A band changes only
+# through a SPEC-012 amendment that cites evidence; simulation output never sets a limit.
+schema = "bands/1"
+
+[[band]]
+id = "CB1"
+confidence = "partial"
+sources = [{ document = "CWV", page = 457, note = "1 km is about 2.9 s at 343 m/s (arithmetic)" }]
+note = "1000 m, calm: sound arrives after 2900 to 2930 ms."
+points = [{ weather = "calm", at_mm = 1000000, metric = "delay_ms", low = 2900, high = 2930 }]
+
+[[band]]
+id = "CB2"
+confidence = "partial"
+placeholder = true
+calibration_target = "CT-012-2"
+sources = [{ document = "CWV", page = 457, tag = "V S16", note = "Johnston heard nothing at 2 miles" }]
+note = "seven_pines, 2 miles: silent with the wind blowing away, clearly heard when calm."
+scene = "seven_pines"
+points = [
+  { weather = "toward_minus_x", at_mm = 3218688, metric = "class", low = 0, high = 0 },
+  { weather = "calm", at_mm = 3218688, metric = "class", low = 2, high = 3 },
+]
+
+[[band]]
+id = "CB3"
+confidence = "partial"
+placeholder = true
+calibration_target = "CT-012-2"
+sources = [{ document = "CWV", page = 457, tag = "V S16", note = "Richmond heard the battle at 5 to 10 miles" }]
+note = "seven_pines under an inversion with the wind toward the listener: audible at 5 and 10 miles."
+scene = "seven_pines"
+points = [
+  { weather = "toward_plus_x_inversion", at_mm = 8046720, metric = "margin_cdb", low = 0 },
+  { weather = "toward_plus_x_inversion", at_mm = 16093440, metric = "margin_cdb", low = 0 },
+]
+
+[[band]]
+id = "CB4"
+confidence = "partial"
+placeholder = true
+calibration_target = "CT-012-2"
+sources = [{ document = "CWV", page = 457, tag = "V S17", note = "Perryville heard nothing at 3 miles" }]
+note = "perryville, 3 miles, wind blowing away: silent."
+scene = "perryville"
+points = [{ weather = "toward_minus_x", at_mm = 4828032, metric = "class", low = 0, high = 0 }]
+
+[[band]]
+id = "CB5"
+confidence = "partial"
+placeholder = true
+calibration_target = "CT-012-2"
+sources = [{ document = "CWV", page = 457, tag = "V S16", note = "10 miles not heard at Gettysburg" }]
+note = "seven_pines, calm, 10 miles: not clear (silent or faint)."
+scene = "seven_pines"
+points = [{ weather = "calm", at_mm = 16093440, metric = "class", low = 0, high = 1 }]
+
+[[band]]
+id = "CB6"
+confidence = "unverified"
+placeholder = true
+calibration_target = "CT-012-1"
+sources = [{ document = "CWV", page = 446, note = "very distant gunfire; reports of great distances are not reproduced (range cap 100 km)" }]
+note = "bombardment, 3 guns in the window, 15 km: audible when calm, silent with the wind blowing away."
+scene = "bombardment"
+points = [
+  { weather = "calm", at_mm = 15000000, metric = "margin_cdb", low = 0 },
+  { weather = "toward_minus_x", at_mm = 15000000, metric = "class", low = 0, high = 0 },
+]
