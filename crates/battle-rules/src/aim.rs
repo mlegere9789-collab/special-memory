@@ -87,12 +87,29 @@ pub fn sigma_urad(
     smoke_pm: u32,
     range_mm: u64,
 ) -> Fx {
+    sigma_urad_shaken(weapon, training, fatigue_ppm, smoke_pm, 1000, range_mm)
+}
+
+/// [`sigma_urad`] with the shooter's term also multiplied by `shake_pm / 1000` as the last
+/// factor of the chain (SPEC-005 amendment A11, SPEC-006 section 5.8). At 1000 the
+/// multiplication is skipped, so the result equals [`sigma_urad`] bit for bit.
+pub fn sigma_urad_shaken(
+    weapon: &WeaponRow,
+    training: Training,
+    fatigue_ppm: u32,
+    smoke_pm: u32,
+    shake_pm: u32,
+    range_mm: u64,
+) -> Fx {
     let sb = u64::from(weapon.sigma0_urad)
         + u64::from(weapon.sigma_slope_urad_per_100m) * range_mm / 100_000;
     let mut ss = u64::from(aim_sigma_urad(training));
     ss = ss * u64::from(weapon.aim_scale_pm) / 1000;
     ss = ss * (1000 + 600 * u64::from(fatigue_ppm) / 1_000_000) / 1000;
     ss = ss * (1000 + 4 * u64::from(smoke_pm)) / 1000;
+    if shake_pm != 1000 {
+        ss = ss * u64::from(shake_pm) / 1000;
+    }
     let sum = (sb * sb + ss * ss).min(i32::MAX as u64);
     Fx::from_int(sum as i32).sqrt()
 }
@@ -139,6 +156,12 @@ pub fn aim(i: &AimInput, d: &ShotDraws) -> Aim {
 /// 6: thin smoke widens the error before it blocks the view). At 1000 the multiplication is
 /// skipped, so the result equals [`aim`] bit for bit.
 pub fn aim_in_smoke(i: &AimInput, d: &ShotDraws, range_err_pm: u32) -> Aim {
+    aim_shaken(i, d, range_err_pm, 1000)
+}
+
+/// [`aim_in_smoke`] with the shooter's aim error also multiplied by `shake_pm / 1000`
+/// (SPEC-005 amendment A11). At 1000 the result equals [`aim_in_smoke`] bit for bit.
+pub fn aim_shaken(i: &AimInput, d: &ShotDraws, range_err_pm: u32, shake_pm: u32) -> Aim {
     let thousand = Fx::from_int(1000);
     let mut err = Fx::from_int(range_sigma_pm(i.training) as i32) * d.range;
     if range_err_pm != 1000 {
@@ -147,7 +170,14 @@ pub fn aim_in_smoke(i: &AimInput, d: &ShotDraws, range_err_pm: u32) -> Aim {
     let scale = thousand + err;
     let r_est = (i.range * scale / thousand).max(Fx::ZERO);
     let range_mm = (i64::from((i.range * thousand).to_int_floor())).max(0) as u64;
-    let sigma = sigma_urad(i.weapon, i.training, i.fatigue_ppm, i.smoke_pm, range_mm);
+    let sigma = sigma_urad_shaken(
+        i.weapon,
+        i.training,
+        i.fatigue_ppm,
+        i.smoke_pm,
+        shake_pm,
+        range_mm,
+    );
     let urad = |g: Fx| angle_from_urad(i64::from((sigma * g).to_int_floor()));
     let elevation = i.table.elevation(r_est)
         + angle_from_urad(i64::from(aim_high_urad(i.training)))

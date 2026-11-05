@@ -143,6 +143,10 @@ impl BattleState {
                 continue;
             }
             agents.set_flags(id, flags & !F_DISABLED);
+            if flags & crate::registry::F_SKULK != 0 {
+                // An absent soldier stays off the roster until the morale step returns it.
+                continue;
+            }
             let unit = agents.unit(id).unwrap_or(u32::MAX);
             if let Some(reg) = self.regiments.get_mut(unit as usize) {
                 if let Err(at) = reg.roster.binary_search(&id) {

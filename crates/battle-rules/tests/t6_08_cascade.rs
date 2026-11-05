@@ -114,20 +114,23 @@ fn a_fall_shocks_less_and_does_not_help_the_enemy() {
     }
     pin_to_ceiling(&mut b, 2);
     pin_to_ceiling(&mut b, 3);
-    let (c2, c3) = (
-        b.morale.as_ref().unwrap().regs[2].c,
-        b.morale.as_ref().unwrap().regs[3].c,
-    );
+    let c2 = b.morale.as_ref().unwrap().regs[2].c;
     run_period(&mut b, false, Some(true));
     let ms = b.morale.as_ref().unwrap();
     assert_eq!(ms.events.len(), 1);
     assert_eq!(ms.events[0].kind, MoraleEventKind::Fell);
+    // The same battle with the event dropped: the enemy's ceiling moves because the regiment
+    // that fell back no longer fires (SPEC-006 section 5.2), so its cohesion is compared with
+    // the run without the event rather than with its value before the period.
+    let mut quiet = b.clone();
+    quiet.morale.as_mut().unwrap().events.clear();
+    run_period(&mut quiet, false, Some(false));
     run_period(&mut b, false, Some(false));
     let ms = b.morale.as_ref().unwrap();
     let full = g.nbr_shock * 120 / 150;
     assert_eq!(ms.regs[2].c, c2 - full * g.nbr_fall_pm / 1000);
-    // Regiment 3 had no gap to close and receives nothing.
-    assert_eq!(ms.regs[3].c, c3);
+    // The enemy receives nothing from the event.
+    assert_eq!(ms.regs[3].c, quiet.morale.as_ref().unwrap().regs[3].c);
 }
 
 #[test]
