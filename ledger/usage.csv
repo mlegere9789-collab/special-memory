@@ -80,3 +80,5 @@ date,ticket,class,estimated_usage,actual_usage,review_defects,rework_count,notes
 2026-11-04,T-114 Gettysburg bands timeline conflict data (SPEC-011),M,,175662 tokens,0,0,fresh implementer; 17 Rust tests and 7 Python tests; bands HB-01 to HB-24; placeholder unit ids
 2026-11-04,T-076 command scenario bands goldens performance (SPEC-007),M,,244955 tokens,0,0,fresh implementer; bands C1 to C12 pass with no data changed; hd-sim battle added; golden in expected-command.json; H7 mean 0.027 ms
 2026-11-05,T-096 observers sighting log signal quality (SPEC-009),M,,152713 tokens,0,0,fresh implementer; 15 tests; observer hash bytes only with env Some
+2026-11-05,T-121 sound log (SPEC-005 A10),S,,113968 tokens,0,0,fresh implementer; 5 tests; hash untouched
+2026-11-05,T-151 ui-model crate snapshot commands display fields (SPEC-015),M,,191085 tokens,0,0,fresh implementer; 19 Rust tests and 9 Python tests; over 400 lines; no new dependency

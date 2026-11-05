@@ -45,6 +45,7 @@ jobs:
           python3 tools/test_survey.py
           python3 qc/fixtures/terrain/test_schemas.py
           python3 tools/test_environment_validator.py
+          python3 tools/test_validate_ui.py
           python3 tools/test_ingest_dem.py
           python3 tools/test_check_assets.py
           python3 tools/test_extract_traits.py
