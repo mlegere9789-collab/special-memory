@@ -10,6 +10,7 @@ use crate::{
     energy_joules, AmmoKind, Ballistics, BattleState, DamageTable, Flight, FlightEnv, HitOutcome,
     Projectile, Tables, TerrainGrid, F_DISABLED, F_WOUNDED,
 };
+use crate::{FireRecord, FireRecordKind};
 use core_math::{Fx, SplitMix64, Vec2Fx};
 use sim_state::{AgentId, AgentStore, SpatialGrid};
 
@@ -300,6 +301,7 @@ impl BattleState {
             seq,
             counters,
             pending,
+            sound_log,
             ..
         } = self;
         let env = FlightEnv {
@@ -332,6 +334,7 @@ impl BattleState {
         let n = pool.len();
         let mut alive = vec![true; n];
         let mut born: Vec<(u64, Vec<Projectile>)> = Vec::new();
+        let mut bursts_heard: Vec<FireRecord> = Vec::new();
         for k in 0..n {
             let i = if reverse { n - 1 - k } else { k };
             let p = &mut pool[i];
@@ -339,6 +342,7 @@ impl BattleState {
             if p.fuse == 0 && ammo.kind == AmmoKind::Canister {
                 if let Some(c) = ammo.burst.as_ref().and_then(|b| burst_children(p, ammo, b)) {
                     alive[i] = false;
+                    bursts_heard.push(FireRecord::of(FireRecordKind::Burst, p));
                     born.push((p.seq, c));
                     continue;
                 }
@@ -376,7 +380,10 @@ impl BattleState {
             alive[i] = false;
             if bursts {
                 match ammo.burst.as_ref().and_then(|b| burst_children(p, ammo, b)) {
-                    Some(c) => born.push((p.seq, c)),
+                    Some(c) => {
+                        bursts_heard.push(FireRecord::of(FireRecordKind::Burst, p));
+                        born.push((p.seq, c));
+                    }
                     None if flight == Flight::FuseExpired => {
                         p.fuse = FUSE_INERT;
                         alive[i] = true;
@@ -390,6 +397,8 @@ impl BattleState {
             k += 1;
             alive[k - 1]
         });
+        bursts_heard.sort_by_key(|r| r.seq);
+        sound_log.extend(bursts_heard);
         born.sort_by_key(|b| b.0);
         for (_, children) in born {
             for mut c in children {

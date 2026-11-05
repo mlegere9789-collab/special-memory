@@ -443,6 +443,7 @@ impl BattleState {
             counters,
             env,
             obstacles,
+            sound_log,
             ..
         } = self;
         let source = env.as_ref().map(|e| &e.table().smoke);
@@ -577,7 +578,7 @@ impl BattleState {
             );
             let (horizontal, vz) = launch_speeds(ammo.muzzle_mm_s, a.elevation);
             let muzzle_mm = tables.damage.posture(posture_of(flags)).muzzle_height_mm;
-            pool.push(Projectile {
+            let shot = Projectile {
                 seq: *seq,
                 owner: idx,
                 unit: u32::from(reg.id.0),
@@ -592,7 +593,9 @@ impl BattleState {
                 hits: 0,
                 fuse: a.fuse,
                 seed: d.seed,
-            });
+            };
+            sound_log.push(crate::FireRecord::of(crate::FireRecordKind::Shot, &shot));
+            pool.push(shot);
             *seq += 1;
             counters.projectiles_spawned += 1;
             match source {

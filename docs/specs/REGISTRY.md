@@ -331,7 +331,7 @@ Labels are sequential per base spec in landing order (wave, then ticket id). A l
 | A7 | section 4: streams of materialised soldiers (`0x8000_0000 + serial`), shot-word discard, hand-over fields | SPEC-008 | T-083 | 4 | pending |
 | A8 | sections 4 and 8: with `env` `Some`, the SPEC-009 smoke source and update replace section 8; firing drain scaled by heat; `Weather` filled by the weather timeline | SPEC-009 | T-092, T-093 | 4 | landed |
 | A9 | sections 3 and 4: targeting gate, range-error multiplier, `smoke_at_shooter` | SPEC-009 | T-095 | 5 | landed |
-| A10 | section 4 (was SPEC-012 "A5"): `sound_log` of `FireRecord` | SPEC-012 | T-121 | 5 | pending |
+| A10 | section 4 (was SPEC-012 "A5"): `sound_log` of `FireRecord` | SPEC-012 | T-121 | 5 | landed |
 | A11 | sections 3 and 4: `load_gate` and `shake_pm` | SPEC-006 | T-064 | 6 | pending |
 | A12 | section 6 (was SPEC-016 "A5"): `BattleEvent` buffer and `drain_events` | SPEC-016 | T-164 | 6 | pending |
 | A13 | `FireExt` rounds setter and read accessors (fire state, smoke, casualties) | SPEC-010, 015 | T-103 | 7 | pending |
