@@ -16,4 +16,7 @@ for f in "${files[@]}"; do
   echo "verifying $f"
   "$BIN" verify "$f"
 done
-echo "verify_goldens: ${#files[@]} replays verified"
+# Acoustics goldens (SPEC-012 T12-13): hashes recorded in qc/golden-replays/expected-acoustics.json.
+echo "verifying qc/golden-replays/expected-acoustics.json"
+cargo test --release --locked -p acoustics-model --test t12_13_determinism
+echo "verify_goldens: ${#files[@]} replays and the acoustics goldens verified"
