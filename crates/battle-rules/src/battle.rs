@@ -5,6 +5,7 @@
 use crate::command::{CommandState, CommandTable};
 use crate::fire::{RangeEntry, RegFire};
 use crate::hit::{ObstacleLayer, QueuedHit};
+use crate::registry::F_SKULK;
 use crate::{
     assign_slots, slot_layout, transition_ticks, DrillTable, Formation, Order, Regiment,
     RegimentId, RegimentSpec, RegimentState, SlotLocal, Tables, TerrainGrid, F_DISABLED, F_WOUNDED,
@@ -102,14 +103,23 @@ pub struct BattleState {
     pub sound_log: Vec<crate::FireRecord>,
 }
 
-/// Drops soldiers that are gone, disabled or wounded; marks the regiment dirty if any left.
+/// Whether a morale state lets a regiment fire and take orders.
+pub(crate) fn morale_allows_fire(kind: crate::MoraleKind) -> bool {
+    !matches!(
+        kind,
+        crate::MoraleKind::FallingBack | crate::MoraleKind::Broken
+    )
+}
+
+/// Drops soldiers that are gone, disabled, wounded or absent (`F_SKULK`, SPEC-004 amendment A7);
+/// marks the regiment dirty if any left.
 pub(crate) fn sync_roster(agents: &AgentStore, reg: &mut Regiment) {
     let before = reg.roster.len();
     reg.roster.retain(|&id| {
         agents.is_alive(id)
             && agents
                 .flags(id)
-                .is_some_and(|f| f & (F_DISABLED | F_WOUNDED) == 0)
+                .is_some_and(|f| f & (F_DISABLED | F_WOUNDED | F_SKULK) == 0)
     });
     if reg.roster.len() != before {
         reg.dirty = true;
@@ -292,7 +302,16 @@ impl BattleState {
     ///   formation changes nothing.
     /// - In `Forming`, any order other than `Hold` replaces `pending` and starts when the
     ///   transition ends.
+    ///
+    /// With morale on, a regiment that is `FallingBack` or `Broken` takes no order at all
+    /// (SPEC-004 amendment A7): the call returns `false` and changes nothing.
     pub fn issue_order(&mut self, id: RegimentId, order: Order) -> bool {
+        if self
+            .morale_state(id)
+            .is_some_and(|k| !morale_allows_fire(k))
+        {
+            return false;
+        }
         let BattleState {
             world,
             regiments,
@@ -361,11 +380,22 @@ impl BattleState {
         }
     }
 
-    /// Whether a regiment may fire (see [`can_fire`](crate::can_fire)); `false` for an unknown id.
+    /// The morale state of a regiment; `None` with morale off or for an unknown regiment.
+    pub(crate) fn morale_state(&self, id: RegimentId) -> Option<crate::MoraleKind> {
+        self.morale
+            .as_ref()?
+            .regs
+            .get(usize::from(id.0))
+            .map(|r| r.kind)
+    }
+
+    /// Whether a regiment may fire: [`can_fire`](crate::can_fire) and, with morale on, a state of
+    /// `Steady`, `Wavering` or `Rallied` (SPEC-004 amendment A7); `false` for an unknown id.
     pub fn can_fire(&self, id: RegimentId) -> bool {
         self.regiments
             .get(usize::from(id.0))
             .is_some_and(crate::can_fire)
+            && self.morale_state(id).is_none_or(morale_allows_fire)
     }
 
     /// One whole tick in the order of REGISTRY section 6.2 for the steps that exist: TK-04

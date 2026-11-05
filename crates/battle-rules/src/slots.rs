@@ -1,5 +1,6 @@
 //! Slot geometry and soldier-to-slot assignment (SPEC-004 section 8), plus the roster helper.
 
+use crate::registry::F_SKULK;
 use crate::{fx_ratio, DrillTable, Formation, F_DISABLED, F_WOUNDED};
 use core_math::{Angle, Fx, Vec2Fx};
 use sim_state::{AgentId, AgentStore};
@@ -134,7 +135,7 @@ pub fn assign_slots(
 }
 
 /// The roster of a regiment: live agents whose `unit` is `unit` and that are neither
-/// `F_DISABLED` nor `F_WOUNDED`, in ascending slot index.
+/// `F_DISABLED`, `F_WOUNDED` nor `F_SKULK` (SPEC-004 amendment A7), in ascending slot index.
 pub fn regiment_roster(store: &AgentStore, unit: u32) -> Vec<AgentId> {
     store
         .iter_alive()
@@ -142,7 +143,7 @@ pub fn regiment_roster(store: &AgentStore, unit: u32) -> Vec<AgentId> {
             store.unit(id) == Some(unit)
                 && store
                     .flags(id)
-                    .is_some_and(|f| f & (F_DISABLED | F_WOUNDED) == 0)
+                    .is_some_and(|f| f & (F_DISABLED | F_WOUNDED | F_SKULK) == 0)
         })
         .collect()
 }

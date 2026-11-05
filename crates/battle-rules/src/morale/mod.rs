@@ -9,8 +9,10 @@ mod ceiling;
 mod events;
 mod helpers;
 mod inputs;
+mod report;
 mod state;
 mod step;
+mod symptoms;
 mod table;
 mod transition;
 
@@ -21,9 +23,11 @@ pub use ceiling::{
 pub use events::{enemy_boost, neighbour_shock};
 pub use helpers::{classify_exposure, lerp, load_gate, shock_unit, Exposure};
 pub use inputs::MoraleInputs;
+pub use report::{rank_causes, Cause, MoraleReport, ReportMemo, MARGIN_STEP_PM, TREND_BAND_PPM};
 pub use state::{
     officers_total, Indicator, Leader, MoraleEvent, MoraleEventKind, MoraleState, RegimentMorale,
 };
+pub use symptoms::{symptom_values, SymptomValues};
 pub use table::{
     MoraleGlobals, MoraleKind, MoraleTable, MoraleTrainingRow, SymptomRamp, SymptomRow,
 };

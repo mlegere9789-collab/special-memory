@@ -106,6 +106,8 @@ pub struct RegimentMorale {
     pub dwell: u16,
     /// Cohesion removed by one casualty of weight 1000 permille, ppm.
     pub shock_unit: u32,
+    /// Report-only memory (neighbour shock, trend); no rule reads it and it is not hashed.
+    pub memo: super::report::ReportMemo,
 }
 
 /// Morale of a battle: one entry per regiment that existed when it was enabled.
@@ -182,6 +184,10 @@ impl BattleState {
                 indicator: Indicator::Firm,
                 dwell: 0,
                 shock_unit: super::shock_unit(u32::try_from(s0).unwrap_or(u32::MAX), row.cap_pm),
+                memo: super::report::ReportMemo {
+                    c_prev: row.base_ppm,
+                    ..Default::default()
+                },
             });
         }
         self.morale = Some(MoraleState {

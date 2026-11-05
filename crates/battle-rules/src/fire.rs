@@ -5,7 +5,9 @@
 //! shot reads a fixed 50 words from that stream ([`crate::aim::draw_shot`]) whatever the
 //! outcome, so a soldier's shots depend on nothing but its own stream and situation.
 
-use crate::aim::{aim_in_smoke, draw_shot, launch_speeds, smoke_pm, AimInput};
+use crate::aim::{aim_shaken, draw_shot, launch_speeds, smoke_pm, AimInput};
+use crate::morale::{load_gate, symptom_values};
+use crate::registry::F_SKULK;
 use crate::registry::TAG_SET_FIRE_MODE;
 use crate::smoke::shot_units;
 use crate::{
@@ -444,6 +446,7 @@ impl BattleState {
             env,
             obstacles,
             sound_log,
+            morale,
             ..
         } = self;
         let source = env.as_ref().map(|e| &e.table().smoke);
@@ -454,6 +457,19 @@ impl BattleState {
         if fire.len() < agents.slot_count() {
             fire.resize(agents.slot_count(), FireExt::UNEQUIPPED);
         }
+        // With morale on, per regiment: may it fire, and its loading and shake permille
+        // (SPEC-005 amendment A11); `None` leaves every gate as it was.
+        let gates: Option<Vec<(bool, u16, u16)>> = morale.as_ref().map(|ms| {
+            ms.regs
+                .iter()
+                .map(|r| {
+                    let v = symptom_values(&tables.morale, r.kind, r.c);
+                    let ok = crate::battle::morale_allows_fire(r.kind);
+                    (ok, v.fire_pm as u16, v.shake_pm as u16)
+                })
+                .collect()
+        });
+        let tick = world.tick;
         let mut shooters: Vec<(u32, u16, u32)> = Vec::new();
         for (ri, rf) in regfire.iter().enumerate() {
             if rf.weapon.is_some() {
@@ -473,17 +489,20 @@ impl BattleState {
                 continue;
             };
             let f = &mut fire[idx as usize];
-            if flags & (F_DISABLED | F_WOUNDED) != 0 || f.rounds == 0 {
+            if flags & (F_DISABLED | F_WOUNDED | F_SKULK) != 0 || f.rounds == 0 {
                 continue;
             }
+            let gate = gates.as_ref().and_then(|g| g.get(usize::from(ri)).copied());
             let n = w.load_steps.len();
-            if usize::from(f.step) != n {
+            if usize::from(f.step) != n
+                && gate.is_none_or(|(_, fire_pm, _)| load_gate(tick, idx, fire_pm))
+            {
                 f.left = f.left.saturating_sub(1);
                 if f.left == 0 {
                     advance(f, w, reg.training);
                 }
             }
-            if usize::from(f.step) != n || !can_fire(reg) {
+            if usize::from(f.step) != n || !can_fire(reg) || gate.is_some_and(|(ok, _, _)| !ok) {
                 continue;
             }
             let FireMode::AtWill { target } = rf.mode else {
@@ -562,7 +581,7 @@ impl BattleState {
                 Some(e) => smoke.smoke_pm(pos, e.table().smoke.ref_units),
                 None => smoke_pm(smoke.cell_density(pos)),
             };
-            let a = aim_in_smoke(
+            let a = aim_shaken(
                 &AimInput {
                     weapon: w,
                     ammo,
@@ -575,6 +594,7 @@ impl BattleState {
                 },
                 &d,
                 range_pm,
+                gate.map_or(1000, |(_, _, shake_pm)| u32::from(shake_pm)),
             );
             let (horizontal, vz) = launch_speeds(ammo.muzzle_mm_s, a.elevation);
             let muzzle_mm = tables.damage.posture(posture_of(flags)).muzzle_height_mm;

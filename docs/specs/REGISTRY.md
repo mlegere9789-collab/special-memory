@@ -315,7 +315,7 @@ Labels are sequential per base spec in landing order (wave, then ticket id). A l
 | A4 | section 7 and 11: `Regiment` gains `status`, `class`, `since`; aggregate regiments | SPEC-008 | T-083 | 4 | pending |
 | A5 | section 4: heat and rest multipliers in the fatigue step | SPEC-009 | T-092 | 4 | landed |
 | A6 | section 9: steering target offset `peek_mm` | SPEC-009 | T-095 | 5 | landed |
-| A7 | sections 7 and 8: `issue_order` refusal in FallingBack and Broken, roster skips `F_SKULK`, `BattleState::can_fire` morale gate | SPEC-006 | T-064 | 6 | pending |
+| A7 | sections 7 and 8: `issue_order` refusal in FallingBack and Broken, roster skips `F_SKULK`, `BattleState::can_fire` morale gate | SPEC-006 | T-064 | 6 | landed |
 | A8 | public setters (fatigue, strength) and read accessors for belief building and the interface | SPEC-010, 015 | T-103 | 7 | pending |
 | A9 | movement details found while building steering: snap needs `\|vel\| <= accel / TICK_HZ`, T4-03 against the fatigue-aware reference, gait defaults, anchor and scenario geometry (was labelled A2 in the T-019 commit; A2 belongs to SPEC-007) | T-019 | T-019 | 1 | landed |
 
@@ -332,7 +332,7 @@ Labels are sequential per base spec in landing order (wave, then ticket id). A l
 | A8 | sections 4 and 8: with `env` `Some`, the SPEC-009 smoke source and update replace section 8; firing drain scaled by heat; `Weather` filled by the weather timeline | SPEC-009 | T-092, T-093 | 4 | landed |
 | A9 | sections 3 and 4: targeting gate, range-error multiplier, `smoke_at_shooter` | SPEC-009 | T-095 | 5 | landed |
 | A10 | section 4 (was SPEC-012 "A5"): `sound_log` of `FireRecord` | SPEC-012 | T-121 | 5 | landed |
-| A11 | sections 3 and 4: `load_gate` and `shake_pm` | SPEC-006 | T-064 | 6 | pending |
+| A11 | sections 3 and 4: `load_gate` and `shake_pm` | SPEC-006 | T-064 | 6 | landed |
 | A12 | section 6 (was SPEC-016 "A5"): `BattleEvent` buffer and `drain_events` | SPEC-016 | T-164 | 6 | pending |
 | A13 | `FireExt` rounds setter and read accessors (fire state, smoke, casualties) | SPEC-010, 015 | T-103 | 7 | pending |
 | A14 | section 7: counter `obstacle_stops` | SPEC-010 | T-106 | 10 | pending |
