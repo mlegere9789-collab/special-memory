@@ -15,7 +15,14 @@ fn read_tree(dir: &Path) -> Vec<(String, Vec<u8>)> {
         .chain(fs::read_dir(dir.join("tiles")).unwrap())
         .map(|e| e.unwrap().path())
         .filter(|p| p.is_file())
-        .map(|p| p.strip_prefix(dir).unwrap().display().to_string())
+        .map(|p| {
+            p.strip_prefix(dir)
+                .unwrap()
+                .components()
+                .map(|c| c.as_os_str().to_string_lossy().into_owned())
+                .collect::<Vec<_>>()
+                .join("/")
+        })
         .collect();
     names.sort();
     names
