@@ -1,0 +1,45 @@
+hash = "d46f38c754935db0"
+tick = 40
+clock_s = 36002
+side = 0
+full_view = 0
+
+[[regiment]]
+id = 0
+side = 0
+pos_x = 11192684760
+pos_y = 0
+heading = 0
+formation = 0
+strength = 10
+order = 2
+level = 2
+margin = -7
+trend = -1
+factors = [[3, -120], [1, 45]]
+
+[[enemy]]
+unit = 1
+last_seen = 12
+pos_x = 12884901888
+pos_y = 506806140928
+err = 4500
+lo = 100
+hi = 300
+formation_known = 0
+
+[[order]]
+id = 7
+regiment = 0
+tag = 1
+arg = 0
+sent = 10
+eta_lo = 60
+eta_hi = 90
+eta_hi0 = 80
+ack = 35
+interp_tag = 3
+interp_arg = 1
+executed = -1
+completed = -1
+lost_known = 0

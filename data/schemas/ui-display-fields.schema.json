@@ -1,0 +1,24 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "ui-display-fields.schema.json",
+  "title": "Display-field registry of the interface (SPEC-015 section 14)",
+  "type": "object",
+  "required": ["field"],
+  "additionalProperties": false,
+  "properties": {
+    "field": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["name", "kind", "source"],
+        "additionalProperties": false,
+        "properties": {
+          "name": {"type": "string", "pattern": "^[A-Z][A-Za-z0-9]*\\.[a-z][a-z0-9_]*$"},
+          "kind": {"enum": ["exact", "band", "range"]},
+          "source": {"type": "string", "pattern": "\\S"}
+        }
+      }
+    }
+  }
+}
