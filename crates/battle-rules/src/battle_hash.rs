@@ -245,8 +245,10 @@ const ENV_MAGIC: u32 = 0x45_4E_56_31;
 /// clear_vis i32, light i32`), powder damp `u32`, ground wetness `u32`, and the smoke losses
 /// `lost_edge u64, lost_decay u64, lost_cap u64`; per regiment ascending `EnvInputs` (`smoke_pm u16,
 /// blind_pm u16, view_blocked u8, heat_drain_pm u16`, zeros before the first period); per
-/// locomotion slot ascending `peek_mm u16, blind u8, fired u8`. The observer list and the sight
-/// logs follow in a later ticket.
+/// locomotion slot ascending `peek_mm u16, blind u8, fired u8`; the registered observers (`u32`
+/// count, then `id u16, team u8, pos x i64, pos y i64, eye_mm u32, vision_mm u32`); the sight
+/// logs by team ascending (`u32` count, then `team u8`, entry count `u32` and per entry `observer
+/// u16, enemy u16, tick u64, men_seen u16, quality_pm u16, centroid x i64, centroid y i64`).
 fn write_environment(h: &mut StateHasher, state: &BattleState) {
     let Some(env) = &state.env else {
         return;
@@ -276,5 +278,29 @@ fn write_environment(h: &mut StateHasher, state: &BattleState) {
         h.write_u16(l.peek_mm);
         h.write_u8(u8::from(l.blind));
         h.write_u8(u8::from(l.fired));
+    }
+    let count = |n: usize| u32::try_from(n).unwrap_or(u32::MAX);
+    h.write_u32(count(state.observers.list.len()));
+    for o in &state.observers.list {
+        h.write_u16(o.id);
+        h.write_u8(o.team);
+        h.write_i64(o.pos.x.raw());
+        h.write_i64(o.pos.y.raw());
+        h.write_u32(o.eye_mm as u32);
+        h.write_u32(o.vision_mm);
+    }
+    h.write_u32(count(state.observers.logs.len()));
+    for (team, log) in &state.observers.logs {
+        h.write_u8(*team);
+        h.write_u32(count(log.entries().len()));
+        for s in log.entries() {
+            h.write_u16(s.observer);
+            h.write_u16(s.enemy.0);
+            h.write_u64(s.tick);
+            h.write_u16(s.men_seen);
+            h.write_u16(s.quality_pm);
+            h.write_i64(s.centroid.x.raw());
+            h.write_i64(s.centroid.y.raw());
+        }
     }
 }

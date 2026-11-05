@@ -85,6 +85,8 @@ pub struct BattleState {
     /// The environment layer (SPEC-009): weather timeline, heat, powder damp, ground wetness;
     /// `None` leaves every SPEC-004 and SPEC-005 behaviour and the hash unchanged.
     pub env: Option<Environment>,
+    /// Registered observers and the sighting logs (SPEC-009 section 8).
+    pub(crate) observers: crate::observers::Observers,
     /// Weapon and fire mode per regiment.
     pub(crate) regfire: Vec<RegFire>,
     /// Range tables built for the equipped weapon and ammunition pairs.
@@ -205,6 +207,7 @@ impl BattleState {
             cmd: None,
             morale: None,
             env: None,
+            observers: crate::observers::Observers::default(),
             regfire: Vec::new(),
             ranges: Vec::new(),
             pending: Vec::new(),
@@ -363,7 +366,7 @@ impl BattleState {
 
     /// One whole tick in the order of REGISTRY section 6.2 for the steps that exist: TK-04
     /// movement, TK-05 grid rebuild and release of expired disables, TK-06 fire, TK-07 flight and
-    /// hit, TK-10 casualties, TK-11 morale (only with `morale` `Some`), TK-12 smoke (decay, or with `env` `Some` the SPEC-009 update), TK-13 the peek update (only with `env` `Some`), TK-14 roster updates, TK-15 `advance_tick`
+    /// hit, TK-10 casualties, TK-11 morale (only with `morale` `Some`), TK-12 smoke (decay, or with `env` `Some` the SPEC-009 update), TK-13 the peek update and the observers (only with `env` `Some`), TK-14 roster updates, TK-15 `advance_tick`
     /// (SPEC-005 amendment A5); with `env` `Some`, TK-02 first (SPEC-009). A later layer adds its step here at its place.
     pub fn step(&mut self) {
         self.step_with(false);
@@ -396,6 +399,7 @@ impl BattleState {
         self.step_morale();
         self.step_smoke();
         self.step_sight();
+        self.step_observers();
         self.step_rosters();
         self.world.advance_tick();
     }

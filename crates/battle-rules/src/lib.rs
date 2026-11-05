@@ -136,6 +136,10 @@ pub use sight::{
     ElevationGrid, Sight, SightWorld,
 };
 
+// T-096
+mod observers;
+pub use observers::{Observer, SightLog, SightVisibility, Sighting, OBSERVER_ID_BASE};
+
 // T-024
 pub mod calibration;
 
