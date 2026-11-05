@@ -193,3 +193,10 @@ Sections 7 and 8 gain the morale gates of SPEC-006 section 5.8. With `morale` `N
 - **`issue_order` (section 7).** It returns `false` and changes nothing for a regiment whose morale state is `FallingBack` or `Broken`, whatever the order. The flight orders of SPEC-006 section 5.5 are written by the morale step straight into `Regiment::order` and are not refused.
 - **`can_fire` (section 7).** The free function `can_fire(&Regiment)` is unchanged. `BattleState::can_fire(id)` is that function and, when `morale` is `Some`, the morale state is `Steady`, `Wavering` or `Rallied`.
 - **Roster (section 8).** `regiment_roster` and `sync_roster` also leave out a soldier carrying `F_SKULK`; a released disabled soldier carrying `F_SKULK` is not put back on the roster. Such a soldier is alive, steered to the slot the morale step gave it, and not counted in any layout.
+
+## Amendment A8 (from T-103, SPEC-010)
+Section 7 gains the setters and read accessors the belief builder of SPEC-010 section 7 and the interface need, so that a world can be built from reports without reaching into the fields. None of them runs in a step; nothing here changes a hash or a golden.
+- **`set_fatigue(id, ppm) -> bool`.** Sets the `fatigue` of every soldier on the regiment's roster to `min(ppm, FATIGUE_MAX)`; `false` for an unknown regiment.
+- **`set_strength(id, n) -> bool`.** Keeps the first `n` soldiers of the roster (ascending slot order) and despawns the rest; the regiment becomes `dirty`, so the close-up regenerates the layout on its next interval. The rounds of a despawned soldier of an equipped regiment are added to `acct.lost` (SPEC-005 amendment A7), so the round identity still holds. It never raises a strength: `false` and no change for an unknown regiment, for `n` above the roster length, and for a regiment of class 2.
+- **`strength(id) -> Option<u32>`.** Fit soldiers: the roster length, or `aggregate.fit` for a regiment of class 2; `None` for an unknown regiment.
+- **`fatigue_pm(id) -> Option<u16>`.** Mean fatigue of the roster in permille, `sum_ppm / (1000 * n)` truncating; 0 for an empty roster; `None` for an unknown regiment.

@@ -9,6 +9,8 @@
 #![forbid(unsafe_code)]
 
 mod ai;
+mod belief;
+mod lookahead;
 mod notes;
 mod outbox;
 mod personality;
@@ -25,6 +27,15 @@ pub use port::{
     ObjectiveKind, OrderBody, OutMessage, OwnReport, SeatId, UnitRef,
 };
 
+pub use belief::{
+    Area, BeliefView, Foe, Frame, GridSpec, BELIEF_MAX_SOLDIERS, BELIEF_RADIUS_MM,
+    EST_LATENCY_TICKS,
+};
+pub use lookahead::{
+    aggregate_scores, build_belief, forecast, plan_budget, score_sample, tactical_budget,
+    BudgetPlan, EnemyModel, ForecastResult, Script, ScriptItem, HORIZON_MAX, HORIZON_MIN,
+    TL_BUDGET_DIV, TL_CANDIDATES,
+};
 pub use personality::{personality_for, Personality};
 pub use tables::{
     AiGlobals, AiTables, Bounds, Difficulty, DifficultyRow, RelationFact, RelationKind, Trait,

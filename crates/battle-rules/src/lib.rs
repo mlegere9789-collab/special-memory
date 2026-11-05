@@ -147,6 +147,9 @@ pub mod calibration;
 mod sound_log;
 pub use sound_log::{FireRecord, FireRecordKind};
 
+// T-103
+mod readout;
+
 // T-084
 mod runner;
 pub use runner::{embedded_rules, Battle, BattleLedger, FidelityState};
