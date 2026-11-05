@@ -73,9 +73,9 @@ CT-009-1 smoke yield, extinction, decay, diffusion (bands E1, E2, E5). CT-009-2 
 | E2 | same at 3 m/s crosswind | 200 | 900 | unverified CT-009-1 |
 | E3 | seconds for a 91 m line to recover transmit 500 after ceasing fire, calm | 30 | 180 | unverified CT-009-1 |
 | E4 | casualties/100 with smoke over without, `cal_line` rifle 183 m | 300 | 900 (permille) | qualitative: fought at shorter range, CWV p511; unverified CT-009-1, CT-009-3 |
-| E5 | fatigue after 1 h at quick, 14:00 day 2 over 04:30 | 1100 | 1500 (permille) | qualitative heat, CWV p079, p116; unverified CT-009-4 |
+| E5 | fatigue after 900 s at quick (amendment A2), 14:00 day 2 over 04:30 | 1100 | 1500 (permille) | qualitative heat, CWV p079, p116; unverified CT-009-4 |
 | E6 | misfire ppm at full damp over dry | 2500 | 3500 (permille) | wet powder, CWV p510 4.2 via SPEC-005; unverified CT-009-5 |
-| E7 | `crest` (regiment 60 m behind a 3 m crest): share of men with a shot after 60 s | 800 | 1000 (permille) | unverified CT-009-3 |
+| E7 | `crest` (regiment 60 m behind a 1.5 m crest, amendment A2): share of men with a shot after 60 s | 800 | 1000 (permille) | unverified CT-009-3 |
 | E8 | hill observer sees at least this share of enemy regiments with LOS within 1500 m, clear day | 700 | 1000 (permille) | unverified CT-009-3 |
 
 ## 11. Acceptance tests (tests first; goldens recorded once from the stated reference)
@@ -106,3 +106,16 @@ R1 Extinction, yield and decay are unsourced and set visibility (E1 to E4). R2 T
 
 ## 14. Done when
 fmt, clippy `-D warnings`, `cargo test --workspace` (also `--release`) and T9-01 to T9-19 pass; schemas, data, fixtures and goldens committed and verified on three platforms; scans pass; public items documented; no floating point outside `#[cfg(test)]`; T9-18 numbers recorded in a cycle report.
+
+## Amendment A2 (from T-097 calibration)
+The first run of the environment bands (CYCLE-environment) missed E2 (transmission between 91 m lines in a 3 m/s crosswind, 17 permille against 200 to 900) because the placeholder yield keeps the line's own muzzle cells opaque even when the wind carries smoke along the line. The row below was fitted on data only; no band, formula or test threshold changed. It stays a placeholder with its target.
+
+| Row | Old | New | Band | Target |
+|---|---|---|---|---|
+| `[smoke]` `yield_pm` | 550 | 220 | E2, with E1, E3 and E4 re-checked | CT-009-1 |
+
+Why plausible: the model keeps all smoke in one 3 m column, but a volley's plume expands and rises well above 3 m within seconds, so the share of the powder mass that stays in the layer that blocks sight is below the solid-residue share of the powder (the old value). The figure is unsourced either way (section 3.1).
+
+**Scenario parameter.** The scenario `crest` of band E7 uses a crest of 1.5 m (`crest_dm = 15`), not 3 m. A soldier's eye is 1.7 m above his ground and the target aim point 1.02 m, so a ray over a crest higher than the shooter's own rise cannot clear it: with the crest ramp 68 to 132 m and a peek of at most `peek_max_mm`, 1.5 m gives every man a shot, 1.6 m about half, 1.7 m and above none. The band limits are unchanged; the E7 row of section 10 reads "a 1.5 m crest".
+
+**Measurement window of E5.** E5 reads fatigue after 900 s at quick time, not after 1 h; the limits 1100 to 1500 permille are unchanged. The SPEC-004 quick drain (28 ppm per tick, CT-004-2) saturates fatigue at 1,000,000 after about 1790 s in cool weather and about 1350 s at the 14:00 heat, so after 1 h the ratio is 1.000 in any weather and says nothing about heat. The quantity E5 tests is the heat multiplier on drain, which shows only before saturation. When CT-004-2 is replaced by sourced data the 1 h window of the first text must be revisited.

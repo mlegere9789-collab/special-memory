@@ -84,7 +84,7 @@ pub struct LineSet {
 }
 
 /// Runs `f` for every seed on its own thread and returns the results in seed order.
-fn per_seed<T: Send>(seeds: &[u64], f: impl Fn(u64) -> T + Sync) -> Vec<T> {
+pub(crate) fn per_seed<T: Send>(seeds: &[u64], f: impl Fn(u64) -> T + Sync) -> Vec<T> {
     let f = &f;
     std::thread::scope(|s| {
         let handles: Vec<_> = seeds.iter().map(|&seed| s.spawn(move || f(seed))).collect();
@@ -415,8 +415,8 @@ impl Suite<'_> {
     }
 }
 
-/// Runs the bands of `family` (`fire` for B1 to B11) described by the text of the band file and
-/// returns every measured row.
+/// Runs the bands of `family` (`fire` for B1 to B11, `env` for E1 to E8) described by the text
+/// of the band file and returns every measured row.
 ///
 /// Errors: [`DataError`] when the band file does not parse.
 pub fn run_band_suite(
@@ -424,6 +424,9 @@ pub fn run_band_suite(
     tables: &Tables,
     bands_toml: &str,
 ) -> Result<SuiteReport, DataError> {
+    if family == "env" {
+        return crate::calibration::env::run_env_suite(tables, bands_toml);
+    }
     let bands: Vec<Band> = parse_bands(bands_toml)?
         .into_iter()
         .filter(|b| b.family == family)

@@ -38,7 +38,7 @@ heat_curve = [
 period_ticks = 4
 cell_mm = 8000
 height_mm = 3000
-yield_pm = 550
+yield_pm = 220
 misfire_pm = 250
 diffuse_ppm = 10000
 decay_ppm = 4000
@@ -50,7 +50,7 @@ confidence = "unverified"
 placeholder = true
 calibration_target = "CT-009-1"
 sources = [{ document = "CWV", page = 511, note = "section 4.3, qualitative only" }, { document = "CWV", page = 451, note = "section 3.4, smoke coupled to gameplay" }]
-note = "The yield is a remembered figure, unsourced."
+note = "The yield is an unsourced model coefficient; 550 was a remembered figure, fitted to 220 so that band E2 holds (SPEC-009 amendment A2)."
 
 [sight]
 period_ticks = 20

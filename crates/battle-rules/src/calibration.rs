@@ -5,6 +5,7 @@
 //! or a table: a missed band is reported, never tuned away.
 
 pub mod bands;
+pub mod env;
 pub mod fire;
 pub mod report;
 

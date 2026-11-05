@@ -1,0 +1,8 @@
+{
+  "format": 1,
+  "rows": [
+    {"scenario": "env_smoke_line", "parameters": "rifle_58 trained 91440 light wind", "ticks": 2400, "seed": 1, "final_hash": "a477372036e44c0b"},
+    {"scenario": "env_hill_hq", "parameters": "hill observer, valley fight", "ticks": 1200, "seed": 2, "final_hash": "49f929a0a3d19c6a"},
+    {"scenario": "env_heat_march", "parameters": "400 quick, 14:00 day 2", "ticks": 4000, "seed": 3, "final_hash": "a3cc5f8d9a051b8c"}
+  ]
+}
