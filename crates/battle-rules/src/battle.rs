@@ -95,6 +95,9 @@ pub struct BattleState {
     pub(crate) counters: Counters,
     /// Serial of the next materialised soldier (SPEC-005 amendment A7).
     pub soldier_serial: u32,
+    /// Shots and bursts of the current tick, cleared when a step starts (SPEC-005 amendment
+    /// A10; not hashed).
+    pub sound_log: Vec<crate::FireRecord>,
 }
 
 /// Drops soldiers that are gone, disabled or wounded; marks the regiment dirty if any left.
@@ -210,6 +213,7 @@ impl BattleState {
             pending: Vec::new(),
             counters: Counters::default(),
             soldier_serial: 0,
+            sound_log: Vec::new(),
         }
     }
 
@@ -373,6 +377,7 @@ impl BattleState {
     /// the result is the same).
     #[doc(hidden)]
     pub fn step_with(&mut self, reverse_flight: bool) {
+        self.sound_log.clear();
         self.step_environment();
         self.step_movement_to_end(reverse_flight);
     }
@@ -380,6 +385,7 @@ impl BattleState {
     /// [`BattleState::step`] with the command layer's step TK-03 (SPEC-007) between the
     /// environment and movement steps. With `cmd` `None` it is exactly [`BattleState::step`].
     pub fn step_with_command(&mut self, table: &CommandTable) {
+        self.sound_log.clear();
         self.step_environment();
         self.step_command(table);
         self.step_movement_to_end(false);
@@ -535,6 +541,11 @@ impl BattleState {
             let h = e.heat();
             (h.drain_pm, h.rest_pm)
         })
+    }
+
+    /// The shots and bursts of the current tick (SPEC-005 amendment A10).
+    pub fn sound_log(&self) -> &[crate::FireRecord] {
+        &self.sound_log
     }
 
     /// The state hash, see [`battle_hash`](crate::battle_hash).

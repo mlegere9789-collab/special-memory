@@ -139,6 +139,10 @@ pub use sight::{
 // T-024
 pub mod calibration;
 
+// T-121
+mod sound_log;
+pub use sound_log::{FireRecord, FireRecordKind};
+
 // T-084
 mod runner;
 pub use runner::{embedded_rules, Battle, BattleLedger, FidelityState};
