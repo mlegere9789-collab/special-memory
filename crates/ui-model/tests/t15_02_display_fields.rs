@@ -12,12 +12,14 @@ use ui_model::{
 
 const FIELDS: &str = include_str!("../../../data/ui/display-fields.toml");
 /// Structs whose fields are display fields, with the file that defines them.
-const SHOWN: [(&str, &str); 5] = [
+const SHOWN: [(&str, &str); 7] = [
     ("Snapshot", "snapshot.rs"),
     ("RegimentView", "snapshot.rs"),
     ("EnemyView", "snapshot.rs"),
     ("MoraleReport", "source.rs"),
     ("OrderRecord", "source.rs"),
+    ("OrderView", "status.rs"),
+    ("MoraleView", "morale.rs"),
 ];
 
 /// `Struct.field` for every public field in the shown structs, leaving out fields that only

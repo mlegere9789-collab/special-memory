@@ -1,0 +1,59 @@
+# What the player is told each morale level looks like (SPEC-015 section 6): a string-table key for
+# the word, a distinct icon id and the symptom set. The figure for slowed fire is the simulation's
+# loading multiplier and is never stored here. Level ids follow MoraleReport.level (CT-015-3).
+schema = "ui-symptoms/1"
+
+[[level]]
+id = 0
+word = "morale.level.steady"
+icon = 0
+fire_slowed = false
+looking_back = false
+ranks_thinning = false
+confidence = "unverified"
+placeholder = true
+calibration_target = "CT-015-3"
+
+[[level]]
+id = 1
+word = "morale.level.uneasy"
+icon = 1
+fire_slowed = false
+looking_back = true
+ranks_thinning = false
+confidence = "unverified"
+placeholder = true
+calibration_target = "CT-015-3"
+
+[[level]]
+id = 2
+word = "morale.level.wavering"
+icon = 2
+fire_slowed = false
+looking_back = true
+ranks_thinning = true
+confidence = "unverified"
+placeholder = true
+calibration_target = "CT-015-3"
+
+[[level]]
+id = 3
+word = "morale.level.breaking"
+icon = 3
+fire_slowed = true
+looking_back = true
+ranks_thinning = false
+confidence = "unverified"
+placeholder = true
+calibration_target = "CT-015-3"
+
+[[level]]
+id = 4
+word = "morale.level.broken"
+icon = 4
+fire_slowed = true
+looking_back = true
+ranks_thinning = true
+confidence = "unverified"
+placeholder = true
+calibration_target = "CT-015-3"

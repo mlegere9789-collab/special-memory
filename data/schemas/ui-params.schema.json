@@ -1,0 +1,256 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "ui-params.schema.json",
+  "title": "Interface parameter files (SPEC-015 sections 4 to 6): confidence, status, morale, symptoms",
+  "description": "One of four documents, told apart by the schema key. Integers only; every row carries provenance as in rules-common.schema.json.",
+  "$defs": {
+    "provenance_fields": {
+      "properties": {
+        "confidence": {
+          "$ref": "common.schema.json#/$defs/confidence"
+        },
+        "placeholder": {
+          "type": "boolean"
+        },
+        "calibration_target": {
+          "type": "string",
+          "pattern": "^CT-015-[0-9]+$"
+        },
+        "sources": {
+          "$ref": "common.schema.json#/$defs/sources"
+        },
+        "second_source": {
+          "type": "string"
+        },
+        "note": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "confidence"
+      ],
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "placeholder": {
+                "const": true
+              }
+            },
+            "required": [
+              "placeholder"
+            ]
+          },
+          "then": {
+            "required": [
+              "calibration_target"
+            ]
+          },
+          "else": {
+            "required": [
+              "sources"
+            ]
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "confidence": {
+                "const": "verified"
+              }
+            },
+            "required": [
+              "confidence"
+            ]
+          },
+          "then": {
+            "required": [
+              "second_source"
+            ],
+            "properties": {
+              "second_source": {
+                "minLength": 1
+              }
+            }
+          }
+        }
+      ]
+    }
+  },
+  "oneOf": [
+    {
+      "type": "object",
+      "required": [
+        "schema",
+        "params"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "schema": {
+          "const": "ui-confidence/1"
+        },
+        "params": {
+          "type": "object",
+          "required": [
+            "age_pm_per_s",
+            "err_pm_per_100m"
+          ],
+          "properties": {
+            "age_pm_per_s": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 1000
+            },
+            "err_pm_per_100m": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 1000
+            }
+          },
+          "unevaluatedProperties": false,
+          "allOf": [
+            {
+              "$ref": "#/$defs/provenance_fields"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "type": "object",
+      "required": [
+        "schema",
+        "params"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "schema": {
+          "const": "ui-status/1"
+        },
+        "params": {
+          "type": "object",
+          "required": [
+            "lost_grace_ticks"
+          ],
+          "properties": {
+            "lost_grace_ticks": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 4294967295
+            }
+          },
+          "unevaluatedProperties": false,
+          "allOf": [
+            {
+              "$ref": "#/$defs/provenance_fields"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "type": "object",
+      "required": [
+        "schema",
+        "params"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "schema": {
+          "const": "ui-morale/1"
+        },
+        "params": {
+          "type": "object",
+          "required": [
+            "large_pm",
+            "moderate_pm",
+            "warn_margin_pm"
+          ],
+          "properties": {
+            "large_pm": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 1000
+            },
+            "moderate_pm": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 1000
+            },
+            "warn_margin_pm": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 1000
+            }
+          },
+          "unevaluatedProperties": false,
+          "allOf": [
+            {
+              "$ref": "#/$defs/provenance_fields"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "type": "object",
+      "required": [
+        "schema",
+        "level"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "schema": {
+          "const": "ui-symptoms/1"
+        },
+        "level": {
+          "type": "array",
+          "minItems": 5,
+          "maxItems": 5,
+          "items": {
+            "type": "object",
+            "required": [
+              "id",
+              "word",
+              "icon",
+              "fire_slowed",
+              "looking_back",
+              "ranks_thinning"
+            ],
+            "properties": {
+              "id": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 4
+              },
+              "word": {
+                "type": "string",
+                "pattern": "^[a-z][a-z0-9_.]*$"
+              },
+              "icon": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 255
+              },
+              "fire_slowed": {
+                "type": "boolean"
+              },
+              "looking_back": {
+                "type": "boolean"
+              },
+              "ranks_thinning": {
+                "type": "boolean"
+              }
+            },
+            "unevaluatedProperties": false,
+            "allOf": [
+              {
+                "$ref": "#/$defs/provenance_fields"
+              }
+            ]
+          }
+        }
+      }
+    }
+  ]
+}

@@ -1,0 +1,10 @@
+# Order status timing (SPEC-015 section 5). The grace after the acknowledgement deadline is the
+# SPEC-007 value; the adapter passes the live one, this row is the interface default (CT-015-2).
+schema = "ui-status/1"
+
+[params]
+lost_grace_ticks = 2400
+confidence = "unverified"
+placeholder = true
+calibration_target = "CT-015-2"
+note = "Mirrors the SPEC-007 lost_grace_ticks placeholder: two minutes of silence at 20 ticks per second."
