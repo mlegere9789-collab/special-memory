@@ -37,4 +37,10 @@ field = [
   { name = "OrderRecord.executed_tick", kind = "exact", source = "InfoSource.orders executed_tick" },
   { name = "OrderRecord.completed_tick", kind = "exact", source = "InfoSource.orders completed_tick" },
   { name = "OrderRecord.lost_known", kind = "exact", source = "InfoSource.orders lost_known" },
+  { name = "OrderView.status", kind = "band", source = "OrderRecord ack, reading, execution, completion and loss marks, eta_hi, eta_hi0 and the clock" },
+  { name = "OrderView.misread", kind = "exact", source = "OrderRecord.interpreted differs from OrderRecord.order" },
+  { name = "MoraleView.level", kind = "exact", source = "MoraleReport.level" },
+  { name = "MoraleView.warn", kind = "band", source = "MoraleReport.margin below warn_margin_pm at level 2" },
+  { name = "MoraleView.trend", kind = "exact", source = "MoraleReport.trend" },
+  { name = "MoraleView.top", kind = "band", source = "MoraleReport.factors, the three largest by absolute value, banded Large, Moderate or Slight" },
 ]

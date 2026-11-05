@@ -1,0 +1,13 @@
+# Morale feedback (SPEC-015 section 6), in permille of the SPEC-006 ceiling. A factor is Large from
+# large_pm, Moderate from moderate_pm, else Slight; the early warning shows while a wavering
+# regiment is less than warn_margin_pm above the next worse level (CT-015-3).
+schema = "ui-morale/1"
+
+[params]
+large_pm = 200
+moderate_pm = 80
+warn_margin_pm = 100
+confidence = "unverified"
+placeholder = true
+calibration_target = "CT-015-3"
+note = "Two steps of the 50 permille margin band warn before the break."

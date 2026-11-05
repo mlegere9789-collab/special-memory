@@ -4,6 +4,9 @@
 Checks under the root:
   - data/ui/display-fields.toml against data/schemas/ui-display-fields.schema.json, plus: no name is
     listed twice and every field has a non-blank source (T15-02).
+  - data/ui/{confidence,status,morale,symptoms}.toml against data/schemas/ui-params.schema.json (integers
+    only, provenance on every row, calibration targets of SPEC-015), plus: the morale thresholds are
+    ordered and the five levels differ in icon, word and symptom set.
   - crates/ui-model/tests/golden/snapshot.toml: the snapshot hash is re-derived here with an encoder
     written from the canonical encoding in crates/ui-model/src/hash.rs and must equal the recorded one.
 tools/validators/ui.py registers `validate` as a plugin of tools/validate_data.py (rule R8).
@@ -15,6 +18,7 @@ import sys
 import tomllib
 
 from jsonschema import Draft202012Validator
+from referencing import Registry, Resource
 
 FNV_OFFSET = 0xCBF29CE484222325
 FNV_PRIME = 0x100000001B3
@@ -53,6 +57,63 @@ def check_display_fields(root):
         if name in seen:
             problems.append("%s: field %s is listed twice" % (rel, name))
         seen.add(name)
+    return problems
+
+
+PARAM_FILES = ("confidence", "status", "morale", "symptoms")
+
+
+def _registry(root):
+    reg = Registry()
+    sdir = os.path.join(root, "data", "schemas")
+    for name in sorted(os.listdir(sdir)):
+        if name.endswith(".schema.json"):
+            with open(os.path.join(sdir, name), encoding="utf-8") as f:
+                reg = reg.with_resource(name, Resource.from_contents(json.load(f)))
+    return reg
+
+
+def _level_problems(rel, levels):
+    problems = []
+    ids = sorted(row.get("id") for row in levels)
+    if ids != [0, 1, 2, 3, 4]:
+        problems.append("%s: levels 0 to 4 must each be listed once, found %s" % (rel, ids))
+    for key, label in (("icon", "icon"), ("word", "word")):
+        values = [row.get(key) for row in levels]
+        if len(set(values)) != len(values):
+            problems.append("%s: levels share a %s" % (rel, label))
+    sets = [(row.get("fire_slowed"), row.get("looking_back"), row.get("ranks_thinning")) for row in levels]
+    if len(set(sets)) != len(sets):
+        problems.append("%s: levels share a symptom set" % rel)
+    return problems
+
+
+def check_params(root):
+    """Schema, provenance and cross-field rules of the SPEC-015 parameter files that exist."""
+    problems = []
+    reg = None
+    for name in PARAM_FILES:
+        rel = "data/ui/%s.toml" % name
+        if not os.path.exists(os.path.join(root, rel)):
+            continue
+        try:
+            rec = _load(root, rel)
+        except tomllib.TOMLDecodeError as e:
+            problems.append("%s: not valid TOML: %s" % (rel, e))
+            continue
+        if reg is None:
+            reg = _registry(root)
+        branch = {"$ref": "ui-params.schema.json#/oneOf/%d" % PARAM_FILES.index(name)}
+        errors = list(Draft202012Validator(branch, registry=reg).iter_errors(rec))
+        for err in errors:
+            problems.append("%s: schema: %s at /%s" % (rel, err.message[:120], "/".join(map(str, err.absolute_path))))
+        if errors:
+            continue
+        params = rec.get("params", {})
+        if name == "morale" and params.get("moderate_pm", 0) > params.get("large_pm", 0):
+            problems.append("%s: moderate_pm must not exceed large_pm" % rel)
+        if name == "symptoms":
+            problems += _level_problems(rel, rec.get("level", []))
     return problems
 
 
@@ -105,7 +166,7 @@ def check_snapshot_golden(root):
 
 
 def validate(root):
-    return check_display_fields(root) + check_snapshot_golden(root)
+    return check_display_fields(root) + check_params(root) + check_snapshot_golden(root)
 
 
 def main():

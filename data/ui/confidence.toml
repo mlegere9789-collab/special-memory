@@ -1,0 +1,12 @@
+# Confidence shading of enemy markers (SPEC-015 section 4): the score falls with the age of the
+# last sighting (permille per second) and with the position error (permille per 100 m). The band
+# edges (750, 500, 250) are fixed by the spec. Placeholders awaiting the playtest (CT-015-1).
+schema = "ui-confidence/1"
+
+[params]
+age_pm_per_s = 5
+err_pm_per_100m = 100
+confidence = "unverified"
+placeholder = true
+calibration_target = "CT-015-1"
+note = "Weights chosen so a one-minute-old sighting at 100 m error reads Probable."
