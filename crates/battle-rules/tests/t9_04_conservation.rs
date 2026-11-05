@@ -9,19 +9,19 @@ use t93_support::{at, balance, centre, grid, params, put, Lcg};
 
 #[test]
 fn add_smoke_scales_by_yield_and_misfire_and_saturates_at_the_cap() {
-    let p = params(&[("cell_cap = 1000000", "cell_cap = 3000")]);
+    let p = params(&[("cell_cap = 1000000", "cell_cap = 1000")]);
     let mut g = grid(4, 4);
     g.add_smoke(centre(1, 1), 3900, false, &p);
-    assert_eq!(at(&g, 1, 1), 2145); // 3900 * 550 / 1000
+    assert_eq!(at(&g, 1, 1), 858); // 3900 * 220 / 1000
     g.add_smoke(centre(2, 2), 3900, true, &p);
-    assert_eq!(at(&g, 2, 2), 536); // 2145 * 250 / 1000, floors in order
-    g.add_smoke(centre(1, 1), 3900, false, &p); // 4290 asked, 855 fit
-    assert_eq!(at(&g, 1, 1), 3000);
-    assert_eq!(g.lost_cap, 2145 - 855);
-    assert_eq!(g.injected, 2145 + 536 + 2145);
+    assert_eq!(at(&g, 2, 2), 214); // 858 * 250 / 1000, floors in order
+    g.add_smoke(centre(1, 1), 3900, false, &p); // 1716 asked, 142 fit
+    assert_eq!(at(&g, 1, 1), 1000);
+    assert_eq!(g.lost_cap, 858 - 142);
+    assert_eq!(g.injected, 858 + 214 + 858);
     assert_eq!(balance(&g).0, balance(&g).1);
     g.add_smoke(centre(1, 1), 0, false, &p);
-    assert_eq!(at(&g, 1, 1), 3000);
+    assert_eq!(at(&g, 1, 1), 1000);
     assert_eq!(SmokeGrid::empty().total(), 0);
     let mut e = SmokeGrid::empty();
     e.add_smoke(Vec2Fx::ZERO, 3900, false, &p);
@@ -30,7 +30,7 @@ fn add_smoke_scales_by_yield_and_misfire_and_saturates_at_the_cap() {
 
 #[test]
 fn injected_equals_density_plus_the_three_losses_for_2000_updates() {
-    let p = params(&[("cell_cap = 1000000", "cell_cap = 20000")]);
+    let p = params(&[("cell_cap = 1000000", "cell_cap = 8000")]);
     let mut g = grid(24, 20);
     let mut rng = Lcg(7);
     let mut asked = 0u64;

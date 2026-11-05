@@ -91,7 +91,7 @@ fn with_the_environment_on_a_shot_adds_the_yield_and_no_per_tick_decay_runs() {
         b.world.advance_tick();
         assert!(b.world.tick < 2000);
     }
-    let want = 100 * (powder * 550 / 1000);
+    let want = 100 * (powder * 220 / 1000);
     assert_eq!(u64::from(b.smoke.cell_density(metres(100, 200))), want);
     assert_eq!(b.smoke.injected, want);
     // Tick 0 mod 4 is not an update tick: the density stays.

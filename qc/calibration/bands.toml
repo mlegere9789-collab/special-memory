@@ -152,3 +152,105 @@ confidence = "unverified"
 placeholder = true
 calibration_target = "CT-005-5"
 note = "Friendly hits over all hits over every cal_line run, in permille."
+
+# SPEC-009 section 10: the environment bands E1 to E8 (family "env"), means over seeds 1 to 8.
+# Integer-only like the fire bands. `weapon` names the variant (calm or crosswind); `at_mm` the
+# distance of E4. E1 and E2 are permille of light, E3 seconds, E4 to E8 ratios and shares times
+# 1000. A band changes only through a SPEC-009 amendment that cites evidence; simulation output
+# never sets a limit.
+
+[[band]]
+id = "E1"
+family = "env"
+metric = "line_transmit"
+weapon = "calm"
+scale = 1
+points = [{ low = 0, high = 150 }]
+confidence = "unverified"
+placeholder = true
+calibration_target = "CT-009-1"
+sources = [{ document = "CWV", page = 511, tag = "4.3", note = "smoke forced fighting at much shorter range; qualitative only" }]
+note = "Transmission between two firing lines 91 m apart at tick 1200 in calm air, permille."
+
+[[band]]
+id = "E2"
+family = "env"
+metric = "line_transmit"
+weapon = "crosswind"
+scale = 1
+points = [{ low = 200, high = 900 }]
+confidence = "unverified"
+placeholder = true
+calibration_target = "CT-009-1"
+note = "The same at a 3 m/s crosswind, permille."
+
+[[band]]
+id = "E3"
+family = "env"
+metric = "line_recover_s"
+weapon = "calm"
+scale = 1
+points = [{ low = 30, high = 180 }]
+confidence = "unverified"
+placeholder = true
+calibration_target = "CT-009-1"
+note = "Seconds for a 91 m line to recover a transmission of 500 permille after ceasing fire, calm."
+
+[[band]]
+id = "E4"
+family = "env"
+metric = "smoke_casualty_ratio"
+weapon = "rifle_58"
+scale = 1000
+points = [{ at_mm = 182880, low = 300, high = 900 }]
+confidence = "unverified"
+placeholder = true
+calibration_target = "CT-009-1"
+sources = [{ document = "CWV", page = 511, tag = "4.3", note = "men fought at shorter range in smoke; qualitative only" }]
+note = "Casualties of the smoke line at 200 yd over the same lines without the environment."
+
+[[band]]
+id = "E5"
+family = "env"
+metric = "heat_fatigue_ratio"
+scale = 1000
+points = [{ low = 1100, high = 1500 }]
+confidence = "unverified"
+placeholder = true
+calibration_target = "CT-009-4"
+sources = [{ document = "CWV", page = 79, note = "hot days; qualitative only" }, { document = "CWV", page = 116, tag = "11.8", note = "heat as a fatigue input" }]
+note = "Fatigue after 900 s at quick time from 14:00 on day 2 over the same from 04:30 (SPEC-009 amendment A2)."
+
+[[band]]
+id = "E6"
+family = "env"
+metric = "misfire_ratio"
+scale = 1000
+points = [{ low = 2500, high = 3500 }]
+confidence = "unverified"
+placeholder = true
+calibration_target = "CT-009-5"
+sources = [{ document = "CWV", page = 510, tag = "4.2", note = "wet powder; qualitative only" }]
+note = "Misfire rate at full powder dampness over the dry rate."
+
+[[band]]
+id = "E7"
+family = "env"
+metric = "crest_share"
+scale = 1000
+points = [{ low = 800, high = 1000 }]
+confidence = "unverified"
+placeholder = true
+calibration_target = "CT-009-3"
+note = "Share of the men of a regiment 60 m behind a 1.5 m crest that have fired after 60 s."
+
+[[band]]
+id = "E8"
+family = "env"
+metric = "hill_share"
+scale = 1000
+points = [{ low = 700, high = 1000 }]
+confidence = "unverified"
+placeholder = true
+calibration_target = "CT-009-3"
+note = "Share of the enemy regiments with a clear line within 1500 m that the hill observer logs, clear day."

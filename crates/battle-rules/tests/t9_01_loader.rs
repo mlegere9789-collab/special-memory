@@ -35,7 +35,7 @@ fn environment_loads_with_the_spec_values() {
             s.yield_pm,
             s.misfire_pm
         ],
-        [4, 8000, 3000, 550, 250]
+        [4, 8000, 3000, 220, 250]
     );
     assert_eq!(
         [s.diffuse_ppm, s.decay_ppm, s.rain_decay_gain_pm, s.cell_cap],
@@ -129,7 +129,7 @@ fn gettysburg_weather_loads_and_the_880_keys_cite_p079() {
 
 #[test]
 fn environment_rejections() {
-    let float = env_with("yield_pm = 550", "yield_pm = 550.5");
+    let float = env_with("yield_pm = 220", "yield_pm = 220.5");
     assert!(matches!(float, Err(DataError::Float(p)) if p == "smoke.yield_pm"));
     let unknown = env_with("[sight]\n", "[sight]\nbogus = 1\n");
     assert!(matches!(unknown, Err(DataError::UnknownKey(p)) if p == "sight.bogus"));

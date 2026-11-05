@@ -3,6 +3,7 @@
 //! through the world header.
 
 pub mod command;
+pub mod env;
 pub mod fidelity;
 pub mod fire;
 

@@ -20,7 +20,9 @@ fn tables() -> Tables {
 
 #[test]
 fn the_band_file_has_b1_to_b11_with_provenance() {
-    let bands = parse_bands(BANDS).unwrap();
+    let all = parse_bands(BANDS).unwrap();
+    assert!(all.iter().all(|b| b.family == "fire" || b.family == "env"));
+    let bands: Vec<_> = all.into_iter().filter(|b| b.family == "fire").collect();
     let ids: Vec<&str> = bands.iter().map(|b| b.id.as_str()).collect();
     let want: Vec<String> = (1..=11).map(|n| format!("B{n}")).collect();
     assert_eq!(ids, want.iter().map(String::as_str).collect::<Vec<_>>());

@@ -346,6 +346,12 @@ Labels are sequential per base spec in landing order (wave, then ticket id). A l
 |---|---|---|---|---|---|
 | A1 | sections 4, 6, 8, 9: hashed `CommandState.staff`, `OrderRecord.{ack_deadline, medium}`, ack length, `dispatch` and `order_views` forms, instant-order and downed-officer rules, `step_with_command` | T-074 | T-074 | 5 | landed |
 
+### 9.9 SPEC-009 (smoke, weather and sight)
+
+| Label | Content | Source | Ticket | Wave | Status |
+|---|---|---|---|---|---|
+| A2 | sections 3.1 and 10: `yield_pm` fitted so that band E2 holds; the `crest` scenario uses a 1.5 m crest; the E5 window is 900 s (A1 stays reserved) | T-097 | T-097 | 6 | landed |
+
 ### 9.11 SPEC-011 (historical replay and calibration)
 
 | Label | Content | Source | Ticket | Wave | Status |
